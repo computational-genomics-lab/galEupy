@@ -44,7 +44,7 @@ class BaseApp(DatabaseConfig):
         schema_existence = schema.check_schema_existence()
 
         if schema_existence:
-            _logger.debug('Database Schemas already exist')
+            _logger.debug('Database Schemas are already exist')
             return True
         else:
             _logger.debug('Database Schemas are missing')
@@ -59,7 +59,7 @@ class BaseApp(DatabaseConfig):
         table_stat.get_protein_feature_table_status()
 
     def drop_databases(self):
-        query_response = query_yes_no("Would you like to delete the database")
+        query_response = query_yes_no("Would you like to delete the Database ? ")
         if query_response:
             db_obj = DatabaseCreate(self.host, self.db_username, self.db_password, port=self.db_port)
             if db_obj.db_existence(self.db_name) is not None:
