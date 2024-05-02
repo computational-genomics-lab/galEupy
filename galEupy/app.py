@@ -44,7 +44,7 @@ class BaseApp(DatabaseConfig):
         schema_existence = schema.check_schema_existence()
 
         if schema_existence:
-            _logger.debug('Database Schemas are already exist')
+            _logger.debug('Database Schemas already exist')
             return True
         else:
             _logger.debug('Database Schemas are missing')
@@ -59,7 +59,7 @@ class BaseApp(DatabaseConfig):
         table_stat.get_protein_feature_table_status()
 
     def drop_databases(self):
-        query_response = query_yes_no("Would you like to delete the Database ? ")
+        query_response = query_yes_no("Would you like to delete the database?")
         if query_response:
             db_obj = DatabaseCreate(self.host, self.db_username, self.db_password, port=self.db_port)
             if db_obj.db_existence(self.db_name) is not None:
@@ -127,7 +127,7 @@ class App(ConfigFileHandler):
         _logger.debug(f"Annotation type: {app1.annotation_type}")
 
         if app1.taxonomy_id_sres is None:
-            _logger.error(f"""There is no entry with entered organism name: Please check the organism name
+            _logger.error(f"""There is no entry with the entered organism name: Please check the organism name
             Entered organism name: {app1.org_config.organism}""")
             app1.taxon_entries()
 
@@ -166,36 +166,36 @@ class App(ConfigFileHandler):
                                                         taxonomy_id, org_version)
             # protein_annotation_obj.create_protein_file(app1.taxonomy_id_sres, app1.org_config.version)
 
-            # upload InterProScan data
-            if app1.org_config.interproscan:
-                _logger.info("IntroProScan data is provided")
-                if app1.org_config.interproscan.exists():
-                    _logger.info("Processing IntroProScan data")
-                    protein_annotation_obj.parse_interproscan_data(app1.org_config.interproscan)
-                else:
-                    _logger.error(f"Please check the path for InterProScan data\n Path: {app1.org_config.interproscan}")
-            else:
-                _logger.info("IntroProScan data is not provided")
+            # # upload InterProScan data
+            # if app1.org_config.interproscan:
+            #     _logger.info("IntroProScan data is provided")
+            #     if app1.org_config.interproscan.exists():
+            #         _logger.info("Processing IntroProScan data")
+            #         protein_annotation_obj.parse_interproscan_data(app1.org_config.interproscan)
+            #     else:
+            #         _logger.error(f"Please check the path for InterProScan data\n Path: {app1.org_config.interproscan}")
+            # else:
+            #     _logger.info("IntroProScan data is not provided")
 
-            # for SignalP
-            if app1.org_config.signalp:
-                _logger.info("SignalP data is provided")
-                if app1.org_config.signalp.exists():
-                    _logger.info("Processing SignalP data")
-                    protein_annotation_obj.parse_signalp_result(app1.org_config.signalp)
-                    protein_annotation_obj.upload_signalp_data()
-            else:
-                _logger.info("SignalP data is not provided")
+            # # for SignalP
+            # if app1.org_config.signalp:
+            #     _logger.info("SignalP data is provided")
+            #     if app1.org_config.signalp.exists():
+            #         _logger.info("Processing SignalP data")
+            #         protein_annotation_obj.parse_signalp_result(app1.org_config.signalp)
+            #         protein_annotation_obj.upload_signalp_data()
+            # else:
+            #     _logger.info("SignalP data is not provided")
 
-            # for tmhmm
-            if app1.org_config.tmhmm:
-                _logger.info("tmhmm data is provided")
-                if app1.org_config.tmhmm.exists():
-                    _logger.info("Processing tmhmm data")
-                    protein_annotation_obj.parse_tmhmm_result(app1.org_config.tmhmm)
-                    protein_annotation_obj.upload_tmhmm_data()
-            else:
-                _logger.info("tmhmm data is not provided")
+            # # for tmhmm
+            # if app1.org_config.tmhmm:
+            #     _logger.info("tmhmm data is provided")
+            #     if app1.org_config.tmhmm.exists():
+            #         _logger.info("Processing tmhmm data")
+            #         protein_annotation_obj.parse_tmhmm_result(app1.org_config.tmhmm)
+            #         protein_annotation_obj.upload_tmhmm_data()
+            # else:
+            #     _logger.info("tmhmm data is not provided")
 
             # Eggnog
             if app1.org_config.eggnog:
@@ -341,34 +341,34 @@ class CentralDogmaAnnotator(AnnotationCategory, Taxonomy, TableStatusID):
             protein_annotation_obj = ProteinAnnotations(self.db_connection, self.path_config, self.org_config,
                                                         random_string, taxonomy_id, org_version)
             # upload InterProScan data
-            if self.org_config.interproscan:
-                _logger.info("InterProScan data is provided")
-                if self.org_config.interproscan.exists():
-                    _logger.info("Processing InterProScan data")
-                    protein_annotation_obj.parse_interproscan_data(self.org_config.interproscan)
-                else:
-                    _logger.error(f"Please check the path for InterProScan data\n Path: {self.org_config.interproscan}")
-            else:
-                _logger.info("IntroProScan data is not provided")
+            # if self.org_config.interproscan:
+            #     _logger.info("InterProScan data is provided")
+            #     if self.org_config.interproscan.exists():
+            #         _logger.info("Processing InterProScan data")
+            #         protein_annotation_obj.parse_interproscan_data(self.org_config.interproscan)
+            #     else:
+            #         _logger.error(f"Please check the path for InterProScan data\n Path: {self.org_config.interproscan}")
+            # else:
+            #     _logger.info("IntroProScan data is not provided")
 
-            # for SignalP
-            if self.org_config.signalp:
-                _logger.info("SignalP data is provided")
-                if self.org_config.signalp.exists():
-                    _logger.info("Processing SignalP data")
-                    protein_annotation_obj.parse_signalp_result(self.org_config.signalp)
-                    protein_annotation_obj.upload_signalp_data()
-            else:
-                _logger.info("SignalP data is not provided")
+            # # for SignalP
+            # if self.org_config.signalp:
+            #     _logger.info("SignalP data is provided")
+            #     if self.org_config.signalp.exists():
+            #         _logger.info("Processing SignalP data")
+            #         protein_annotation_obj.parse_signalp_result(self.org_config.signalp)
+            #         protein_annotation_obj.upload_signalp_data()
+            # else:
+            #     _logger.info("SignalP data is not provided")
 
-            if self.org_config.tmhmm:
-                _logger.info("tmhmm data is provided")
-                if self.org_config.tmhmm.exists():
-                    _logger.info("Processing tmhmm data")
-                    protein_annotation_obj.parse_tmhmm_result(self.org_config.tmhmm)
-                    protein_annotation_obj.upload_tmhmm_data()
-            else:
-                _logger.info("tmhmm data is not provided")
+            # if self.org_config.tmhmm:
+            #     _logger.info("tmhmm data is provided")
+            #     if self.org_config.tmhmm.exists():
+            #         _logger.info("Processing tmhmm data")
+            #         protein_annotation_obj.parse_tmhmm_result(self.org_config.tmhmm)
+            #         protein_annotation_obj.upload_tmhmm_data()
+            # else:
+            #     _logger.info("tmhmm data is not provided")
 
             if self.org_config.eggnog:
                 _logger.info(f"eggnog data is provided: {self.org_config.eggnog}")

@@ -397,21 +397,21 @@ CREATE TABLE `genecategory` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
--- DROP TABLE IF EXISTS `gene`;
--- CREATE TABLE `gene` (
---     `gene_ID` int(11) NOT NULL AUTO_INCREMENT,
---     `name` varchar(255) DEFAULT NULL,
---     `gene_symbol` varchar(50) DEFAULT NULL,
---     `gene_category_ID` int(11) DEFAULT NULL,
---     `review_status_ID` int(11) NOT NULL,
---     `description` varchar(500) DEFAULT NULL,
---     `reviewer_summary` varchar(4000) DEFAULT NULL,
---     `modification_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
---     PRIMARY KEY (`gene_ID`),
---     KEY `gene_FK01` (`gene_category_ID`),
---     KEY `gene_FK02` (`review_status_ID`),
---     CONSTRAINT `gene_FK01` FOREIGN KEY (`gene_category_ID`) REFERENCES `genecategory` (`gene_category_ID`)
--- ) ENGINE=InnoDB AUTO_INCREMENT=510783 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `gene`;
+CREATE TABLE `gene` (
+    `gene_ID` int(11) NOT NULL AUTO_INCREMENT,
+    `name` varchar(255) DEFAULT NULL,
+    `gene_symbol` varchar(50) DEFAULT NULL,
+    `gene_category_ID` int(11) DEFAULT NULL,
+    `review_status_ID` int(11) NOT NULL,
+    `description` varchar(500) DEFAULT NULL,
+    `reviewer_summary` varchar(4000) DEFAULT NULL,
+    `modification_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`gene_ID`),
+    KEY `gene_FK01` (`gene_category_ID`),
+    KEY `gene_FK02` (`review_status_ID`),
+    CONSTRAINT `gene_FK01` FOREIGN KEY (`gene_category_ID`) REFERENCES `genecategory` (`gene_category_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=510783 DEFAULT CHARSET=utf8;
 
 
 
@@ -647,29 +647,29 @@ select
 from `proteininstancefeature` where (`proteininstancefeature`.`subclass_view` = 'Pfam') ;
 
 
--- DROP TABLE IF EXISTS `signalp`;
--- CREATE TABLE IF NOT EXISTS `signalp`(
---     signalp_ID INT(11) NOT NULL AUTO_INCREMENT,
---     gene_instance_ID INT(11) NOT NULL,
---     `y-score` FLOAT NULL,
---     `y-pos` INT(11) NULL,
---     `d-score` FLOAT NULL,
---     status varchar(20) NULL,
---     PRIMARY KEY(signalp_ID),
---     FOREIGN KEY(gene_instance_id) REFERENCES geneinstance(gene_instance_ID)
--- )ENGINE=InnoDB AUTO_INCREMENT = 1;
+DROP TABLE IF EXISTS `signalp`;
+CREATE TABLE IF NOT EXISTS `signalp`(
+    signalp_ID INT(11) NOT NULL AUTO_INCREMENT,
+    gene_instance_ID INT(11) NOT NULL,
+    `y-score` FLOAT NULL,
+    `y-pos` INT(11) NULL,
+    `d-score` FLOAT NULL,
+    status varchar(20) NULL,
+    PRIMARY KEY(signalp_ID),
+    FOREIGN KEY(gene_instance_id) REFERENCES geneinstance(gene_instance_ID)
+)ENGINE=InnoDB AUTO_INCREMENT = 1;
 
--- DROP TABLE IF EXISTS `tmhmm`;
--- CREATE TABLE IF NOT EXISTS `tmhmm`(
--- tmhmm_ID INT(11) NOT NULL AUTO_INCREMENT,
--- gene_instance_ID INT(11) NOT NULL,
--- inside VARCHAR(60),
--- outside VARCHAR(60),
--- tmhelix VARCHAR(60),
--- modification_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
--- PRIMARY KEY(tmhmm_ID),
--- FOREIGN KEY(gene_instance_ID) REFERENCES geneinstance(gene_instance_ID)
--- )ENGINE=InnoDB AUTO_INCREMENT = 1;
+DROP TABLE IF EXISTS `tmhmm`;
+CREATE TABLE IF NOT EXISTS `tmhmm`(
+tmhmm_ID INT(11) NOT NULL AUTO_INCREMENT,
+gene_instance_ID INT(11) NOT NULL,
+inside VARCHAR(60),
+outside VARCHAR(60),
+tmhelix VARCHAR(60),
+modification_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+PRIMARY KEY(tmhmm_ID),
+FOREIGN KEY(gene_instance_ID) REFERENCES geneinstance(gene_instance_ID)
+)ENGINE=InnoDB AUTO_INCREMENT = 1;
 
 
 --
@@ -1301,8 +1301,3 @@ select
     `nafeatureimp`.`modification_date` AS `modification_date`
 from `nafeatureimp`
 where (`nafeatureimp`.`subclass_view` = 'tRNA');
-
-
-
-
-
