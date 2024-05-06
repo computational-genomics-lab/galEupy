@@ -30,7 +30,7 @@ def upload_shared_data(db, main_path):
     shared_data.upload_taxonomy_data()
     shared_data.upload_go_evidence()
     shared_data.upload_go_term()
-    shared_data.upload_gram_strain()
+    #shared_data.upload_gram_strain()
 
 
 class DefaultSharedData:
@@ -44,7 +44,7 @@ class DefaultSharedData:
 
         self.data_path = Path(data_path)
 
-        gram_strain_file = 'GramStrain.txt'
+        #gram_strain_file = 'GramStrain.txt'
         # go_term_file = 'go_daily-termdb-tables/term.txt'
         go_term_file = "go_termData.csv"
         go_evidence_file = 'goevidence.out'
@@ -55,7 +55,7 @@ class DefaultSharedData:
         self.taxonomy_file = self.data_path.joinpath(taxonomy_file)
         self.go_evidence_file = self.data_path.joinpath(go_evidence_file)
         self.go_term_file = self.data_path.joinpath(go_term_file)
-        self.gram_strain_file = self.data_path.joinpath(gram_strain_file)
+        #self.gram_strain_file = self.data_path.joinpath(gram_strain_file)
 
 
 class UploadCommonData(DefaultSharedData):
@@ -78,13 +78,13 @@ class UploadCommonData(DefaultSharedData):
         sql_tax = """SELECT * FROM taxon;"""
         sql_go_evidence = """SELECT * FROM goevidencecode;"""
         sql_go_term = """SELECT * FROM go_term;"""
-        sql_gram_strain = """SELECT * FROM gramstrain;"""
+        #sql_gram_strain = """SELECT * FROM gramstrain;"""
 
         self.row_genetic_code = self.db_sres.rowcount(sql_gc)
         self.row_taxonomy = self.db_sres.rowcount(sql_tax)
         self.row_go_evidence_code = self.db_sres.rowcount(sql_go_evidence)
         self.row_go_term = self.db_sres.rowcount(sql_go_term)
-        self.row_gram_strain = self.db_sres.rowcount(sql_gram_strain)
+        #self.row_gram_strain = self.db_sres.rowcount(sql_gram_strain)
 
     def upload_genetic_code(self):
         if self.row_genetic_code == 0:
@@ -121,13 +121,13 @@ class UploadCommonData(DefaultSharedData):
             """
             self.db_sres.insert(query)
 
-    def upload_gram_strain(self):
-        if self.gram_strain_file == 0:
-            _logger.debug("Upload shared gram strain data")
-            query = """LOAD DATA LOCAL INFILE '{}' INTO TABLE gramstrain FIELDS TERMINATED BY '\t' OPTIONALLY 
-                ENCLOSED BY '"' LINES TERMINATED BY '\n'(taxon_ID, strain_type, organism, membrane_type);""".format(
-                self.gram_strain_file)
-            self.db_sres.insert(query)
+    # def upload_gram_strain(self):
+    #     if self.gram_strain_file == 0:
+    #         _logger.debug("Upload shared gram strain data")
+    #         query = """LOAD DATA LOCAL INFILE '{}' INTO TABLE gramstrain FIELDS TERMINATED BY '\t' OPTIONALLY 
+    #             ENCLOSED BY '"' LINES TERMINATED BY '\n'(taxon_ID, strain_type, organism, membrane_type);""".format(
+    #             self.gram_strain_file)
+    #         self.db_sres.insert(query)
 
 
 class DownloadCommonData:

@@ -184,9 +184,9 @@ def organism_config_reader(filename):
     # header :AnnotationInfo
     config_org_annotation = config_obj.section_map('AnnotationInfo')
     if_blastp = config_org_annotation['blastp'] if 'blastp' in config_org_annotation else None
-    if_signalp = config_org_annotation['signalp'] if 'signalp' in config_org_annotation else None
-    if_pfam = config_org_annotation['pfam'] if 'pfam' in config_org_annotation else None
-    if_tmhmm = config_org_annotation['tmhmm'] if 'tmhmm' in config_org_annotation else None
+    # if_signalp = config_org_annotation['signalp'] if 'signalp' in config_org_annotation else None
+    # if_pfam = config_org_annotation['pfam'] if 'pfam' in config_org_annotation else None
+    # if_tmhmm = config_org_annotation['tmhmm'] if 'tmhmm' in config_org_annotation else None
 
     # header : FilePath
     config_annotation_path = config_obj.section_map('filePath')
@@ -195,11 +195,11 @@ def organism_config_reader(filename):
     gff = config_obj.check_key(config_annotation_path, 'gff')
     product = config_obj.check_key(config_annotation_path, 'product')
 
-    lastz = config_obj.check_key(config_annotation_path, 'lastz')
-    signalp = config_obj.check_key(config_annotation_path, 'signalp')
-    pfam = config_obj.check_key(config_annotation_path, 'pfam')
-    tmhmm = config_obj.check_key(config_annotation_path, 'tmhmm')
-    interproscan = config_obj.check_keys(config_annotation_path, ['interproscan', 'interpro'])
+    # lastz = config_obj.check_key(config_annotation_path, 'lastz')
+    # signalp = config_obj.check_key(config_annotation_path, 'signalp')
+    # pfam = config_obj.check_key(config_annotation_path, 'pfam')
+    # tmhmm = config_obj.check_key(config_annotation_path, 'tmhmm')
+    # interproscan = config_obj.check_keys(config_annotation_path, ['interproscan', 'interpro'])
     eggnog = config_obj.check_key(config_annotation_path, 'eggnog')
 
     # header : Other
@@ -213,18 +213,18 @@ def organism_config_reader(filename):
         'source_url': source_url,
         'sequence_type': sequence_type,
         'ifblastp': if_blastp,
-        'ifsignalp': if_signalp,
-        'ifpfam': if_pfam,
-        'iftmhmm': if_tmhmm,
+        # 'ifsignalp': if_signalp,
+        # 'ifpfam': if_pfam,
+        # 'iftmhmm': if_tmhmm,
         'GenBank': genbank,
         'fasta': fasta,
         'gff': gff,
         'product': product,
-        'lastz': lastz,
-        'signalp': signalp,
-        'pfam': pfam,
-        'tmhmm': tmhmm,
-        'interproscan': interproscan,
+        # 'lastz': lastz,
+        # 'signalp': signalp,
+        # 'pfam': pfam,
+        # 'tmhmm': tmhmm,
+        # 'interproscan': interproscan,
         "eggnog": eggnog,
         'program': program,
         'RefOrg': ref_org
@@ -241,19 +241,19 @@ class OrganismConf:
         self.version = organism_config_dct['orgVersion']
 
         self.is_blastp = organism_config_dct['ifblastp']
-        self.is_signalp = organism_config_dct['ifsignalp']
-        self.is_pfam = organism_config_dct['ifpfam']
-        self.is_tmhmm = organism_config_dct['iftmhmm']
+        # self.is_signalp = organism_config_dct['ifsignalp']
+        # self.is_pfam = organism_config_dct['ifpfam']
+        # self.is_tmhmm = organism_config_dct['iftmhmm']
 
         self.GenBank = organism_config_dct['GenBank']
         self.fasta = organism_config_dct['fasta']
         self.gff = organism_config_dct['gff']
         self.product = organism_config_dct['product']
-        self.lastz = organism_config_dct['lastz']
-        self.signalp = organism_config_dct['signalp']
-        self.pfam = organism_config_dct['pfam']
-        self.tmhmm = organism_config_dct['tmhmm']
-        self.interproscan = organism_config_dct['interproscan']
+        # self.lastz = organism_config_dct['lastz']
+        # self.signalp = organism_config_dct['signalp']
+        # self.pfam = organism_config_dct['pfam']
+        # self.tmhmm = organism_config_dct['tmhmm']
+        # self.interproscan = organism_config_dct['interproscan']
         self.eggnog = organism_config_dct['eggnog']
 
         self.program = organism_config_dct['program']
@@ -270,34 +270,34 @@ def path_config_reader(filename):
     # header : External_Program
     external_program_section = config_obj.section_map("External_Program")
 
-    lastz = external_program_section['lastz'] if 'lastz' in external_program_section else None
+    # lastz = external_program_section['lastz'] if 'lastz' in external_program_section else None
     db_creator = external_program_section['db_creator'] if 'db_creator' in external_program_section else None
-    augustus = external_program_section['augustus'] if 'augustus' in external_program_section else None
-    genmark = external_program_section['genmark'] if 'genmark' in external_program_section else None
-    signalp = external_program_section['signalp'] if 'signalp' in external_program_section else None
-    tmhmm = external_program_section['tmhmm'] if 'tmhmm' in external_program_section else None
-    hmmscan = external_program_section['hmmscan'] if 'hmmscan' in external_program_section else None
+    # augustus = external_program_section['augustus'] if 'augustus' in external_program_section else None
+    # genmark = external_program_section['genmark'] if 'genmark' in external_program_section else None
+    # signalp = external_program_section['signalp'] if 'signalp' in external_program_section else None
+    # tmhmm = external_program_section['tmhmm'] if 'tmhmm' in external_program_section else None
+    # hmmscan = external_program_section['hmmscan'] if 'hmmscan' in external_program_section else None
     blastp = external_program_section['blastp'] if 'blastp' in external_program_section else None
 
     # header : Associated_External_Program_Path
     associated_ext_program_section = config_obj.section_map("Associated_External_Program_Path")
     blast_path = associated_ext_program_section['blast'] if 'blast' in associated_ext_program_section else None
-    hmm_db = associated_ext_program_section['hmm_db'] if 'hmm_db' in associated_ext_program_section else None
+    # hmm_db = associated_ext_program_section['hmm_db'] if 'hmm_db' in associated_ext_program_section else None
     genmark_model = associated_ext_program_section['genmark_model'] if 'genmark_model' in associated_ext_program_section else None
     # header:
 
     path_config_dct = {
         'upload_path': upload_path,
-        'lastz': lastz,
+        # 'lastz': lastz,
         'db_creator': db_creator,
-        'augustus': augustus,
-        'genmark': genmark,
-        'signalp': signalp,
-        'TMHMM': tmhmm,
-        'HMMSCAN': hmmscan,
+        # 'augustus': augustus,
+        # 'genmark': genmark,
+        # 'signalp': signalp,
+        # 'TMHMM': tmhmm,
+        # 'HMMSCAN': hmmscan,
         'blastp': blastp,
         'blast_path': blast_path,
-        'hmm_db': hmm_db,
+        # 'hmm_db': hmm_db,
         'genmark_model': genmark_model
     }
 
@@ -309,17 +309,17 @@ class PathConf:
         path_config_dct = path_config_reader(filename)
 
         self.upload_dir = BaseUploadDirectory(path_config_dct['upload_path']).upload_dir
-        self.lastz = path_config_dct['lastz']
+        # self.lastz = path_config_dct['lastz']
         self.db_creator = path_config_dct['db_creator']
-        self.augustus = path_config_dct['augustus']
-        self.genmark = path_config_dct['genmark']
-        self.signalp = path_config_dct['signalp']
-        self.TMHMM = path_config_dct['TMHMM']
-        self.HMMSCAN = path_config_dct['HMMSCAN']
+        # self.augustus = path_config_dct['augustus']
+        # self.genmark = path_config_dct['genmark']
+        # self.signalp = path_config_dct['signalp']
+        # self.TMHMM = path_config_dct['TMHMM']
+        # self.HMMSCAN = path_config_dct['HMMSCAN']
         self.blastp = path_config_dct['blastp']
 
         self.blast_path = path_config_dct['blast_path']
-        self.hmm_db = path_config_dct['hmm_db']
+        # self.hmm_db = path_config_dct['hmm_db']
         self.genmark_model = path_config_dct['genmark_model']
 
 

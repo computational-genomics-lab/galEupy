@@ -62,28 +62,26 @@ class TableStatusID:
 
     def get_protein_feature_table_status(self):
 
-        sql_1 = "SELECT MAX(protein_instance_feature_id) as LAST_ID FROM HmmPfam"
-        sql_2 = "SELECT MAX(tmhmm_ID) as LAST_ID FROM tmhmm"
-        sql_3 = "SELECT MAX(signalp_ID) as LAST_ID FROM signalp"
+        # sql_1 = "SELECT MAX(protein_instance_feature_id) as LAST_ID FROM HmmPfam"
+        # sql_2 = "SELECT MAX(tmhmm_ID) as LAST_ID FROM tmhmm"
+        # sql_3 = "SELECT MAX(signalp_ID) as LAST_ID FROM signalp"
         # sql_5 = "SELECT MAX(interpro_scan_ID) AS LAST_ID FROM interproscan"
         sql_5 = "Select MAX(protein_instance_feature_ID) as LAST_ID from proteininstancefeature"
 
-        row_hmm_pfam = self.get_max_table_value(sql_1)
-        row_tmhmm = self.get_max_table_value(sql_2)
-        row_signalp = self.get_max_table_value(sql_3)
+        # row_hmm_pfam = self.get_max_table_value(sql_1)
+        # row_tmhmm = self.get_max_table_value(sql_2)
+        # row_signalp = self.get_max_table_value(sql_3)
         row_protein_instance_feature = self.get_max_table_value(sql_5)
 
         row_dct = {
-            'pfam': row_hmm_pfam,
-            'tmhmm': row_tmhmm,
-            'signalp': row_signalp,
+            # 'pfam': row_hmm_pfam,
+            # 'tmhmm': row_tmhmm,
+            # 'signalp': row_signalp,
             'protein_instance_feature_ID': row_protein_instance_feature
         }
 
         log_str = f"""Getting Max IDs of each Protein Annotation table..
-                        hmmpfam ID: {row_hmm_pfam}
-                        signalp ID: {row_signalp}
-                        tmhmm ID: {row_tmhmm}
+
                         protein_instance_feature_ID: {row_protein_instance_feature}
                 """
         _logger.info(log_str)
@@ -331,26 +329,26 @@ class UploadTableData(UploadDirectory):
         _logger.debug(sql_5)
         self.db.insert(sql_5)
 
-    def protein_feature_data(self, upload_dir_names):
-        pfam_upload_file = upload_dir_names.PFam
-        signalp_upload_file = upload_dir_names.SignalP
-        tmhmm_upload_file = upload_dir_names.TmHmm
+    # def protein_feature_data(self, upload_dir_names):
+    #     pfam_upload_file = upload_dir_names.PFam
+    #     signalp_upload_file = upload_dir_names.SignalP
+    #     tmhmm_upload_file = upload_dir_names.TmHmm
 
-        # For HmmPfam table
-        sql_1 = f"""LOAD DATA LOCAL INFILE '{pfam_upload_file}' INTO TABLE hmmpfam FIELDS TERMINATED BY '\t' OPTIONALLY
-           ENCLOSED BY '"' LINES TERMINATED BY '\n'
-        (`pfam_ID`, `gene_instance_ID`, `e_value`, `score`, `bias`, `accession_id`, `domain_name`, `domain_description`)
-        """
-        self.db.insert(sql_1)
+    #     # For HmmPfam table
+    #     sql_1 = f"""LOAD DATA LOCAL INFILE '{pfam_upload_file}' INTO TABLE hmmpfam FIELDS TERMINATED BY '\t' OPTIONALLY
+    #        ENCLOSED BY '"' LINES TERMINATED BY '\n'
+    #     (`pfam_ID`, `gene_instance_ID`, `e_value`, `score`, `bias`, `accession_id`, `domain_name`, `domain_description`)
+    #     """
+    #     self.db.insert(sql_1)
 
-        # signalp table
-        sql_2 = f"""LOAD DATA LOCAL INFILE '{signalp_upload_file}' INTO TABLE signalp 
-        FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n'"""
-        self.db.insert(sql_2)
+    #     # signalp table
+    #     sql_2 = f"""LOAD DATA LOCAL INFILE '{signalp_upload_file}' INTO TABLE signalp 
+    #     FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n'"""
+    #     self.db.insert(sql_2)
 
-        # For Tmhmm table
-        sql_3 = f"""LOAD DATA LOCAL INFILE '{tmhmm_upload_file}' INTO TABLE tmhmm FIELDS TERMINATED BY '\t' OPTIONALLY
-               ENCLOSED BY '"' LINES TERMINATED BY '\n'
-               (`tmhmm_ID`, `gene_instance_ID`, `inside`, `outside`, `tmhelix`)"""
-        self.db.insert(sql_3)
-        _logger.info("Uploading central dogma data: complete")
+    #     # For Tmhmm table
+    #     sql_3 = f"""LOAD DATA LOCAL INFILE '{tmhmm_upload_file}' INTO TABLE tmhmm FIELDS TERMINATED BY '\t' OPTIONALLY
+    #            ENCLOSED BY '"' LINES TERMINATED BY '\n'
+    #            (`tmhmm_ID`, `gene_instance_ID`, `inside`, `outside`, `tmhelix`)"""
+    #     self.db.insert(sql_3)
+    #     _logger.info("Uploading central dogma data: complete")

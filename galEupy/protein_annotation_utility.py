@@ -103,138 +103,138 @@ class ProteinAnnotations(BaseProteinAnnotations, TranscriptMap):
         TranscriptMap.__init__(self, db_conn, taxonomy_id, org_version)
         # self.table_status_dct = self.get_tables_max_id()
 
-    def parse_interproscan_data(self, interpro_file):
-        pif_id = self.table_status_dct['interproscan']
-        parsed_file_name = Path(self.path_config.upload_dir).joinpath('parsed_interpro_file')
+    # def parse_interproscan_data(self, interpro_file):
+    #     pif_id = self.table_status_dct['interproscan']
+    #     parsed_file_name = Path(self.path_config.upload_dir).joinpath('parsed_interpro_file')
 
-        interpro_obj = ParseInterproResult(interpro_file, parsed_file_name, self.transcript_map_dct)
-        interpro_obj.create_parsed_output(pif_id)
+    #     interpro_obj = ParseInterproResult(interpro_file, parsed_file_name, self.transcript_map_dct)
+    #     interpro_obj.create_parsed_output(pif_id)
 
-        self.upload_interpro_data(parsed_file_name)
+    #     self.upload_interpro_data(parsed_file_name)
 
-    def upload_interpro_data(self, interpro_data):
-        _logger.debug("Uploading interproscan data")
-        # For ProteinInstanceFeature table
-        sql_1 = f"""LOAD DATA LOCAL INFILE '{interpro_data}' INTO TABLE interproscan 
-        FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n';"""
-        self.db_conn.insert(sql_1)
+    # def upload_interpro_data(self, interpro_data):
+    #     _logger.debug("Uploading interproscan data")
+    #     # For ProteinInstanceFeature table
+    #     sql_1 = f"""LOAD DATA LOCAL INFILE '{interpro_data}' INTO TABLE interproscan 
+    #     FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n';"""
+    #     self.db_conn.insert(sql_1)
 
-    def parse_hmmscan_result(self, parsed_file, upload_file):
-        fh = open(parsed_file, 'r')
-        pfam_write_fh = open(upload_file, 'w')
-        hmm_row_id = self.table_status_dct['tmhmm']
+    # def parse_hmmscan_result(self, parsed_file, upload_file):
+    #     fh = open(parsed_file, 'r')
+    #     pfam_write_fh = open(upload_file, 'w')
+    #     hmm_row_id = self.table_status_dct['tmhmm']
 
-        for i, line in enumerate(fh):
-            line = line.rstrip()
-            if not line.startswith("#"):
-                line_list = line.split()
-                list_len = len(line_list)
-                if list_len > 19:
-                    line_list[18:list_len] = [' '.join(line_list[18:list_len])]
-                list_len = len(line_list)
-                if list_len == 19:
-                    hmm_string = self.process_hmm_scan_single_line(line_list)
-                    hmm_row_id += 1
-                    hmm_string1 = '{}\t{}\n'.format(hmm_row_id, hmm_string)
-                    pfam_write_fh.write(hmm_string1)
+    #     for i, line in enumerate(fh):
+    #         line = line.rstrip()
+    #         if not line.startswith("#"):
+    #             line_list = line.split()
+    #             list_len = len(line_list)
+    #             if list_len > 19:
+    #                 line_list[18:list_len] = [' '.join(line_list[18:list_len])]
+    #             list_len = len(line_list)
+    #             if list_len == 19:
+    #                 hmm_string = self.process_hmm_scan_single_line(line_list)
+    #                 hmm_row_id += 1
+    #                 hmm_string1 = '{}\t{}\n'.format(hmm_row_id, hmm_string)
+    #                 pfam_write_fh.write(hmm_string1)
 
-    @staticmethod
-    def process_hmm_scan_single_line(line_list):
-        domain_name = line_list[0]
-        accession_id = line_list[1]
-        gi_id = line_list[2]
-        e_value = line_list[7]
-        score = line_list[8]
-        bias = line_list[9]
-        domain_des = line_list[18]
-        match_obj = re.search(r"gi='(.*)'", gi_id, re.M | re.I)
-        if match_obj:
-            gi_id = match_obj.group(1)
-            hmm_string = '{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(gi_id, e_value, score, bias, accession_id, domain_name,
-                                                             domain_des)
-            return hmm_string
+    # @staticmethod
+    # def process_hmm_scan_single_line(line_list):
+    #     domain_name = line_list[0]
+    #     accession_id = line_list[1]
+    #     gi_id = line_list[2]
+    #     e_value = line_list[7]
+    #     score = line_list[8]
+    #     bias = line_list[9]
+    #     domain_des = line_list[18]
+    #     match_obj = re.search(r"gi='(.*)'", gi_id, re.M | re.I)
+    #     if match_obj:
+    #         gi_id = match_obj.group(1)
+    #         hmm_string = '{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(gi_id, e_value, score, bias, accession_id, domain_name,
+    #                                                          domain_des)
+    #         return hmm_string
 
-    def upload_hmmpfam_data(self, hmmpfam_data):
-        # For HmmPfam table
-        sql_1 = f"""LOAD DATA LOCAL INFILE '{hmmpfam_data}' INTO TABLE hmmpfam FIELDS TERMINATED BY '\t' OPTIONALLY
-                   ENCLOSED BY '"' LINES TERMINATED BY '\n' (`pfam_ID`, `gene_instance_ID`, 
-                   `e_value`, `score`, `bias`, `accession_id`, `domain_name`, `domain_description`)"""
-        self.db_conn.insert(sql_1)
+    # def upload_hmmpfam_data(self, hmmpfam_data):
+    #     # For HmmPfam table
+    #     sql_1 = f"""LOAD DATA LOCAL INFILE '{hmmpfam_data}' INTO TABLE hmmpfam FIELDS TERMINATED BY '\t' OPTIONALLY
+    #                ENCLOSED BY '"' LINES TERMINATED BY '\n' (`pfam_ID`, `gene_instance_ID`, 
+    #                `e_value`, `score`, `bias`, `accession_id`, `domain_name`, `domain_description`)"""
+    #     self.db_conn.insert(sql_1)
 
-    def parse_signalp_result(self, parsed_file):
-        _logger.debug(f"Reading SignalP file from {parsed_file}")
-        fh = open(parsed_file, 'r')
-        signalp_write_fh = open(self.SignalP, 'w')
-        signalp_row_id = self.table_status_dct['signalp']
+    # def parse_signalp_result(self, parsed_file):
+    #     _logger.debug(f"Reading SignalP file from {parsed_file}")
+    #     fh = open(parsed_file, 'r')
+    #     signalp_write_fh = open(self.SignalP, 'w')
+    #     signalp_row_id = self.table_status_dct['signalp']
 
-        for i, line in enumerate(fh):
-            line = line.rstrip()
-            if not line.startswith("#"):
-                line_list = line.split()
-                list_len = len(line_list)
+    #     for i, line in enumerate(fh):
+    #         line = line.rstrip()
+    #         if not line.startswith("#"):
+    #             line_list = line.split()
+    #             list_len = len(line_list)
 
-                # if list_len == 12:
-                # print(list_len)
-                if list_len >= 10:
-                    gi_id = get_gi_id(line_list[0])
-                    gene_name = gi_id
+    #             # if list_len == 12:
+    #             # print(list_len)
+    #             if list_len >= 10:
+    #                 gi_id = get_gi_id(line_list[0])
+    #                 gene_name = gi_id
 
-                    protein_instance_id = self.find_transcript_entry(gene_name)
-                    if protein_instance_id is None:
-                        continue
+    #                 protein_instance_id = self.find_transcript_entry(gene_name)
+    #                 if protein_instance_id is None:
+    #                     continue
 
-                    y_score = line_list[3]
-                    y_pos = line_list[4]
-                    d_score = line_list[8]
-                    status = line_list[9]
-                    s_string = f'{protein_instance_id}\t{y_score}\t{y_pos}\t{d_score}\t{status}'
-                    signalp_row_id += 1
-                    s_string1 = '{}\t{}\n'.format(signalp_row_id, s_string)
-                    signalp_write_fh.write(s_string1)
+    #                 y_score = line_list[3]
+    #                 y_pos = line_list[4]
+    #                 d_score = line_list[8]
+    #                 status = line_list[9]
+    #                 s_string = f'{protein_instance_id}\t{y_score}\t{y_pos}\t{d_score}\t{status}'
+    #                 signalp_row_id += 1
+    #                 s_string1 = '{}\t{}\n'.format(signalp_row_id, s_string)
+    #                 signalp_write_fh.write(s_string1)
 
-        signalp_write_fh.close()
-        fh.close()
+    #     signalp_write_fh.close()
+    #     fh.close()
 
-    def upload_signalp_data(self):
-        _logger.debug(f"Uploading SignalP data from {self.SignalP}")
-        # SignalP table
-        query = f"""LOAD DATA LOCAL INFILE '{self.SignalP}' INTO TABLE signalp 
-                FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n'"""
-        # _logger.debug(query)
-        self.db_conn.insert(query)
+    # def upload_signalp_data(self):
+    #     _logger.debug(f"Uploading SignalP data from {self.SignalP}")
+    #     # SignalP table
+    #     query = f"""LOAD DATA LOCAL INFILE '{self.SignalP}' INTO TABLE signalp 
+    #             FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n'"""
+    #     # _logger.debug(query)
+    #     self.db_conn.insert(query)
 
-    def parse_tmhmm_result(self, parsed_file):
-        fh = open(parsed_file, 'r')
-        tmhmm_write_fh = open(self.TmHmm, 'w')
-        tmhmm_row_id = self.table_status_dct['tmhmm']
-        for i, line in enumerate(fh):
-            line = line.rstrip()
-            if not line.startswith("#"):
-                line_list = line.split()
-                list_len = len(line_list)
-                if list_len == 5:
-                    if line_list[2] == 'TMhelix':
-                        gi_id = get_gi_id(line_list[0])
-                        gene_name = gi_id
-                        protein_instance_id = self.find_transcript_entry(gene_name)
-                        if protein_instance_id is None:
-                            continue
+    # def parse_tmhmm_result(self, parsed_file):
+    #     fh = open(parsed_file, 'r')
+    #     tmhmm_write_fh = open(self.TmHmm, 'w')
+    #     tmhmm_row_id = self.table_status_dct['tmhmm']
+    #     for i, line in enumerate(fh):
+    #         line = line.rstrip()
+    #         if not line.startswith("#"):
+    #             line_list = line.split()
+    #             list_len = len(line_list)
+    #             if list_len == 5:
+    #                 if line_list[2] == 'TMhelix':
+    #                     gi_id = get_gi_id(line_list[0])
+    #                     gene_name = gi_id
+    #                     protein_instance_id = self.find_transcript_entry(gene_name)
+    #                     if protein_instance_id is None:
+    #                         continue
 
-                        helix_position = '{}-{}'.format(line_list[3], line_list[4])
-                        tmhmm_row_id += 1
-                        string1 = '{}\t{}\t\t\t{}\n'.format(tmhmm_row_id, protein_instance_id, helix_position)
-                        tmhmm_write_fh.write(string1)
-        tmhmm_write_fh.close()
-        fh.close()
+    #                     helix_position = '{}-{}'.format(line_list[3], line_list[4])
+    #                     tmhmm_row_id += 1
+    #                     string1 = '{}\t{}\t\t\t{}\n'.format(tmhmm_row_id, protein_instance_id, helix_position)
+    #                     tmhmm_write_fh.write(string1)
+    #     tmhmm_write_fh.close()
+    #     fh.close()
 
-    def upload_tmhmm_data(self):
-        _logger.debug(f"Uploading tmhmm data from {self.TmHmm}")
-        # For Tmhmm table
-        query = f"""LOAD DATA LOCAL INFILE '{self.TmHmm}' INTO TABLE tmhmm FIELDS TERMINATED BY '\t' OPTIONALLY
-                       ENCLOSED BY '"' LINES 
-                       TERMINATED BY '\n' (`tmhmm_ID`, `gene_instance_ID`, `inside`, `outside`, `tmhelix`)"""
-        # _logger.debug(query)
-        self.db_conn.insert(query)
+    # def upload_tmhmm_data(self):
+    #     _logger.debug(f"Uploading tmhmm data from {self.TmHmm}")
+    #     # For Tmhmm table
+    #     query = f"""LOAD DATA LOCAL INFILE '{self.TmHmm}' INTO TABLE tmhmm FIELDS TERMINATED BY '\t' OPTIONALLY
+    #                    ENCLOSED BY '"' LINES 
+    #                    TERMINATED BY '\n' (`tmhmm_ID`, `gene_instance_ID`, `inside`, `outside`, `tmhelix`)"""
+    #     # _logger.debug(query)
+    #     self.db_conn.insert(query)
 
     def parse_eggnog_result(self, parsed_file):
         _logger.info("Parsing EGGNOG data: Initiated")

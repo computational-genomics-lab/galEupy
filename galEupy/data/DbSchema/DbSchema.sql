@@ -188,15 +188,15 @@ CREATE TABLE `reviewstatus` (
 
 
 DROP TABLE IF EXISTS `gramstrain`;
-CREATE TABLE IF NOT EXISTS `gramstrain`(
-    gram_strain_ID INT(11) NOT NULL AUTO_INCREMENT,
-    organism VARCHAR(255) NOT NULL,
-    taxon_id INT(11) NOT NULL,
-    strain_type VARCHAR(100) NOT NULL,
-    membrane_type VARCHAR(100) NULL,
-    modification_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (gram_strain_ID)
-)ENGINE=InnoDB AUTO_INCREMENT = 1;
+-- CREATE TABLE IF NOT EXISTS `gramstrain`(
+--     gram_strain_ID INT(11) NOT NULL AUTO_INCREMENT,
+--     organism VARCHAR(255) NOT NULL,
+--     taxon_id INT(11) NOT NULL,
+--     strain_type VARCHAR(100) NOT NULL,
+--     membrane_type VARCHAR(100) NULL,
+--     modification_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--     PRIMARY KEY (gram_strain_ID)
+-- )ENGINE=InnoDB AUTO_INCREMENT = 1;
 
 
 --
@@ -647,29 +647,29 @@ select
 from `proteininstancefeature` where (`proteininstancefeature`.`subclass_view` = 'Pfam') ;
 
 
-DROP TABLE IF EXISTS `signalp`;
-CREATE TABLE IF NOT EXISTS `signalp`(
-    signalp_ID INT(11) NOT NULL AUTO_INCREMENT,
-    gene_instance_ID INT(11) NOT NULL,
-    `y-score` FLOAT NULL,
-    `y-pos` INT(11) NULL,
-    `d-score` FLOAT NULL,
-    status varchar(20) NULL,
-    PRIMARY KEY(signalp_ID),
-    FOREIGN KEY(gene_instance_id) REFERENCES geneinstance(gene_instance_ID)
-)ENGINE=InnoDB AUTO_INCREMENT = 1;
+-- DROP TABLE IF EXISTS `signalp`;
+-- CREATE TABLE IF NOT EXISTS `signalp`(
+--     signalp_ID INT(11) NOT NULL AUTO_INCREMENT,
+--     gene_instance_ID INT(11) NOT NULL,
+--     `y-score` FLOAT NULL,
+--     `y-pos` INT(11) NULL,
+--     `d-score` FLOAT NULL,
+--     status varchar(20) NULL,
+--     PRIMARY KEY(signalp_ID),
+--     FOREIGN KEY(gene_instance_id) REFERENCES geneinstance(gene_instance_ID)
+-- )ENGINE=InnoDB AUTO_INCREMENT = 1;
 
-DROP TABLE IF EXISTS `tmhmm`;
-CREATE TABLE IF NOT EXISTS `tmhmm`(
-tmhmm_ID INT(11) NOT NULL AUTO_INCREMENT,
-gene_instance_ID INT(11) NOT NULL,
-inside VARCHAR(60),
-outside VARCHAR(60),
-tmhelix VARCHAR(60),
-modification_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-PRIMARY KEY(tmhmm_ID),
-FOREIGN KEY(gene_instance_ID) REFERENCES geneinstance(gene_instance_ID)
-)ENGINE=InnoDB AUTO_INCREMENT = 1;
+-- DROP TABLE IF EXISTS `tmhmm`;
+-- CREATE TABLE IF NOT EXISTS `tmhmm`(
+-- tmhmm_ID INT(11) NOT NULL AUTO_INCREMENT,
+-- gene_instance_ID INT(11) NOT NULL,
+-- inside VARCHAR(60),
+-- outside VARCHAR(60),
+-- tmhelix VARCHAR(60),
+-- modification_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+-- PRIMARY KEY(tmhmm_ID),
+-- FOREIGN KEY(gene_instance_ID) REFERENCES geneinstance(gene_instance_ID)
+-- )ENGINE=InnoDB AUTO_INCREMENT = 1;
 
 
 --
@@ -801,25 +801,25 @@ where (`proteininstancefeature`.`subclass_view` = 'GO');
 --
 -- Structure for view `HmmPfam`
 --
-DROP TABLE IF EXISTS `HmmPfam`;
+-- DROP TABLE IF EXISTS `HmmPfam`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `HmmPfam` AS
-select
-    `proteininstancefeature`.`protein_instance_feature_ID` AS `protein_instance_feature_id`,
-    `proteininstancefeature`.`protein_instance_id` AS `protein_instance_id`,
-    `proteininstancefeature`.`feature_name` AS `feature_name`,
-    `proteininstancefeature`.`subclass_view` AS `subclass_view`,
-    `proteininstancefeature`.`location_start` AS `location_start`,
-    `proteininstancefeature`.`location_stop` AS `location_stop`,
-    `proteininstancefeature`.`length` AS `length`,
-    `proteininstancefeature`.`pval_mant` AS `pval_mant`,
-    `proteininstancefeature`.`pval_exp` AS `pval_exp`,
-    `proteininstancefeature`.`bit_score` AS `bit_score`,
-    `proteininstancefeature`.`domain_name` AS `domain_name`,
-    `proteininstancefeature`.`prediction_id` AS `prediction_id`,
-    `proteininstancefeature`.`modification_date` AS `modification_date`
-from `proteininstancefeature`
-where (`proteininstancefeature`.`subclass_view` = 'HmmPfam');
+-- CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `HmmPfam` AS
+-- select
+--     `proteininstancefeature`.`protein_instance_feature_ID` AS `protein_instance_feature_id`,
+--     `proteininstancefeature`.`protein_instance_id` AS `protein_instance_id`,
+--     `proteininstancefeature`.`feature_name` AS `feature_name`,
+--     `proteininstancefeature`.`subclass_view` AS `subclass_view`,
+--     `proteininstancefeature`.`location_start` AS `location_start`,
+--     `proteininstancefeature`.`location_stop` AS `location_stop`,
+--     `proteininstancefeature`.`length` AS `length`,
+--     `proteininstancefeature`.`pval_mant` AS `pval_mant`,
+--     `proteininstancefeature`.`pval_exp` AS `pval_exp`,
+--     `proteininstancefeature`.`bit_score` AS `bit_score`,
+--     `proteininstancefeature`.`domain_name` AS `domain_name`,
+--     `proteininstancefeature`.`prediction_id` AS `prediction_id`,
+--     `proteininstancefeature`.`modification_date` AS `modification_date`
+-- from `proteininstancefeature`
+-- where (`proteininstancefeature`.`subclass_view` = 'HmmPfam');
 
 
 -- --------------------------------------------------------
@@ -1057,50 +1057,50 @@ where (`nafeatureimp`.`subclass_view` = 'rnatype');
 --
 -- Structure for view `ScanRegExp`
 --
-DROP TABLE IF EXISTS `ScanRegExp`;
+-- DROP TABLE IF EXISTS `ScanRegExp`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `ScanRegExp` AS
-select
-    `proteininstancefeature`.`protein_instance_feature_ID` AS `protein_instance_feature_id`,
-    `proteininstancefeature`.`protein_instance_id` AS `protein_instance_id`,
-    `proteininstancefeature`.`feature_name` AS `feature_name`,
-    `proteininstancefeature`.`subclass_view` AS `subclass_view`,
-    `proteininstancefeature`.`location_start` AS `location_start`,
-    `proteininstancefeature`.`location_stop` AS `location_stop`,
-    `proteininstancefeature`.`length` AS `length`,
-    `proteininstancefeature`.`pval_mant` AS `pval_mant`,
-    `proteininstancefeature`.`pval_exp` AS `pval_exp`,
-    `proteininstancefeature`.`bit_score` AS `bit_score`,
-    `proteininstancefeature`.`domain_name` AS `domain_name`,
-    `proteininstancefeature`.`prediction_id` AS `prediction_id`,
-    `proteininstancefeature`.`modification_date` AS `modification_date`
-from `proteininstancefeature`
-where (`proteininstancefeature`.`subclass_view` = 'ScanRegExp');
+-- CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `ScanRegExp` AS
+-- select
+--     `proteininstancefeature`.`protein_instance_feature_ID` AS `protein_instance_feature_id`,
+--     `proteininstancefeature`.`protein_instance_id` AS `protein_instance_id`,
+--     `proteininstancefeature`.`feature_name` AS `feature_name`,
+--     `proteininstancefeature`.`subclass_view` AS `subclass_view`,
+--     `proteininstancefeature`.`location_start` AS `location_start`,
+--     `proteininstancefeature`.`location_stop` AS `location_stop`,
+--     `proteininstancefeature`.`length` AS `length`,
+--     `proteininstancefeature`.`pval_mant` AS `pval_mant`,
+--     `proteininstancefeature`.`pval_exp` AS `pval_exp`,
+--     `proteininstancefeature`.`bit_score` AS `bit_score`,
+--     `proteininstancefeature`.`domain_name` AS `domain_name`,
+--     `proteininstancefeature`.`prediction_id` AS `prediction_id`,
+--     `proteininstancefeature`.`modification_date` AS `modification_date`
+-- from `proteininstancefeature`
+-- where (`proteininstancefeature`.`subclass_view` = 'ScanRegExp');
 
--- --------------------------------------------------------
+-- -- --------------------------------------------------------
 
---
--- Structure for view `Seg`
---
-DROP TABLE IF EXISTS `Seg`;
+-- --
+-- -- Structure for view `Seg`
+-- --
+-- DROP TABLE IF EXISTS `Seg`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `Seg` AS
-select
-    `proteininstancefeature`.`protein_instance_feature_ID` AS `protein_instance_feature_id`,
-    `proteininstancefeature`.`protein_instance_id` AS `protein_instance_id`,
-    `proteininstancefeature`.`feature_name` AS `feature_name`,
-    `proteininstancefeature`.`subclass_view` AS `subclass_view`,
-    `proteininstancefeature`.`location_start` AS `location_start`,
-    `proteininstancefeature`.`location_stop` AS `location_stop`,
-    `proteininstancefeature`.`length` AS `length`,
-    `proteininstancefeature`.`pval_mant` AS `pval_mant`,
-    `proteininstancefeature`.`pval_exp` AS `pval_exp`,
-    `proteininstancefeature`.`bit_score` AS `bit_score`,
-    `proteininstancefeature`.`domain_name` AS `domain_name`,
-    `proteininstancefeature`.`prediction_id` AS `prediction_id`,
-    `proteininstancefeature`.`modification_date` AS `modification_date`
-from `proteininstancefeature`
-where (`proteininstancefeature`.`subclass_view` = 'Seg');
+-- CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `Seg` AS
+-- select
+--     `proteininstancefeature`.`protein_instance_feature_ID` AS `protein_instance_feature_id`,
+--     `proteininstancefeature`.`protein_instance_id` AS `protein_instance_id`,
+--     `proteininstancefeature`.`feature_name` AS `feature_name`,
+--     `proteininstancefeature`.`subclass_view` AS `subclass_view`,
+--     `proteininstancefeature`.`location_start` AS `location_start`,
+--     `proteininstancefeature`.`location_stop` AS `location_stop`,
+--     `proteininstancefeature`.`length` AS `length`,
+--     `proteininstancefeature`.`pval_mant` AS `pval_mant`,
+--     `proteininstancefeature`.`pval_exp` AS `pval_exp`,
+--     `proteininstancefeature`.`bit_score` AS `bit_score`,
+--     `proteininstancefeature`.`domain_name` AS `domain_name`,
+--     `proteininstancefeature`.`prediction_id` AS `prediction_id`,
+--     `proteininstancefeature`.`modification_date` AS `modification_date`
+-- from `proteininstancefeature`
+-- where (`proteininstancefeature`.`subclass_view` = 'Seg');
 
 -- --------------------------------------------------------
 
@@ -1207,25 +1207,25 @@ where (`nafeatureimp`.`subclass_view` = 'source');
 --
 -- Structure for view `SuperFamily`
 --
-DROP TABLE IF EXISTS `SuperFamily`;
+-- DROP TABLE IF EXISTS `SuperFamily`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `SuperFamily` AS
-select
-    `proteininstancefeature`.`protein_instance_feature_ID` AS `protein_instance_feature_id`,
-    `proteininstancefeature`.`protein_instance_id` AS `protein_instance_id`,
-    `proteininstancefeature`.`feature_name` AS `feature_name`,
-    `proteininstancefeature`.`subclass_view` AS `subclass_view`,
-    `proteininstancefeature`.`location_start` AS `location_start`,
-    `proteininstancefeature`.`location_stop` AS `location_stop`,
-    `proteininstancefeature`.`length` AS `length`,
-    `proteininstancefeature`.`pval_mant` AS `pval_mant`,
-    `proteininstancefeature`.`pval_exp` AS `pval_exp`,
-    `proteininstancefeature`.`bit_score` AS `bit_score`,
-    `proteininstancefeature`.`domain_name` AS `domain_name`,
-    `proteininstancefeature`.`prediction_id` AS `prediction_id`,
-    `proteininstancefeature`.`modification_date` AS `modification_date`
-from `proteininstancefeature`
-where (`proteininstancefeature`.`subclass_view` = 'SuperFamily');
+-- CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `SuperFamily` AS
+-- select
+--     `proteininstancefeature`.`protein_instance_feature_ID` AS `protein_instance_feature_id`,
+--     `proteininstancefeature`.`protein_instance_id` AS `protein_instance_id`,
+--     `proteininstancefeature`.`feature_name` AS `feature_name`,
+--     `proteininstancefeature`.`subclass_view` AS `subclass_view`,
+--     `proteininstancefeature`.`location_start` AS `location_start`,
+--     `proteininstancefeature`.`location_stop` AS `location_stop`,
+--     `proteininstancefeature`.`length` AS `length`,
+--     `proteininstancefeature`.`pval_mant` AS `pval_mant`,
+--     `proteininstancefeature`.`pval_exp` AS `pval_exp`,
+--     `proteininstancefeature`.`bit_score` AS `bit_score`,
+--     `proteininstancefeature`.`domain_name` AS `domain_name`,
+--     `proteininstancefeature`.`prediction_id` AS `prediction_id`,
+--     `proteininstancefeature`.`modification_date` AS `modification_date`
+-- from `proteininstancefeature`
+-- where (`proteininstancefeature`.`subclass_view` = 'SuperFamily');
 
 -- --------------------------------------------------------
 
