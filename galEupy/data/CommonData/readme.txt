@@ -1,1 +1,1 @@
-This is default common data path
+This is the default common data path

@@ -16,35 +16,35 @@ CREATE TABLE `userinfo` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `tableinfo`;
-CREATE TABLE `tableinfo` (
-  `table_ID` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  `table_type` varchar(50) NOT NULL,
-  `primary_key_column` varchar(50) DEFAULT NULL,
-  `is_versioned` tinyint(1) NOT NULL,
-  `is_view` tinyint(1) NOT NULL,
-  `view_on_table_ID` int(11) DEFAULT NULL,
-  `superclass_table_ID` int(11) DEFAULT NULL,
-  `is_updatable` tinyint(1) NOT NULL,
-  `modification_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`table_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- DROP TABLE IF EXISTS `tableinfo`;
+-- CREATE TABLE `tableinfo` (
+--   `table_ID` int(11) NOT NULL AUTO_INCREMENT,
+--   `name` varchar(50) NOT NULL,
+--   `table_type` varchar(50) NOT NULL,
+--   `primary_key_column` varchar(50) DEFAULT NULL,
+--   `is_versioned` tinyint(1) NOT NULL,
+--   `is_view` tinyint(1) NOT NULL,
+--   `view_on_table_ID` int(11) DEFAULT NULL,
+--   `superclass_table_ID` int(11) DEFAULT NULL,
+--   `is_updatable` tinyint(1) NOT NULL,
+--   `modification_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--   PRIMARY KEY (`table_ID`)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `useruploadtrack`;
-CREATE TABLE `useruploadtrack` (
-  `user_upload_track_ID` int(11) NOT NULL AUTO_INCREMENT,
-  `user_ID` int(11) NOT NULL,
-  `table_ID` int(11) NOT NULL,
-  `status` tinyint(1) NOT NULL,
-  `no_of_records` int(10) NOT NULL,
-  `modification_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`user_upload_track_ID`),
-  FOREIGN KEY(`table_ID`) REFERENCES tableinfo(`table_ID`),
-  FOREIGN KEY(`user_ID`) REFERENCES userinfo(`user_ID`)
+-- DROP TABLE IF EXISTS `useruploadtrack`;
+-- CREATE TABLE `useruploadtrack` (
+--   `user_upload_track_ID` int(11) NOT NULL AUTO_INCREMENT,
+--   `user_ID` int(11) NOT NULL,
+--   `table_ID` int(11) NOT NULL,
+--   `status` tinyint(1) NOT NULL,
+--   `no_of_records` int(10) NOT NULL,
+--   `modification_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--   PRIMARY KEY (`user_upload_track_ID`),
+--   FOREIGN KEY(`table_ID`) REFERENCES tableinfo(`table_ID`),
+--   FOREIGN KEY(`user_ID`) REFERENCES userinfo(`user_ID`)
 
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -397,21 +397,21 @@ CREATE TABLE `genecategory` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `gene`;
-CREATE TABLE `gene` (
-    `gene_ID` int(11) NOT NULL AUTO_INCREMENT,
-    `name` varchar(255) DEFAULT NULL,
-    `gene_symbol` varchar(50) DEFAULT NULL,
-    `gene_category_ID` int(11) DEFAULT NULL,
-    `review_status_ID` int(11) NOT NULL,
-    `description` varchar(500) DEFAULT NULL,
-    `reviewer_summary` varchar(4000) DEFAULT NULL,
-    `modification_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`gene_ID`),
-    KEY `gene_FK01` (`gene_category_ID`),
-    KEY `gene_FK02` (`review_status_ID`),
-    CONSTRAINT `gene_FK01` FOREIGN KEY (`gene_category_ID`) REFERENCES `genecategory` (`gene_category_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=510783 DEFAULT CHARSET=utf8;
+-- DROP TABLE IF EXISTS `gene`;
+-- CREATE TABLE `gene` (
+--     `gene_ID` int(11) NOT NULL AUTO_INCREMENT,
+--     `name` varchar(255) DEFAULT NULL,
+--     `gene_symbol` varchar(50) DEFAULT NULL,
+--     `gene_category_ID` int(11) DEFAULT NULL,
+--     `review_status_ID` int(11) NOT NULL,
+--     `description` varchar(500) DEFAULT NULL,
+--     `reviewer_summary` varchar(4000) DEFAULT NULL,
+--     `modification_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--     PRIMARY KEY (`gene_ID`),
+--     KEY `gene_FK01` (`gene_category_ID`),
+--     KEY `gene_FK02` (`review_status_ID`),
+--     CONSTRAINT `gene_FK01` FOREIGN KEY (`gene_category_ID`) REFERENCES `genecategory` (`gene_category_ID`)
+-- ) ENGINE=InnoDB AUTO_INCREMENT=510783 DEFAULT CHARSET=utf8;
 
 
 
@@ -429,70 +429,70 @@ CREATE TABLE IF NOT EXISTS `geneinstance`(
     FOREIGN KEY(na_feature_ID) REFERENCES nafeatureimp(na_feature_ID)
 )ENGINE=InnoDB AUTO_INCREMENT = 1;
 
-DROP TABLE IF EXISTS `rna`;
-CREATE TABLE `rna` (
-    `rna_ID` int(11) NOT NULL AUTO_INCREMENT,
-    `description` varchar(500) DEFAULT NULL,
-    `review_status_ID` int(11) NOT NULL,
-    `gene_ID` int(11) DEFAULT NULL,
-    `reviewer_summary` varchar(4000) DEFAULT NULL,
-    `modification_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`rna_ID`),
-    KEY `RNA_FK01` (`review_status_ID`),
-    KEY `RNA_FK02` (`gene_ID`),
-    CONSTRAINT `RNA_FK02` FOREIGN KEY (`gene_ID`) REFERENCES `gene` (`gene_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=510783 DEFAULT CHARSET=utf8;
+-- DROP TABLE IF EXISTS `rna`;
+-- CREATE TABLE `rna` (
+--     `rna_ID` int(11) NOT NULL AUTO_INCREMENT,
+--     `description` varchar(500) DEFAULT NULL,
+--     `review_status_ID` int(11) NOT NULL,
+--     `gene_ID` int(11) DEFAULT NULL,
+--     `reviewer_summary` varchar(4000) DEFAULT NULL,
+--     `modification_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--     PRIMARY KEY (`rna_ID`),
+--     KEY `RNA_FK01` (`review_status_ID`),
+--     KEY `RNA_FK02` (`gene_ID`),
+--     CONSTRAINT `RNA_FK02` FOREIGN KEY (`gene_ID`) REFERENCES `gene` (`gene_ID`)
+-- ) ENGINE=InnoDB AUTO_INCREMENT=510783 DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `blatalignment`;
-CREATE TABLE `blatalignment` (
-  `blat_alignment_ID` int(11) NOT NULL AUTO_INCREMENT,
-  `query_na_sequence_ID` int(11) NOT NULL,
-  `target_na_sequence_ID` int(11) NOT NULL,
-  `query_table_ID` int(11) DEFAULT NULL,
-  `query_taxon_ID` int(11) DEFAULT NULL,
-  `query_external_db_ID` int(11) DEFAULT NULL,
-  `target_table_ID` int(11) DEFAULT NULL,
-  `target_taxon_ID` int(11) DEFAULT NULL,
-  `target_external_db_ID` int(11) DEFAULT NULL,
-  `is_consistent` tinyint(1) NOT NULL,
-  `is_genomic_contaminant` tinyint(1) NOT NULL,
-  `unaligned_3p_bases` int(11) NOT NULL,
-  `unaligned_5p_bases` int(11) NOT NULL,
-  `has_3p_polya` tinyint(1) NOT NULL,
-  `has_5p_polya` tinyint(1) NOT NULL,
-  `is_3p_complete` tinyint(1) NOT NULL,
-  `is_5p_complete` tinyint(1) NOT NULL,
-  `percent_IDentity` int(10) NOT NULL,
-  `max_query_gap` int(10) NOT NULL,
-  `max_target_gap` int(10) NOT NULL,
-  `number_of_spans` int(10) NOT NULL,
-  `query_start` int(10) NOT NULL,
-  `query_end` int(10) NOT NULL,
-  `target_start` int(10) NOT NULL,
-  `target_end` int(10) NOT NULL,
-  `is_reversed` tinyint(1) NOT NULL,
-  `query_bases_aligned` int(10) NOT NULL,
-  `repeat_bases_aligned` int(10) NOT NULL,
-  `num_ns` int(10) NOT NULL,
-  `score` float NOT NULL,
-  `is_best_alignment` tinyint(1) NOT NULL DEFAULT '0',
-  `blat_alignment_quality_ID` int(10) NOT NULL,
-  `blocksizes` varchar(4000) NOT NULL,
-  `qstarts` varchar(4000) NOT NULL,
-  `tstarts` varchar(4000) NOT NULL,
-  `modification_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`blat_alignment_ID`),
-  KEY `blatalignment_FK01` (`query_na_sequence_ID`),
-  KEY `blatalignment_FK02` (`target_na_sequence_ID`),
-  KEY `blatalignment_FK07` (`target_taxon_ID`),
-  KEY `blatalignment_FK08` (`target_external_db_ID`),
-  KEY `blatalignment_FK09` (`blat_alignment_quality_ID`),
-  KEY `blatalignment_FK04` (`query_taxon_ID`),
-  KEY `blatalignment_FK05` (`query_external_db_ID`),
-  KEY `blatalignment_FK03` (`query_table_ID`),
-  KEY `blatalignment_FK06` (`target_table_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+-- DROP TABLE IF EXISTS `blatalignment`;
+-- CREATE TABLE `blatalignment` (
+--   `blat_alignment_ID` int(11) NOT NULL AUTO_INCREMENT,
+--   `query_na_sequence_ID` int(11) NOT NULL,
+--   `target_na_sequence_ID` int(11) NOT NULL,
+--   `query_table_ID` int(11) DEFAULT NULL,
+--   `query_taxon_ID` int(11) DEFAULT NULL,
+--   `query_external_db_ID` int(11) DEFAULT NULL,
+--   `target_table_ID` int(11) DEFAULT NULL,
+--   `target_taxon_ID` int(11) DEFAULT NULL,
+--   `target_external_db_ID` int(11) DEFAULT NULL,
+--   `is_consistent` tinyint(1) NOT NULL,
+--   `is_genomic_contaminant` tinyint(1) NOT NULL,
+--   `unaligned_3p_bases` int(11) NOT NULL,
+--   `unaligned_5p_bases` int(11) NOT NULL,
+--   `has_3p_polya` tinyint(1) NOT NULL,
+--   `has_5p_polya` tinyint(1) NOT NULL,
+--   `is_3p_complete` tinyint(1) NOT NULL,
+--   `is_5p_complete` tinyint(1) NOT NULL,
+--   `percent_IDentity` int(10) NOT NULL,
+--   `max_query_gap` int(10) NOT NULL,
+--   `max_target_gap` int(10) NOT NULL,
+--   `number_of_spans` int(10) NOT NULL,
+--   `query_start` int(10) NOT NULL,
+--   `query_end` int(10) NOT NULL,
+--   `target_start` int(10) NOT NULL,
+--   `target_end` int(10) NOT NULL,
+--   `is_reversed` tinyint(1) NOT NULL,
+--   `query_bases_aligned` int(10) NOT NULL,
+--   `repeat_bases_aligned` int(10) NOT NULL,
+--   `num_ns` int(10) NOT NULL,
+--   `score` float NOT NULL,
+--   `is_best_alignment` tinyint(1) NOT NULL DEFAULT '0',
+--   `blat_alignment_quality_ID` int(10) NOT NULL,
+--   `blocksizes` varchar(4000) NOT NULL,
+--   `qstarts` varchar(4000) NOT NULL,
+--   `tstarts` varchar(4000) NOT NULL,
+--   `modification_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--   PRIMARY KEY (`blat_alignment_ID`),
+--   KEY `blatalignment_FK01` (`query_na_sequence_ID`),
+--   KEY `blatalignment_FK02` (`target_na_sequence_ID`),
+--   KEY `blatalignment_FK07` (`target_taxon_ID`),
+--   KEY `blatalignment_FK08` (`target_external_db_ID`),
+--   KEY `blatalignment_FK09` (`blat_alignment_quality_ID`),
+--   KEY `blatalignment_FK04` (`query_taxon_ID`),
+--   KEY `blatalignment_FK05` (`query_external_db_ID`),
+--   KEY `blatalignment_FK03` (`query_table_ID`),
+--   KEY `blatalignment_FK06` (`target_table_ID`)
+-- ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
 
@@ -522,16 +522,16 @@ CREATE TABLE IF NOT EXISTS `protein`(
 
 
 
-DROP TABLE IF EXISTS `protein_cluster`;
-CREATE TABLE `protein_cluster` (
-    `protein_cluster_ID` int(11) NOT NULL AUTO_INCREMENT,
-    `cluster_ID` int(11) NOT NULL,
-    `gene_ID` int(11) NOT NULL,
-    `taxon_ID` int(11) NOT NULL,
-    `desc` varchar(100) NOT NULL,
-    `modification_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`protein_cluster_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=45475 DEFAULT CHARSET=latin1;
+-- DROP TABLE IF EXISTS `protein_cluster`;
+-- CREATE TABLE `protein_cluster` (
+--     `protein_cluster_ID` int(11) NOT NULL AUTO_INCREMENT,
+--     `cluster_ID` int(11) NOT NULL,
+--     `gene_ID` int(11) NOT NULL,
+--     `taxon_ID` int(11) NOT NULL,
+--     `desc` varchar(100) NOT NULL,
+--     `modification_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--     PRIMARY KEY (`protein_cluster_ID`)
+-- ) ENGINE=InnoDB AUTO_INCREMENT=45475 DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `proteininstancefeature`;
 CREATE TABLE `proteininstancefeature` (
@@ -1146,61 +1146,61 @@ where (`nafeatureimp`.`subclass_view` = 'seqvariation');
 --
 -- Structure for view `SOURCE`
 --
-DROP TABLE IF EXISTS `SOURCE`;
+-- DROP TABLE IF EXISTS `SOURCE`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `SOURCE` AS
-select `nafeatureimp`.`na_feature_ID` AS `na_feature_id`,
-    `nafeatureimp`.`na_sequence_ID` AS `na_sequence_id`,
-    `nafeatureimp`.`subclass_view` AS `subclass_view`,
-    `nafeatureimp`.`sequence_ontology_ID` AS `sequence_ontology_id`,
-    `nafeatureimp`.`name` AS `name`,
-    `nafeatureimp`.`parent_ID` AS `parent_id`,
-    `nafeatureimp`.`string1` AS `CELL_LINE`,
-    `nafeatureimp`.`string2` AS `CELL_TYPE`,
-    `nafeatureimp`.`string3` AS `CHROMOPLAST`,
-    `nafeatureimp`.`string4` AS `CHROMOSOME`,
-    `nafeatureimp`.`string5` AS `CLONE`,
-    `nafeatureimp`.`string6` AS `CLONE_LIB`,
-    `nafeatureimp`.`string7` AS `CULTIVAR`,
-    `nafeatureimp`.`string8` AS `CYANELLE`,
-    `nafeatureimp`.`string9` AS `DEV_STAGE`,
-    `nafeatureimp`.`string10` AS `FOCUS`,
-    `nafeatureimp`.`string11` AS `FREQUENCY`,
-    `nafeatureimp`.`string12` AS `GERMLINE`,
-    `nafeatureimp`.`string13` AS `HAPLOTYPE`,
-    `nafeatureimp`.`text1` AS `INSERTION_SEQ`,
-    `nafeatureimp`.`string14` AS `ISOLATE`,
-    `nafeatureimp`.`string15` AS `KINETOPLAST`,
-    `nafeatureimp`.`string16` AS `LAB_HOST`,
-    `nafeatureimp`.`string17` AS `MACRONUCLEAR`,
-    `nafeatureimp`.`string18` AS `ORGANELLE`,
-    `nafeatureimp`.`string19` AS `POP_VARIANT`,
-    `nafeatureimp`.`string20` AS `PLASMID`,
-    `nafeatureimp`.`string21` AS `PROVIRAL`,
-    `nafeatureimp`.`string22` AS `REARRANGED`,
-    `nafeatureimp`.`string23` AS `SEQUENCED_MOL`,
-    `nafeatureimp`.`string24` AS `SEROTYPE`,
-    `nafeatureimp`.`string25` AS `SEX`,
-    `nafeatureimp`.`string26` AS `SPECIFIC_HOST`,
-    `nafeatureimp`.`string27` AS `STRAIN`,
-    `nafeatureimp`.`string28` AS `SUB_CLONE`,
-    `nafeatureimp`.`string29` AS `SUB_SPECIES`,
-    `nafeatureimp`.`string30` AS `SUB_STRAIN`,
-    `nafeatureimp`.`string31` AS `TISSUE_LIB`,
-    `nafeatureimp`.`string32` AS `TRANSPOSON`,
-    `nafeatureimp`.`string33` AS `VARIETY`,
-    `nafeatureimp`.`string34` AS `VIRION`,
-    `nafeatureimp`.`string35` AS `CHLOROPLAST`,
-    `nafeatureimp`.`string36` AS `CITATION`,
-    `nafeatureimp`.`string37` AS `MAP`,
-    `nafeatureimp`.`string38` AS `ORGANISM`,
-    `nafeatureimp`.`string39` AS `SPECIMEN_VOUCHER`,
-    `nafeatureimp`.`string40` AS `TISSUE_TYPE`,
-    `nafeatureimp`.`string41` AS `USEDIN`,
-    `nafeatureimp`.`string42` AS `LABEL`,
-    `nafeatureimp`.`modification_date` AS `modification_date`
-from `nafeatureimp`
-where (`nafeatureimp`.`subclass_view` = 'source');
+-- CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `SOURCE` AS
+-- select `nafeatureimp`.`na_feature_ID` AS `na_feature_id`,
+--     `nafeatureimp`.`na_sequence_ID` AS `na_sequence_id`,
+--     `nafeatureimp`.`subclass_view` AS `subclass_view`,
+--     `nafeatureimp`.`sequence_ontology_ID` AS `sequence_ontology_id`,
+--     `nafeatureimp`.`name` AS `name`,
+--     `nafeatureimp`.`parent_ID` AS `parent_id`,
+--     `nafeatureimp`.`string1` AS `CELL_LINE`,
+--     `nafeatureimp`.`string2` AS `CELL_TYPE`,
+--     `nafeatureimp`.`string3` AS `CHROMOPLAST`,
+--     `nafeatureimp`.`string4` AS `CHROMOSOME`,
+--     `nafeatureimp`.`string5` AS `CLONE`,
+--     `nafeatureimp`.`string6` AS `CLONE_LIB`,
+--     `nafeatureimp`.`string7` AS `CULTIVAR`,
+--     `nafeatureimp`.`string8` AS `CYANELLE`,
+--     `nafeatureimp`.`string9` AS `DEV_STAGE`,
+--     `nafeatureimp`.`string10` AS `FOCUS`,
+--     `nafeatureimp`.`string11` AS `FREQUENCY`,
+--     `nafeatureimp`.`string12` AS `GERMLINE`,
+--     `nafeatureimp`.`string13` AS `HAPLOTYPE`,
+--     `nafeatureimp`.`text1` AS `INSERTION_SEQ`,
+--     `nafeatureimp`.`string14` AS `ISOLATE`,
+--     `nafeatureimp`.`string15` AS `KINETOPLAST`,
+--     `nafeatureimp`.`string16` AS `LAB_HOST`,
+--     `nafeatureimp`.`string17` AS `MACRONUCLEAR`,
+--     `nafeatureimp`.`string18` AS `ORGANELLE`,
+--     `nafeatureimp`.`string19` AS `POP_VARIANT`,
+--     `nafeatureimp`.`string20` AS `PLASMID`,
+--     `nafeatureimp`.`string21` AS `PROVIRAL`,
+--     `nafeatureimp`.`string22` AS `REARRANGED`,
+--     `nafeatureimp`.`string23` AS `SEQUENCED_MOL`,
+--     `nafeatureimp`.`string24` AS `SEROTYPE`,
+--     `nafeatureimp`.`string25` AS `SEX`,
+--     `nafeatureimp`.`string26` AS `SPECIFIC_HOST`,
+--     `nafeatureimp`.`string27` AS `STRAIN`,
+--     `nafeatureimp`.`string28` AS `SUB_CLONE`,
+--     `nafeatureimp`.`string29` AS `SUB_SPECIES`,
+--     `nafeatureimp`.`string30` AS `SUB_STRAIN`,
+--     `nafeatureimp`.`string31` AS `TISSUE_LIB`,
+--     `nafeatureimp`.`string32` AS `TRANSPOSON`,
+--     `nafeatureimp`.`string33` AS `VARIETY`,
+--     `nafeatureimp`.`string34` AS `VIRION`,
+--     `nafeatureimp`.`string35` AS `CHLOROPLAST`,
+--     `nafeatureimp`.`string36` AS `CITATION`,
+--     `nafeatureimp`.`string37` AS `MAP`,
+--     `nafeatureimp`.`string38` AS `ORGANISM`,
+--     `nafeatureimp`.`string39` AS `SPECIMEN_VOUCHER`,
+--     `nafeatureimp`.`string40` AS `TISSUE_TYPE`,
+--     `nafeatureimp`.`string41` AS `USEDIN`,
+--     `nafeatureimp`.`string42` AS `LABEL`,
+--     `nafeatureimp`.`modification_date` AS `modification_date`
+-- from `nafeatureimp`
+-- where (`nafeatureimp`.`subclass_view` = 'source');
 
 -- --------------------------------------------------------
 
