@@ -15,7 +15,7 @@ pip install git+https://github.com/computational-genomics-lab/GAL.git
 or
 ```batch
 git clone https://github.com/computational-genomics-lab/GAL.git
-cd GAL
+cd galEupy
 pip install .
 ```
 
