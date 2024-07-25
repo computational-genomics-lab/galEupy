@@ -114,14 +114,14 @@ class App(ConfigFileHandler):
 
     def upload_schema(self):
         if self.check_db_status:
-            _logger.debug("Uploading Schema: start")
+            _logger.debug("Started Uploading Schema ")
             database_schema(self.db_config_file)
-            _logger.debug("Uploading Schema: Complete")
+            _logger.debug("Uploading Schema: Completed")
         else:
-            _logger.info("Database schema already exists")
+            _logger.info("This Database Schema already exists")
 
     def process_central_dogma_annotation(self):
-        _logger.debug("Process central dogma data: start")
+        _logger.debug("Started processing central dogma data")
 
         app1 = CentralDogmaAnnotator(self.db_config, self.path_config, self.org_config)
         _logger.debug(f"Annotation type: {app1.annotation_type}")
