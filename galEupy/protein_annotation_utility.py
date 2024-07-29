@@ -240,58 +240,53 @@ class ProteinAnnotations(BaseProteinAnnotations, TranscriptMap):
     def parse_eggnog_result(self, parsed_file):
         _logger.info("Parsing EGGNOG data: Initiated")
         
+        eggnog_row_id = self.table_status_dct['protein_instance_feature_ID']
+        field_list = ['Description', 'COG_category', 'GOs', 'EC', 'KEGG_ko', 'KEGG_Pathway',
+                    'KEGG_Module', 'KEGG_Reaction', 'KEGG_rclass', 'BRITE', 'KEGG_TC', 'PFAMs']
+        
+        with open(parsed_file, 'r') as file:
+            reader = csv.reader(file, delimiter='\t')
+            header_indices = {}
+            buffer = []
+
+            for idx, row in enumerate(reader):
+                if row[0].startswith('##'):
+                    continue
+                if row[0].startswith('#'):
+                    header = row
+                    for field_name in field_list:
+                        if field_name not in header:
+                            _logger.error(f"{field_name} doesn't exist")
+                    header_indices = {name: index for index, name in enumerate(header)}
+                    continue
+
+                if header_indices:
+                    protein_instance_id = self.find_transcript_entry(row[0])
+                    feature_name = "EGGNOG"
+                    subclass_dct = {}
+
+                    if row[header_indices['Description']] != '-':
+                        subclass_dct['COG'] = [row[header_indices['Description']], row[header_indices['COG_category']]] + [None] * 10
+                    if row[header_indices['GOs']] != '-':
+                        subclass_dct['GO'] = [None, None, row[header_indices['GOs']]] + [None] * 9
+                    if row[header_indices['KEGG_ko']] != '-':
+                        kegg_values = [row[header_indices[key]] if row[header_indices[key]] != '-' else None for key in field_list[3:]]
+                        subclass_dct['KEGG'] = [None, None, None] + kegg_values
+                    if row[header_indices['PFAMs']] != '-':
+                        subclass_dct['Pfam'] = [None] * 11 + [row[header_indices['PFAMs']]]
+
+                    for subclass_view, data_list in subclass_dct.items():
+                        eggnog_row_id += 1
+                        mapping_list = [eggnog_row_id, protein_instance_id, feature_name, subclass_view]
+                        columns_data = mapping_list + data_list
+                        buffer.append("\t".join(map(str, columns_data)) + '\n')
+
+        # Write all data at once
         with open(self.eggnog, 'w') as eggnog_write_fh:
-            eggnog_row_id = self.table_status_dct['protein_instance_feature_ID']
-            field_list = ['Description', 'COG_category', 'GOs', 'EC', 'KEGG_ko', 'KEGG_Pathway',
-                        'KEGG_Module', 'KEGG_Reaction', 'KEGG_rclass', 'BRITE', 'KEGG_TC', 'PFAMs']
-            
-            with open(parsed_file, 'r') as file:
-                reader = csv.reader(file, delimiter='\t')
-                header_indices = {}
-                buffer = []
-                buffer_size = 1000  # Adjust buffer size as needed
-
-                for idx, row in enumerate(reader):
-                    if row[0].startswith('##'):
-                        continue
-                    if row[0].startswith('#'):
-                        header = row
-                        for field_name in field_list:
-                            if field_name not in header:
-                                _logger.error(f"{field_name} doesn't exist")
-                        header_indices = {name: index for index, name in enumerate(header)}
-                        continue
-
-                    if header_indices:
-                        protein_instance_id = self.find_transcript_entry(row[0])
-                        feature_name = "EGGNOG"
-                        subclass_dct = {}
-
-                        if row[header_indices['Description']] != '-':
-                            subclass_dct['COG'] = [row[header_indices['Description']], row[header_indices['COG_category']]] + [None] * 10
-                        if row[header_indices['GOs']] != '-':
-                            subclass_dct['GO'] = [None, None, row[header_indices['GOs']]] + [None] * 9
-                        if row[header_indices['KEGG_ko']] != '-':
-                            kegg_values = [row[header_indices[key]] if row[header_indices[key]] != '-' else None for key in field_list[3:]]
-                            subclass_dct['KEGG'] = [None, None, None] + kegg_values
-                        if row[header_indices['PFAMs']] != '-':
-                            subclass_dct['Pfam'] = [None] * 11 + [row[header_indices['PFAMs']]]
-
-                        for subclass_view, data_list in subclass_dct.items():
-                            eggnog_row_id += 1
-                            mapping_list = [eggnog_row_id, protein_instance_id, feature_name, subclass_view]
-                            columns_data = mapping_list + data_list
-                            buffer.append("\t".join(map(str, columns_data)) + '\n')
-
-                            if len(buffer) >= buffer_size:
-                                eggnog_write_fh.write("".join(buffer))
-                                buffer.clear()
-
-                # Write any remaining data in the buffer
-                if buffer:
-                    eggnog_write_fh.write("".join(buffer))
+            eggnog_write_fh.write("".join(buffer))
 
         _logger.info("Parsing EGGNOG data: Complete")
+
 
     def upload_eggnog_data(self):
         _logger.info(f"Uploading EGGNOG data from {self.eggnog}")
