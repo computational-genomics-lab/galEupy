@@ -189,8 +189,9 @@ class DotsOrganism(OrganismName):
         taxonomy_id = self.taxonomy_id_dots()
 
         if taxonomy_id is None:
-            _logger.info(f"Organism details doesn't exist. \nOrganism name; {self.org_name}, version: {self.org_version}")
+            _logger.info(f"Organism details doesn't exist. \n\t\tOrganism name; {self.org_name}, version: {self.org_version}")
         else:
+             _logger.info(f"Deleting the organism records: \n\t\tOrganism name; {self.org_name}, version: {self.org_version}")
         #     sql_query_1 = F"""DELETE ips FROM interproscan as ips
         # INNER JOIN geneinstance AS gi
         # ON ips.gene_instance_ID = gi.gene_instance_ID
