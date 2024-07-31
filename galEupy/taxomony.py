@@ -191,7 +191,71 @@ class DotsOrganism(OrganismName):
         if taxonomy_id is None:
             _logger.info(f"Organism details doesn't exist. \n\t\tOrganism name; {self.org_name}, version: {self.org_version}")
         else:
-             _logger.info(f"Deleting the organism records: \n\t\tOrganism name; {self.org_name}, version: {self.org_version}")
+            _logger.info(f"Deleting the organism records: \n\t\tOrganism name; {self.org_name}, version: {self.org_version}")
+
+            sql_query_1 = f"""
+            DELETE nl FROM nalocation AS nl
+            INNER JOIN nafeatureimp AS nf ON nl.na_feature_ID = nf.na_feature_ID
+            INNER JOIN nasequenceimp AS ns ON nf.na_sequence_ID = ns.na_sequence_ID
+            WHERE ns.taxon_ID = {taxonomy_id}
+            AND ns.sequence_version = {self.org_version}
+            AND ns.sequence_type_ID != 1
+            """
+            self.db_dots.insert(sql_query_1)
+
+            sql_query_2 = F"""
+            DELETE p FROM protein AS p
+            INNER JOIN geneinstance AS gi ON p.gene_instance_ID = gi.gene_instance_ID
+            INNER JOIN nafeatureimp AS nf ON gi.na_feature_ID = nf.na_feature_ID
+            INNER JOIN nasequenceimp AS ns ON nf.na_sequence_ID = ns.na_sequence_ID
+            WHERE ns.taxon_ID = {taxonomy_id} 
+            AND ns.sequence_version = {self.org_version} 
+            AND ns.sequence_type_ID = 6
+            """
+            self.db_dots.insert(sql_query_2)
+
+            sql_query_3 = F"""
+            DELETE gi FROM geneinstance AS gi
+            INNER JOIN nafeatureimp AS nf ON gi.na_feature_ID = nf.na_feature_ID
+            INNER JOIN nasequenceimp AS ns ON nf.na_sequence_ID = ns.na_sequence_ID
+            WHERE ns.taxon_ID = {taxonomy_id} 
+            AND ns.sequence_version = {self.org_version}
+            """
+            self.db_dots.insert(sql_query_3)
+
+            sql_query_4 = f"""
+            DELETE nf FROM nafeatureimp AS nf
+            INNER JOIN nasequenceimp AS ns ON nf.na_sequence_ID = ns.na_sequence_ID
+            WHERE ns.taxon_ID = {taxonomy_id}
+            AND ns.sequence_version = {self.org_version}
+            """
+            self.db_dots.insert(sql_query_4)
+
+            sql_query_5 = F"""
+            DELETE ns FROM nasequenceimp AS ns 
+            WHERE ns.taxon_ID = {taxonomy_id} 
+            AND ns.sequence_version = {self.org_version} 
+            AND ns.sequence_type_ID != 1
+            """
+            self.db_dots.insert(sql_query_5)
+
+            sql_query_6 = F"""
+            DELETE ns FROM nasequenceimp AS ns 
+            WHERE ns.taxon_ID = {taxonomy_id} 
+            AND ns.sequence_version = {self.org_version}
+            """
+            self.db_dots.insert(sql_query_6)
+
+            #Step 5: Delete from organism
+            sql_query_7 = F"""
+            DELETE org FROM organism AS org 
+            WHERE org.taxon_ID = {taxonomy_id} 
+            AND org.version = {self.org_version}
+            """
+            self.db_dots.insert(sql_query_7)
+
+
+
         #     sql_query_1 = F"""DELETE ips FROM interproscan as ips
         # INNER JOIN geneinstance AS gi
         # ON ips.gene_instance_ID = gi.gene_instance_ID
@@ -222,46 +286,11 @@ class DotsOrganism(OrganismName):
         # WHERE ns.taxon_ID = {taxonomy_id} and ns.sequence_version = {self.org_version} and ns.sequence_type_ID = 6"""
         #     self.db_dots.insert(sql_query_3)
 
-            sql_query_4 = F"""DELETE p,gi FROM protein as p
-        INNER JOIN geneinstance AS gi
-        ON p.gene_instance_ID = gi.gene_instance_ID
-        INNER JOIN nafeatureimp as nf
-        ON gi.na_feature_ID = nf.na_feature_ID
-        INNER JOIN nasequenceimp as ns 
-        ON nf.na_sequence_ID = ns.na_sequence_ID
-        WHERE ns.taxon_ID = {taxonomy_id} and ns.sequence_version = {self.org_version} and ns.sequence_type_ID = 6"""
-            self.db_dots.insert(sql_query_4)
 
-            # NaLocation
-            sql_query_5 = F"""DELETE nl,nf FROM nalocation as nl
-            INNER JOIN nafeatureimp as nf
-            ON nl.na_feature_ID = nf.na_feature_ID
-            INNER JOIN nasequenceimp as ns 
-            ON nf.na_sequence_ID = ns.na_sequence_ID
-            WHERE ns.taxon_ID = {taxonomy_id} and ns.sequence_version = {self.org_version} and sequence_type_ID != 1"""
-            self.db_dots.insert(sql_query_5)
 
-            # Na feature
-            sql_query_6 = F"""DELETE nf FROM  nafeatureimp as nf
-            INNER JOIN nasequenceimp as ns 
-            ON nf.na_sequence_ID = ns.na_sequence_ID
-            WHERE ns.taxon_ID = {taxonomy_id} and ns.sequence_version = {self.org_version}"""
-            self.db_dots.insert(sql_query_6)
 
-            # delete NasequenceImp
-            sql_query_7 = F"""DELETE ns from nasequenceimp as ns 
-              WHERE ns.taxon_ID = {taxonomy_id} and ns.sequence_version = {self.org_version} and ns.sequence_type_ID != 1"""
-            self.db_dots.insert(sql_query_7)
 
-            # delete NasequenceImp
-            sql_query_7 = F"""DELETE ns from nasequenceimp as ns 
-                      WHERE ns.taxon_ID = {taxonomy_id} and ns.sequence_version = {self.org_version}"""
-            self.db_dots.insert(sql_query_7)
 
-            # Delete Organism table
-            sql_query_9 = F"""DELETE org from organism as org 
-            WHERE org.taxon_ID = {taxonomy_id} and org.version = {self.org_version}"""
-            self.db_dots.insert(sql_query_9)
 
     def get_organism_record(self):
 
