@@ -560,6 +560,8 @@ CREATE TABLE `proteininstancefeature` (
     `text7` varchar(500) DEFAULT NULL,
     `text8` varchar(500) DEFAULT NULL,
     `text9` varchar(500) DEFAULT NULL,
+    `taxonomy_id` int(11) DEFAULT NULL,
+    `org_version` int(11) DEFAULT NULL,
     `modification_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`protein_instance_feature_ID`),
   KEY `proteininstancefeature_FK01` (`protein_instance_ID`),

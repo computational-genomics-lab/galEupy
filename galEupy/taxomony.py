@@ -254,6 +254,14 @@ class DotsOrganism(OrganismName):
             """
             self.db_dots.insert(sql_query_7)
 
+            sql_query_8 = F"""
+            DELETE pi FROM proteininstancefeature AS pi 
+            WHERE pi.taxonomy_id = {taxonomy_id} 
+            AND pi.org_version = {self.org_version}
+            """
+            self.db_dots.insert(sql_query_8)
+
+
 
 
         #     sql_query_1 = F"""DELETE ips FROM interproscan as ips

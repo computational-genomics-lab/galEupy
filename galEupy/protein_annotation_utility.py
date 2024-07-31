@@ -96,13 +96,16 @@ class ProteinAnnotations(BaseProteinAnnotations, TranscriptMap):
     def __init__(self, db_conn, path_config, org_config, random_str, taxonomy_id, org_version):
         BaseProteinAnnotations.__init__(self, db_conn, path_config, org_config, random_str)
         TranscriptMap.__init__(self, db_conn, taxonomy_id, org_version)
+        self.taxonomy_id = taxonomy_id  # Ensure these lines are present
+        self.org_version = org_version
 
     def parse_eggnog_result(self, parsed_file):
         _logger.info("Parsing EGGNOG data: Initiated")
+        _logger.info(f"taxonomy id is {self.taxonomy_id}")
         
         eggnog_row_id = self.table_status_dct['protein_instance_feature_ID']
         field_list = ['Description', 'COG_category', 'GOs', 'EC', 'KEGG_ko', 'KEGG_Pathway',
-                      'KEGG_Module', 'KEGG_Reaction', 'KEGG_rclass', 'BRITE', 'KEGG_TC', 'PFAMs']
+                    'KEGG_Module', 'KEGG_Reaction', 'KEGG_rclass', 'BRITE', 'KEGG_TC', 'PFAMs']
         
         with open(parsed_file, 'r') as file:
             reader = csv.reader(file, delimiter='\t')
@@ -143,7 +146,7 @@ class ProteinAnnotations(BaseProteinAnnotations, TranscriptMap):
 
                     for subclass_view, data_list in subclass_dct.items():
                         eggnog_row_id += 1
-                        mapping_list = [eggnog_row_id, protein_instance_id, feature_name, subclass_view]
+                        mapping_list = [eggnog_row_id, protein_instance_id, feature_name, subclass_view, self.taxonomy_id, self.org_version]
                         columns_data = mapping_list + data_list
                         buffer.append("\t".join(map(str, columns_data)) + '\n')
 
@@ -152,10 +155,14 @@ class ProteinAnnotations(BaseProteinAnnotations, TranscriptMap):
 
         _logger.info("Parsing EGGNOG data: Complete")
 
+
     def upload_eggnog_data(self):
+        
+        _logger.info(f"Parsing EGGNOG data: Initiated with taxonomy_id={self.taxonomy_id}, org_version={self.org_version}")
         _logger.info(f"Uploading EGGNOG data from {self.eggnog}")
-        column_list = ['protein_instance_feature_ID', 'protein_instance_ID', 'feature_name', 'subclass_view',
-                       'domain_name', 'prediction_id', 'go_id', 'text1', 'text2', 'text3', 'text4', 'text5', 'text6', 'text7', 'text8', 'text9']
+        column_list = ['protein_instance_feature_ID', 'protein_instance_ID', 'feature_name', 'subclass_view', 'taxonomy_id', 'org_version',
+                    'domain_name', 'prediction_id', 'go_id',
+                    'text1', 'text2', 'text3', 'text4', 'text5', 'text6', 'text7', 'text8', 'text9']
 
         query = f"""LOAD DATA LOCAL INFILE '{self.eggnog}' INTO TABLE proteininstancefeature FIELDS 
         TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"' LINES 
