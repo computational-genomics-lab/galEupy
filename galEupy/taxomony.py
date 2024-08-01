@@ -4,7 +4,7 @@ _logger = logging.getLogger("galEupy.taxonomy")
 
 
 class OrganismName:
-    def __init__(self, org_name, org_version=1):
+    def __init__(self, org_name, org_version=1 ):
         """
         class constructor for the Organism name
         parameters
@@ -19,9 +19,6 @@ class OrganismName:
         self.org_version = org_version
         self.org_arr = re.split(r'\s', org_name)
         self.species = "{} {}".format(self.org_arr[0], self.org_arr[1])
-        self.strain = ''
-        if len(self.org_arr) > 2:
-            self.strain = " ".join(self.org_arr[2:])
 
     @property
     def prefix(self):
@@ -360,9 +357,10 @@ class DotsOrganism(OrganismName):
 
 
 class Taxonomy(CommonOrganismInfo, DotsOrganism):
-    def __init__(self, db_connection, org_name, org_version=1):
+    def __init__(self, db_connection, org_name, strain, org_version=1):
         CommonOrganismInfo.__init__(self, db_connection, org_name, org_version)
         DotsOrganism.__init__(self, db_connection, org_name, org_version)
+        self.strain = strain  # Stored as an instance attribute
 
     def update_organism_table(self):
         _logger.info(f"Updating the organism table. \nOrganism name: {self.org_name}\nversion: {self.org_version}")

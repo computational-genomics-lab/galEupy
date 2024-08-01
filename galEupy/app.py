@@ -79,13 +79,13 @@ class OrganismApp(BaseApp, OrganismConf):
     def remove_organism_record(self):
         # db_name = DbNames(self.db_prefix)
         db_conn = Database(self.host, self.db_username, self.db_password, self.db_name, 1, port=self.db_port)
-        organism_obj = DotsOrganism(db_conn, self.organism, self.version)
+        organism_obj = DotsOrganism(db_conn, self.organism, self.version, self.strain)
         organism_obj.remove_organism_record()
 
     def get_organism_record(self):
         # db_name = DbNames(self.db_prefix)
         db_conn = Database(self.host, self.db_username, self.db_password, self.db_name, 1, port=self.db_port)
-        organism_obj = DotsOrganism(db_conn, self.organism, self.version)
+        organism_obj = DotsOrganism(db_conn, self.organism, self.version, self.strain)
         organism_obj.get_organism_record()
 
 
@@ -273,7 +273,7 @@ class CentralDogmaAnnotator(AnnotationCategory, Taxonomy, TableStatusID):
                                       1, port=db_config.db_port)
 
         self.file_upload = UploadTableData(self.db_connection, self.path_config.upload_dir)
-        Taxonomy.__init__(self, self.db_connection, org_config.organism, org_config.version)
+        Taxonomy.__init__(self, self.db_connection, org_config.organism, org_config.strain, org_config.version)
         TableStatusID.__init__(self, self.db_connection)
 
     def process_genbank_annotation(self):
