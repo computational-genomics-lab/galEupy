@@ -40,7 +40,7 @@ class DatabaseCreate(BaseDatabase):
             query = "CREATE DATABASE {}".format(db_name)
             self.cursor.execute(query)
             self.connection.commit()
-            _logger.debug(f"{db_name} create database: successful")
+            _logger.debug(f"{db_name} create database: successfull")
         except pymysql.Error as e:
             _logger.error(f"Failed to create database: {db_name} \n{e}")
             self.connection.rollback()

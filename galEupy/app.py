@@ -79,13 +79,13 @@ class OrganismApp(BaseApp, OrganismConf):
     def remove_organism_record(self):
         # db_name = DbNames(self.db_prefix)
         db_conn = Database(self.host, self.db_username, self.db_password, self.db_name, 1, port=self.db_port)
-        organism_obj = DotsOrganism(db_conn, self.organism, self.version, self.strain)
+        organism_obj = DotsOrganism(db_conn, self.organism, self.version)
         organism_obj.remove_organism_record()
 
     def get_organism_record(self):
         # db_name = DbNames(self.db_prefix)
         db_conn = Database(self.host, self.db_username, self.db_password, self.db_name, 1, port=self.db_port)
-        organism_obj = DotsOrganism(db_conn, self.organism, self.version, self.strain)
+        organism_obj = DotsOrganism(db_conn, self.organism, self.version)
         organism_obj.get_organism_record()
 
 
