@@ -29,7 +29,7 @@ class TranscriptMap:
         naf.feature_type='mRNA' and
         na.na_sequence_id = naf.na_sequence_id and 
         na.taxon_id = {self.taxonomy_id} and
-        na.sequence_version = {self.org_version}"""
+        na.org_version = {self.org_version}"""
 
         transcript_name_dct = {}
 
@@ -77,7 +77,7 @@ class BaseProteinAnnotations(ProteinAnnotationFiles, TableStatusID):
 
         query = f"""select nf.feature_type, nf.name, p.description, p.gene_instance_id, p.sequence from 
         nasequenceimp ns, nafeatureimp nf, geneinstance gi, protein p where ns.taxon_id = {taxonomy_id}
-        and ns.sequence_version = {org_version} and ns.sequence_type_id = 6 and nf.na_sequence_id = ns.na_sequence_id
+        and ns.org_version = {org_version} and ns.sequence_type_id = 6 and nf.na_sequence_id = ns.na_sequence_id
         and nf.feature_type = 'mRNA' and gi.na_feature_id = nf.na_feature_id and  
         p.gene_instance_id = gi.gene_instance_id"""
 

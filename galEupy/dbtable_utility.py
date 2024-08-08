@@ -280,7 +280,7 @@ class UploadTableData(UploadDirectory):
 
     def upload_na_sequenceimp(self):
         # For NASequenceImp table
-        columns = ['na_sequence_ID', 'sequence_version', 'subclass_view', 'sequence_type_ID', 'taxon_ID', 'sequence',
+        columns = ['na_sequence_ID', 'org_version', 'subclass_view', 'sequence_type_ID', 'taxon_ID', 'sequence',
                    'length', 'a_count', 't_count', 'g_count', 'c_count', 'other_count', 'description',
                    'source_na_sequence_ID', 'sequence_piece_ID', 'sequencing_center_contact_ID', 'modification_date',
                    'string1', 'string2', 'string3']

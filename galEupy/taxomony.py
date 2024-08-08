@@ -195,7 +195,7 @@ class DotsOrganism(OrganismName):
             INNER JOIN nafeatureimp AS nf ON nl.na_feature_ID = nf.na_feature_ID
             INNER JOIN nasequenceimp AS ns ON nf.na_sequence_ID = ns.na_sequence_ID
             WHERE ns.taxon_ID = {taxonomy_id}
-            AND ns.sequence_version = {self.org_version}
+            AND ns.org_version = {self.org_version}
             AND ns.sequence_type_ID != 1
             """
             self.db_dots.insert(sql_query_1)
@@ -206,7 +206,7 @@ class DotsOrganism(OrganismName):
             INNER JOIN nafeatureimp AS nf ON gi.na_feature_ID = nf.na_feature_ID
             INNER JOIN nasequenceimp AS ns ON nf.na_sequence_ID = ns.na_sequence_ID
             WHERE ns.taxon_ID = {taxonomy_id} 
-            AND ns.sequence_version = {self.org_version} 
+            AND ns.org_version = {self.org_version} 
             AND ns.sequence_type_ID = 6
             """
             self.db_dots.insert(sql_query_2)
@@ -216,7 +216,7 @@ class DotsOrganism(OrganismName):
             INNER JOIN nafeatureimp AS nf ON gi.na_feature_ID = nf.na_feature_ID
             INNER JOIN nasequenceimp AS ns ON nf.na_sequence_ID = ns.na_sequence_ID
             WHERE ns.taxon_ID = {taxonomy_id} 
-            AND ns.sequence_version = {self.org_version}
+            AND ns.org_version = {self.org_version}
             """
             self.db_dots.insert(sql_query_3)
 
@@ -224,14 +224,14 @@ class DotsOrganism(OrganismName):
             DELETE nf FROM nafeatureimp AS nf
             INNER JOIN nasequenceimp AS ns ON nf.na_sequence_ID = ns.na_sequence_ID
             WHERE ns.taxon_ID = {taxonomy_id}
-            AND ns.sequence_version = {self.org_version}
+            AND ns.org_version = {self.org_version}
             """
             self.db_dots.insert(sql_query_4)
 
             sql_query_5 = F"""
             DELETE ns FROM nasequenceimp AS ns 
             WHERE ns.taxon_ID = {taxonomy_id} 
-            AND ns.sequence_version = {self.org_version} 
+            AND ns.org_version = {self.org_version} 
             AND ns.sequence_type_ID != 1
             """
             self.db_dots.insert(sql_query_5)
@@ -239,7 +239,7 @@ class DotsOrganism(OrganismName):
             sql_query_6 = F"""
             DELETE ns FROM nasequenceimp AS ns 
             WHERE ns.taxon_ID = {taxonomy_id} 
-            AND ns.sequence_version = {self.org_version}
+            AND ns.org_version = {self.org_version}
             """
             self.db_dots.insert(sql_query_6)
 
@@ -268,7 +268,7 @@ class DotsOrganism(OrganismName):
         # ON gi.na_feature_ID = nf.na_feature_ID
         # INNER JOIN nasequenceimp as ns 
         # ON nf.na_sequence_ID = ns.na_sequence_ID 
-        # WHERE ns.taxon_ID = {taxonomy_id} and ns.sequence_version = {self.org_version} and ns.sequence_type_ID = 6"""
+        # WHERE ns.taxon_ID = {taxonomy_id} and ns.org_version = {self.org_version} and ns.sequence_type_ID = 6"""
         #     self.db_dots.insert(sql_query_1)
 
         #     sql_query_2 = F"""DELETE sp FROM signalp as sp
@@ -278,7 +278,7 @@ class DotsOrganism(OrganismName):
         # ON gi.na_feature_ID = nf.na_feature_ID
         # INNER JOIN nasequenceimp as ns 
         # ON nf.na_sequence_ID = ns.na_sequence_ID
-        # WHERE ns.taxon_ID = {taxonomy_id} and ns.sequence_version = {self.org_version} and ns.sequence_type_ID = 6"""
+        # WHERE ns.taxon_ID = {taxonomy_id} and ns.org_version = {self.org_version} and ns.sequence_type_ID = 6"""
         #     self.db_dots.insert(sql_query_2)
 
         #     sql_query_3 = F"""DELETE tm FROM tmhmm as tm
@@ -288,7 +288,7 @@ class DotsOrganism(OrganismName):
         # ON gi.na_feature_ID = nf.na_feature_ID
         # INNER JOIN nasequenceimp as ns 
         # ON nf.na_sequence_ID = ns.na_sequence_ID 
-        # WHERE ns.taxon_ID = {taxonomy_id} and ns.sequence_version = {self.org_version} and ns.sequence_type_ID = 6"""
+        # WHERE ns.taxon_ID = {taxonomy_id} and ns.org_version = {self.org_version} and ns.sequence_type_ID = 6"""
         #     self.db_dots.insert(sql_query_3)
 
 
@@ -311,7 +311,7 @@ class DotsOrganism(OrganismName):
         # ON gi.na_feature_ID = nf.na_feature_ID
         # INNER JOIN nasequenceimp as ns 
         # ON nf.na_sequence_ID = ns.na_sequence_ID
-        # WHERE ns.taxon_ID = {taxonomy_id} and ns.sequence_version = {self.org_version} and ns.sequence_type_ID = 6"""
+        # WHERE ns.taxon_ID = {taxonomy_id} and ns.org_version = {self.org_version} and ns.sequence_type_ID = 6"""
         #     data1 = self.db_dots.query_one(sql_query_1)
         #     count_dct['interproscan'] = data1['count']
 
@@ -322,7 +322,7 @@ class DotsOrganism(OrganismName):
         # ON gi.na_feature_ID = nf.na_feature_ID
         # INNER JOIN nasequenceimp as ns 
         # ON nf.na_sequence_ID = ns.na_sequence_ID
-        # WHERE ns.taxon_ID = {taxonomy_id} and ns.sequence_version = {self.org_version} and ns.sequence_type_ID = 6"""
+        # WHERE ns.taxon_ID = {taxonomy_id} and ns.org_version = {self.org_version} and ns.sequence_type_ID = 6"""
         #     data1 = self.db_dots.query_one(sql_query_2)
         #     count_dct['SignalP'] = data1['count']
 
@@ -333,7 +333,7 @@ class DotsOrganism(OrganismName):
         # ON gi.na_feature_ID = nf.na_feature_ID
         # INNER JOIN nasequenceimp as ns 
         # ON nf.na_sequence_ID = ns.na_sequence_ID
-        # WHERE ns.taxon_ID = {taxonomy_id} and ns.sequence_version = {self.org_version} and ns.sequence_type_ID = 6"""
+        # WHERE ns.taxon_ID = {taxonomy_id} and ns.org_version = {self.org_version} and ns.sequence_type_ID = 6"""
         #     data1 = self.db_dots.query_one(sql_query_3)
         #     count_dct['Tmhmm'] = data1['count']
 
@@ -344,7 +344,7 @@ class DotsOrganism(OrganismName):
         # ON gi.na_feature_ID = nf.na_feature_ID
         # INNER JOIN nasequenceimp as ns 
         # ON nf.na_sequence_ID = ns.na_sequence_ID
-        # WHERE ns.taxon_ID = {taxonomy_id} and ns.sequence_version = {self.org_version} and ns.sequence_type_ID = 6"""
+        # WHERE ns.taxon_ID = {taxonomy_id} and ns.org_version = {self.org_version} and ns.sequence_type_ID = 6"""
         #     data1 = self.db_dots.query_one(sql_query_4)
         #     count_dct['hmmpfam'] = data1['count']
 

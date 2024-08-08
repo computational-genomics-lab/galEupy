@@ -237,7 +237,7 @@ INSERT INTO `sequencetype` (sequence_type_ID, name, description, parent_sequence
 DROP TABLE IF EXISTS `nasequenceimp`;
 CREATE TABLE `nasequenceimp` (
     `na_sequence_ID` int(11) NOT NULL AUTO_INCREMENT,
-    `sequence_version` float NOT NULL DEFAULT '1',
+    `org_version` float NOT NULL DEFAULT '1',
     `subclass_view` varchar(50) DEFAULT NULL,
     `sequence_type_ID` int(11) DEFAULT NULL,
     `taxon_ID` int(11) DEFAULT NULL,
@@ -706,7 +706,7 @@ DROP TABLE IF EXISTS `externalnasequence`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `externalnasequence` AS
 select
     `nasequenceimp`.`na_sequence_ID` AS `na_sequence_ID`,
-    `nasequenceimp`.`sequence_version` AS `sequence_version`,
+    `nasequenceimp`.`org_version` AS `org_version`,
     `nasequenceimp`.`sequence_type_ID` AS `sequence_type_ID`,
     `nasequenceimp`.`external_database_ID` AS `external_database_ID`,
     `nasequenceimp`.`string1` AS `source_ID`,
@@ -857,7 +857,7 @@ DROP TABLE IF EXISTS `nasequence`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `nasequence` AS
 select
     `nasequenceimp`.`na_sequence_ID` AS `na_sequence_ID`,
-    `nasequenceimp`.`sequence_version` AS `sequence_version`,
+    `nasequenceimp`.`org_version` AS `org_version`,
     `nasequenceimp`.`subclass_view` AS `subclass_view`,
     `nasequenceimp`.`sequence_type_ID` AS `sequence_type_ID`,
     `nasequenceimp`.`taxon_ID` AS `taxon_ID`,
