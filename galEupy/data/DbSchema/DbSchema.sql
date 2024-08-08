@@ -68,7 +68,8 @@ CREATE TABLE IF NOT EXISTS `organism`(
     version FLOAT NOT NULL DEFAULT 1,
     new_version FLOAT NULL,
     comment VARCHAR(100) NULL,
-    assembly_accession VARCHAR(50) NULL,
+    -- assembly_accession VARCHAR(50) NULL,
+    assembly_version VARCHAR(50) NULL,
     assembly_name VARCHAR(50) NULL,
     assembly_level VARCHAR(50) NULL,
     createdat TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -617,6 +618,7 @@ select
     `proteininstancefeature`.`text7` AS `BRITE`,
     `proteininstancefeature`.`text8` AS `KEGG_TC`,
     `proteininstancefeature`.`prediction_id` AS `prediction_id`,
+    `proteininstancefeature`.`org_version` AS `org_version`,
     `proteininstancefeature`.`modification_date` AS `modification_date`
 from `proteininstancefeature`
 where (`proteininstancefeature`.`subclass_view` = 'KEGG');
@@ -630,6 +632,7 @@ select
     `proteininstancefeature`.`subclass_view` AS `subclass_view`,
     `proteininstancefeature`.`domain_name` AS `COG`,
     `proteininstancefeature`.`prediction_id` AS `prediction_id`,
+    `proteininstancefeature`.`org_version` AS `org_version`,
     `proteininstancefeature`.`modification_date` AS `modification_date`
 from `proteininstancefeature`
 where (`proteininstancefeature`.`subclass_view` = 'COG');
@@ -645,6 +648,7 @@ select
     `proteininstancefeature`.`domain_name` AS `domain_name`,
     `proteininstancefeature`.`text9` AS `PFAMs`,
     `proteininstancefeature`.`prediction_id` AS `prediction_id`,
+    `proteininstancefeature`.`org_version` AS `org_version`,
     `proteininstancefeature`.`modification_date` AS `modification_date`
 from `proteininstancefeature` where (`proteininstancefeature`.`subclass_view` = 'Pfam') ;
 
@@ -791,6 +795,7 @@ select
     `proteininstancefeature`.`domain_name` AS `domain_name`,
     `proteininstancefeature`.`go_id` AS `go_id`,
     `proteininstancefeature`.`prediction_id` AS `prediction_id`,
+     `proteininstancefeature`.`org_version` AS `org_version`,
     `proteininstancefeature`.`modification_date` AS `modification_date`
 from `proteininstancefeature`
 where (`proteininstancefeature`.`subclass_view` = 'GO');

@@ -51,7 +51,7 @@ class DatabaseCreate(BaseDatabase):
             query = f"DROP DATABASE {db_name}"
             cursor = self.connection.cursor(pymysql.cursors.DictCursor)
             cursor.execute(query)
-            _logger.debug(f"{db_name} deletion: successful")
+            _logger.debug(f"{db_name} deletion: successfull")
         except pymysql.Error as e:
             _logger.error(f"Failed to delete  database: {db_name} \n{e}")
             self.connection.rollback()

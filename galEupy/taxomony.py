@@ -357,10 +357,11 @@ class DotsOrganism(OrganismName):
 
 
 class Taxonomy(CommonOrganismInfo, DotsOrganism):
-    def __init__(self, db_connection, org_name, strain, org_version=1):
+    def __init__(self, db_connection, org_name, strain, assembly_version, org_version=1):
         CommonOrganismInfo.__init__(self, db_connection, org_name, org_version)
         DotsOrganism.__init__(self, db_connection, org_name, org_version)
         self.strain = strain  # Stored as an instance attribute
+        self.assembly_version = assembly_version
 
     def update_organism_table(self):
         _logger.info(f"Updating the organism table. \nOrganism name: {self.org_name}\nversion: {self.org_version}")
@@ -376,8 +377,8 @@ class Taxonomy(CommonOrganismInfo, DotsOrganism):
         family = taxonomy_dct['family']
         super_kingdom = taxonomy_dct['superkingdom']
 
-        query = f'''INSERT INTO organism(taxon_ID, taxon_name, species, strain, phylum, family, genus, orders, class, 
-        superkingdom, version) VALUES ({taxonomy_id}, '{self.org_name}', '{self.species}', '{self.strain}', '{phylum}',
+        query = f'''INSERT INTO organism(taxon_ID, taxon_name, species, strain, assembly_version, phylum, family, genus, orders, class, 
+        superkingdom, version) VALUES ({taxonomy_id}, '{self.org_name}', '{self.species}', '{self.strain}', '{self.assembly_version}', '{phylum}',
         '{family}', '{genus}', '{order}', '{class_name}', '{super_kingdom}', '{self.org_version}')'''
         self.db_dots.insert(query)
         _logger.info(" Organism Table update complete")

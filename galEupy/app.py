@@ -273,7 +273,7 @@ class CentralDogmaAnnotator(AnnotationCategory, Taxonomy, TableStatusID):
                                       1, port=db_config.db_port)
 
         self.file_upload = UploadTableData(self.db_connection, self.path_config.upload_dir)
-        Taxonomy.__init__(self, self.db_connection, org_config.organism, org_config.strain, org_config.version)
+        Taxonomy.__init__(self, self.db_connection, org_config.organism, org_config.strain, org_config.assembly_version, org_config.version)
         TableStatusID.__init__(self, self.db_connection)
 
     def process_genbank_annotation(self):

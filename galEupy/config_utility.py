@@ -178,6 +178,7 @@ def organism_config_reader(filename):
     version = config_org_details['version']
     source_url = config_org_details['source_url']
     strain = config_org_details['strain']
+    assembly_version = config_org_details['assembly_version']
 
     # header : SequenceType
     sequence_type = config_obj.section_map('SequenceType')['sequencetype']
@@ -213,6 +214,7 @@ def organism_config_reader(filename):
         'orgVersion': version,
         'source_url': source_url,
         'strain': strain,
+        'assembly_version': assembly_version,
         'sequence_type': sequence_type,
         'ifblastp': if_blastp,
         # 'ifsignalp': if_signalp,
@@ -242,6 +244,7 @@ class OrganismConf:
         self.organism = organism_config_dct['organism']
         self.version = organism_config_dct['orgVersion']
         self.strain = organism_config_dct['strain']
+        self.assembly_version = organism_config_dct['assembly_version']
 
         self.is_blastp = organism_config_dct['ifblastp']
         # self.is_signalp = organism_config_dct['ifsignalp']
