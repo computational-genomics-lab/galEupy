@@ -619,6 +619,7 @@ select
     `proteininstancefeature`.`text7` AS `BRITE`,
     `proteininstancefeature`.`text8` AS `KEGG_TC`,
     `proteininstancefeature`.`prediction_id` AS `prediction_id`,
+    `proteininstancefeature`.`taxonomy_id` AS `taxonomy_id`,
     `proteininstancefeature`.`strain_number` AS `strain_number`,
     `proteininstancefeature`.`modification_date` AS `modification_date`
 from `proteininstancefeature`
@@ -633,6 +634,7 @@ select
     `proteininstancefeature`.`subclass_view` AS `subclass_view`,
     `proteininstancefeature`.`domain_name` AS `COG`,
     `proteininstancefeature`.`prediction_id` AS `prediction_id`,
+    `proteininstancefeature`.`taxonomy_id` AS `taxonomy_id`,
     `proteininstancefeature`.`strain_number` AS `strain_number`,
     `proteininstancefeature`.`modification_date` AS `modification_date`
 from `proteininstancefeature`
@@ -649,6 +651,7 @@ select
     `proteininstancefeature`.`domain_name` AS `domain_name`,
     `proteininstancefeature`.`text9` AS `PFAMs`,
     `proteininstancefeature`.`prediction_id` AS `prediction_id`,
+    `proteininstancefeature`.`taxonomy_id` AS `taxonomy_id`,
     `proteininstancefeature`.`strain_number` AS `strain_number`,
     `proteininstancefeature`.`modification_date` AS `modification_date`
 from `proteininstancefeature` where (`proteininstancefeature`.`subclass_view` = 'Pfam') ;
@@ -796,6 +799,7 @@ select
     `proteininstancefeature`.`domain_name` AS `domain_name`,
     `proteininstancefeature`.`go_id` AS `go_id`,
     `proteininstancefeature`.`prediction_id` AS `prediction_id`,
+    `proteininstancefeature`.`taxonomy_id` AS `taxonomy_id`,
      `proteininstancefeature`.`strain_number` AS `strain_number`,
     `proteininstancefeature`.`modification_date` AS `modification_date`
 from `proteininstancefeature`
