@@ -1,3 +1,4 @@
+
 --
 -- core Schema
 --
@@ -65,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `organism`(
     orders VARCHAR(100) NULL,
     class varchar(100) NULL,
     superkingdom VARCHAR(100) NULL,
-    version FLOAT NOT NULL DEFAULT 1,
+    strain_number FLOAT NOT NULL DEFAULT 1,
     new_version FLOAT NULL,
     comment VARCHAR(100) NULL,
     -- assembly_accession VARCHAR(50) NULL,
@@ -237,7 +238,7 @@ INSERT INTO `sequencetype` (sequence_type_ID, name, description, parent_sequence
 DROP TABLE IF EXISTS `nasequenceimp`;
 CREATE TABLE `nasequenceimp` (
     `na_sequence_ID` int(11) NOT NULL AUTO_INCREMENT,
-    `org_version` float NOT NULL DEFAULT '1',
+    `strain_number` float NOT NULL DEFAULT '1',
     `subclass_view` varchar(50) DEFAULT NULL,
     `sequence_type_ID` int(11) DEFAULT NULL,
     `taxon_ID` int(11) DEFAULT NULL,
@@ -562,7 +563,7 @@ CREATE TABLE `proteininstancefeature` (
     `text8` varchar(500) DEFAULT NULL,
     `text9` varchar(500) DEFAULT NULL,
     `taxonomy_id` int(11) DEFAULT NULL,
-    `org_version` int(11) DEFAULT NULL,
+    `strain_number` int(11) DEFAULT NULL,
     `modification_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`protein_instance_feature_ID`),
   KEY `proteininstancefeature_FK01` (`protein_instance_ID`),
@@ -618,7 +619,7 @@ select
     `proteininstancefeature`.`text7` AS `BRITE`,
     `proteininstancefeature`.`text8` AS `KEGG_TC`,
     `proteininstancefeature`.`prediction_id` AS `prediction_id`,
-    `proteininstancefeature`.`org_version` AS `org_version`,
+    `proteininstancefeature`.`strain_number` AS `strain_number`,
     `proteininstancefeature`.`modification_date` AS `modification_date`
 from `proteininstancefeature`
 where (`proteininstancefeature`.`subclass_view` = 'KEGG');
@@ -632,7 +633,7 @@ select
     `proteininstancefeature`.`subclass_view` AS `subclass_view`,
     `proteininstancefeature`.`domain_name` AS `COG`,
     `proteininstancefeature`.`prediction_id` AS `prediction_id`,
-    `proteininstancefeature`.`org_version` AS `org_version`,
+    `proteininstancefeature`.`strain_number` AS `strain_number`,
     `proteininstancefeature`.`modification_date` AS `modification_date`
 from `proteininstancefeature`
 where (`proteininstancefeature`.`subclass_view` = 'COG');
@@ -648,7 +649,7 @@ select
     `proteininstancefeature`.`domain_name` AS `domain_name`,
     `proteininstancefeature`.`text9` AS `PFAMs`,
     `proteininstancefeature`.`prediction_id` AS `prediction_id`,
-    `proteininstancefeature`.`org_version` AS `org_version`,
+    `proteininstancefeature`.`strain_number` AS `strain_number`,
     `proteininstancefeature`.`modification_date` AS `modification_date`
 from `proteininstancefeature` where (`proteininstancefeature`.`subclass_view` = 'Pfam') ;
 
@@ -706,7 +707,7 @@ DROP TABLE IF EXISTS `externalnasequence`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `externalnasequence` AS
 select
     `nasequenceimp`.`na_sequence_ID` AS `na_sequence_ID`,
-    `nasequenceimp`.`org_version` AS `org_version`,
+    `nasequenceimp`.`strain_number` AS `strain_number`,
     `nasequenceimp`.`sequence_type_ID` AS `sequence_type_ID`,
     `nasequenceimp`.`external_database_ID` AS `external_database_ID`,
     `nasequenceimp`.`string1` AS `source_ID`,
@@ -795,7 +796,7 @@ select
     `proteininstancefeature`.`domain_name` AS `domain_name`,
     `proteininstancefeature`.`go_id` AS `go_id`,
     `proteininstancefeature`.`prediction_id` AS `prediction_id`,
-     `proteininstancefeature`.`org_version` AS `org_version`,
+     `proteininstancefeature`.`strain_number` AS `strain_number`,
     `proteininstancefeature`.`modification_date` AS `modification_date`
 from `proteininstancefeature`
 where (`proteininstancefeature`.`subclass_view` = 'GO');
@@ -857,7 +858,7 @@ DROP TABLE IF EXISTS `nasequence`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `nasequence` AS
 select
     `nasequenceimp`.`na_sequence_ID` AS `na_sequence_ID`,
-    `nasequenceimp`.`org_version` AS `org_version`,
+    `nasequenceimp`.`strain_number` AS `strain_number`,
     `nasequenceimp`.`subclass_view` AS `subclass_view`,
     `nasequenceimp`.`sequence_type_ID` AS `sequence_type_ID`,
     `nasequenceimp`.`taxon_ID` AS `taxon_ID`,

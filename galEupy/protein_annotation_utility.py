@@ -6,11 +6,8 @@ import csv
 # from .BioFile.interproscan_parser import ParseInterproResult
 from .directory_utility import ProteinAnnotationFiles
 # import time
-import threading
-from concurrent.futures import ThreadPoolExecutor
 
 _logger = logging.getLogger("galEupy.protein_annotation_utility")
-
 
 _logger = logging.getLogger("galEupy.protein_annotation_utility")
 
@@ -29,7 +26,7 @@ class TranscriptMap:
         naf.feature_type='mRNA' and
         na.na_sequence_id = naf.na_sequence_id and 
         na.taxon_id = {self.taxonomy_id} and
-        na.org_version = {self.org_version}"""
+        na.strain_number = {self.org_version}"""
 
         transcript_name_dct = {}
 
@@ -77,7 +74,7 @@ class BaseProteinAnnotations(ProteinAnnotationFiles, TableStatusID):
 
         query = f"""select nf.feature_type, nf.name, p.description, p.gene_instance_id, p.sequence from 
         nasequenceimp ns, nafeatureimp nf, geneinstance gi, protein p where ns.taxon_id = {taxonomy_id}
-        and ns.org_version = {org_version} and ns.sequence_type_id = 6 and nf.na_sequence_id = ns.na_sequence_id
+        and ns.strain_number = {org_version} and ns.sequence_type_id = 6 and nf.na_sequence_id = ns.na_sequence_id
         and nf.feature_type = 'mRNA' and gi.na_feature_id = nf.na_feature_id and  
         p.gene_instance_id = gi.gene_instance_id"""
 
@@ -158,9 +155,9 @@ class ProteinAnnotations(BaseProteinAnnotations, TranscriptMap):
 
     def upload_eggnog_data(self):
         
-        _logger.info(f"Parsing EGGNOG data: Initiated with taxonomy_id={self.taxonomy_id}, org_version={self.org_version}")
+        _logger.info(f"Parsing EGGNOG data: Initiated with taxonomy_id={self.taxonomy_id}, strain_number={self.org_version}")
         _logger.info(f"Uploading EGGNOG data from {self.eggnog}")
-        column_list = ['protein_instance_feature_ID', 'protein_instance_ID', 'feature_name', 'subclass_view', 'taxonomy_id', 'org_version',
+        column_list = ['protein_instance_feature_ID', 'protein_instance_ID', 'feature_name', 'subclass_view', 'taxonomy_id', 'strain_number',
                     'domain_name', 'prediction_id', 'go_id',
                     'text1', 'text2', 'text3', 'text4', 'text5', 'text6', 'text7', 'text8', 'text9']
 

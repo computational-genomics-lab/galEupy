@@ -168,7 +168,7 @@ class DotsOrganism(OrganismName):
 
     @property
     def taxonomy_hierarchy_dots(self):
-        sql_query = f"select * from organism where taxon_name = '{self.org_name}' and version = {self.org_version}"
+        sql_query = f"select * from organism where taxon_name = '{self.org_name}' and strain_number = {self.org_version}"
         taxonomy_dct = {}
 
         result = self.db_dots.query_one(sql_query)
@@ -186,16 +186,16 @@ class DotsOrganism(OrganismName):
         taxonomy_id = self.taxonomy_id_dots()
 
         if taxonomy_id is None:
-            _logger.info(f"Organism details doesn't exist. \n\t\tOrganism name; {self.org_name}, version: {self.org_version}")
+            _logger.info(f"Organism details doesn't exist. \n\t\tOrganism name; {self.org_name}, strain_number: {self.org_version}")
         else:
-            _logger.info(f"Deleting the organism records: \n\t\tOrganism name; {self.org_name}, version: {self.org_version}")
+            _logger.info(f"Deleting the organism records: \n\t\tOrganism name; {self.org_name}, strain_number: {self.org_version}")
 
             sql_query_1 = f"""
             DELETE nl FROM nalocation AS nl
             INNER JOIN nafeatureimp AS nf ON nl.na_feature_ID = nf.na_feature_ID
             INNER JOIN nasequenceimp AS ns ON nf.na_sequence_ID = ns.na_sequence_ID
             WHERE ns.taxon_ID = {taxonomy_id}
-            AND ns.org_version = {self.org_version}
+            AND ns.strain_number = {self.org_version}
             AND ns.sequence_type_ID != 1
             """
             self.db_dots.insert(sql_query_1)
@@ -206,7 +206,7 @@ class DotsOrganism(OrganismName):
             INNER JOIN nafeatureimp AS nf ON gi.na_feature_ID = nf.na_feature_ID
             INNER JOIN nasequenceimp AS ns ON nf.na_sequence_ID = ns.na_sequence_ID
             WHERE ns.taxon_ID = {taxonomy_id} 
-            AND ns.org_version = {self.org_version} 
+            AND ns.strain_number = {self.org_version} 
             AND ns.sequence_type_ID = 6
             """
             self.db_dots.insert(sql_query_2)
@@ -216,7 +216,7 @@ class DotsOrganism(OrganismName):
             INNER JOIN nafeatureimp AS nf ON gi.na_feature_ID = nf.na_feature_ID
             INNER JOIN nasequenceimp AS ns ON nf.na_sequence_ID = ns.na_sequence_ID
             WHERE ns.taxon_ID = {taxonomy_id} 
-            AND ns.org_version = {self.org_version}
+            AND ns.strain_number = {self.org_version}
             """
             self.db_dots.insert(sql_query_3)
 
@@ -224,14 +224,14 @@ class DotsOrganism(OrganismName):
             DELETE nf FROM nafeatureimp AS nf
             INNER JOIN nasequenceimp AS ns ON nf.na_sequence_ID = ns.na_sequence_ID
             WHERE ns.taxon_ID = {taxonomy_id}
-            AND ns.org_version = {self.org_version}
+            AND ns.strain_number = {self.org_version}
             """
             self.db_dots.insert(sql_query_4)
 
             sql_query_5 = F"""
             DELETE ns FROM nasequenceimp AS ns 
             WHERE ns.taxon_ID = {taxonomy_id} 
-            AND ns.org_version = {self.org_version} 
+            AND ns.strain_number = {self.org_version} 
             AND ns.sequence_type_ID != 1
             """
             self.db_dots.insert(sql_query_5)
@@ -239,7 +239,7 @@ class DotsOrganism(OrganismName):
             sql_query_6 = F"""
             DELETE ns FROM nasequenceimp AS ns 
             WHERE ns.taxon_ID = {taxonomy_id} 
-            AND ns.org_version = {self.org_version}
+            AND ns.strain_number = {self.org_version}
             """
             self.db_dots.insert(sql_query_6)
 
@@ -247,14 +247,14 @@ class DotsOrganism(OrganismName):
             sql_query_7 = F"""
             DELETE org FROM organism AS org 
             WHERE org.taxon_ID = {taxonomy_id} 
-            AND org.version = {self.org_version}
+            AND org.strain_number = {self.org_version}
             """
             self.db_dots.insert(sql_query_7)
 
             sql_query_8 = F"""
             DELETE pi FROM proteininstancefeature AS pi 
             WHERE pi.taxonomy_id = {taxonomy_id} 
-            AND pi.org_version = {self.org_version}
+            AND pi.strain_number = {self.org_version}
             """
             self.db_dots.insert(sql_query_8)
 
@@ -293,16 +293,12 @@ class DotsOrganism(OrganismName):
 
 
 
-
-
-
-
     def get_organism_record(self):
 
         count_dct = {}
         taxonomy_id = self.taxonomy_id_dots()
         if taxonomy_id is None:
-            _logger.info(f"Organism details doesn't exist. \nOrganism name; {self.org_name}, version: {self.org_version}")
+            _logger.info(f"Organism details doesn't exist. \nOrganism name; {self.org_name}, strain number: {self.org_version}")
         # else:
         #     sql_query_1 = F"""select count(*) as count FROM interproscan as ips
         # INNER JOIN geneinstance AS gi
@@ -364,7 +360,7 @@ class Taxonomy(CommonOrganismInfo, DotsOrganism):
         self.assembly_version = assembly_version
 
     def update_organism_table(self):
-        _logger.info(f"Updating the organism table. \nOrganism name: {self.org_name}\nversion: {self.org_version}")
+        _logger.info(f"Updating the organism table. \nOrganism name: {self.org_name}\nstrain number: {self.org_version}")
 
         taxonomy_dct = self.taxonomy_hierarchy()
         taxonomy_dct = NoneDict(taxonomy_dct)
@@ -378,7 +374,7 @@ class Taxonomy(CommonOrganismInfo, DotsOrganism):
         super_kingdom = taxonomy_dct['superkingdom']
 
         query = f'''INSERT INTO organism(taxon_ID, taxon_name, species, strain, assembly_version, phylum, family, genus, orders, class, 
-        superkingdom, version) VALUES ({taxonomy_id}, '{self.org_name}', '{self.species}', '{self.strain}', '{self.assembly_version}', '{phylum}',
+        superkingdom, strain_number) VALUES ({taxonomy_id}, '{self.org_name}', '{self.species}', '{self.strain}', '{self.assembly_version}', '{phylum}',
         '{family}', '{genus}', '{order}', '{class_name}', '{super_kingdom}', '{self.org_version}')'''
         self.db_dots.insert(query)
         _logger.info(" Organism Table update complete")
@@ -391,13 +387,13 @@ class Taxonomy(CommonOrganismInfo, DotsOrganism):
             _logger.info("Error: Organism Name does not exist")
             return True
         else:
-            _logger.info(f'Organism: {self.org_name} version: {self.org_version}')
+            _logger.info(f'Organism: {self.org_name} strain number: {self.org_version}')
             taxonomy_id = self.taxonomy_id_sres
             if taxonomy_id:
-                sql_query = f"select * from organism where taxon_ID = {taxonomy_id} and version = {self.org_version}"
+                sql_query = f"select * from organism where taxon_ID = {taxonomy_id} and strain_number = {self.org_version}"
                 row_count = self.db_dots.rowcount(sql_query)
                 if row_count == 1:
-                    _logger.info("Info: Organism Name and same version already exists")
+                    _logger.info("Info: Organism Name and same strain number already exists")
                     return True
                 else:
                     _logger.info("New Organism")
@@ -407,7 +403,7 @@ class Taxonomy(CommonOrganismInfo, DotsOrganism):
                 return True
 
     def organism_name_check(self):
-        sql_query = f"select * from organism where taxon_ID = {self.taxonomy_id} and version = {self.org_version}"
+        sql_query = f"select * from organism where taxon_ID = {self.taxonomy_id} and strain_number = {self.org_version}"
 
     @property
     def organism_type(self):
