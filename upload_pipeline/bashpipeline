@@ -1,4 +1,5 @@
-```bash
+```batch
+
 #!/bin/bash
 
 # Function to check for the existence of a file or directory
@@ -123,4 +124,5 @@ EOF
     galEupy -db "$database_config" -org organism.ini -v d -upload All -log "$accession.log"
 
 done < "$list_accession_file"
+
 ```
