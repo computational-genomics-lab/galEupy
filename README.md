@@ -113,7 +113,7 @@ galEupy -v d -db <db_configuration_file> -remove_db
 
 ### Running uploader pipeline
  
- A pipeline has been written in bash, called "bashpipeline", which is present in the directory "upload_pipeline". This directory is not part of the galEupy module but is provided in the GAL directory. It also contains a python file called "id_replace.py", which is required for pre-processing eggnog files.
+ A pipeline has been written in bash, called "bashpipeline", which is present in the directory "upload_pipeline". It also contains a python file called "id_replace.py", which is required for pre-processing eggnog files.
  
 Usage 
 ```commandline
