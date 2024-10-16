@@ -1,88 +1,4 @@
-# #!/bin/bash
-
-# #a pipeline to basically upload all the organism data using galEupy to mysql backend
-
-# # Prompt the user for the path to the list_accession file
-# read -p "Enter the path to the list_accession file: " list_accession_file
-
-# # Check if the list_accession file exists
-# if [ ! -f "$list_accession_file" ]; then
-#     echo "Error: The specified list_accession file does not exist."
-#     exit 1
-# fi
-
-# # Prompt the user for the directory containing the genome files
-# read -p "Enter the path to the directory containing the genome files: " genomic_data_directory
-
-# # Check if the genome directory exists
-# if [ ! -d "$genomic_data_directory" ]; then
-#     echo "Error: The specified genome directory does not exist."
-#     exit 1
-# fi
-
-# # Read accession numbers from the "list_accession" file
-# while IFS= read -r accession; do
-
-# #writing a logic to check for the existence of a certain file in any location
-# check_file() {
-#     local file="$1"
-#     if [ ! -s "$file" ] || [ ! -f "$file" ]; then
-#         # Genome file is empty or not existent, print a message and return non-zero exit code
-#         echo "The file is empty or not found $file"
-#         continue
-#     fi
-# }    
-
-# # Find the genomic fasta file/check if it exists
-#     genome_file=$(find "$accession/data/$accession" -name 'GC*.fna' -type f -print -quit)
-#     check_file "$genome_file"; 
-
-# #Get the header from the genome file
-#     header=$(head -n 1 "$genome_file")
-
-#     # Extract organism name from the header
-#     organism_name=$(echo "$header" | awk -F' ' '/>/{print $2, $3}' | head -n 1)
-
-#     # Print the organism name
-#     echo "Organism Name for $accession: $organism_name"
-
-
-# # Check if gff file is present
-#     gff_file="$accession/data/$accession/genomic.gff"
-#     check_file "$gff_file"; 
-
-# #check for corresponding eggnog file
-#     eggnog_file="$accession.emapper.annotations"
-#     check_file "$eggnog_file";
-
-# #generate the modified eggnog emapper annotation file using inhouse script called 'id_replace.py'
-#     python id_replace.py $gff_file $eggnog_file
-
-# #Making the organism.ini configuration file
-# cat <<EOF > organism.ini
-# [OrganismDetails]
-# Organism: $organism_name
-# version: 1
-# source_url:
-
-# [SequenceType]
-# SequenceType: chromosome
-# scaffold_prefix:
-
-# [filePath]
-# GenBank:
-# FASTA: $genome_file
-# GFF: $gff_file
-# eggnog: eggnog_emapper.modified_annotations
-
-# EOF
-
-# #UPLOAD USING galEupy
-# #it is assumed that a database.ini file is already present in the working directory
-#     galEupy -db database.ini -org organism.ini -v d -upload All -log $accession.log
-
-# done < "list_accession"
-
+```bash
 #!/bin/bash
 
 # Function to check for the existence of a file or directory
@@ -207,4 +123,4 @@ EOF
     galEupy -db "$database_config" -org organism.ini -v d -upload All -log "$accession.log"
 
 done < "$list_accession_file"
-
+```
