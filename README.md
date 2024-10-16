@@ -73,7 +73,7 @@ db_name :
 port:
 ```
 #### Format for organism configuration file
-version denotes the different strains of the same species if they are available. So the first strain to be uploaded has version: 1, the second strain has version: 2 and so on. 
+The version denotes the different strains of the same species if they are available. So in the configuration file, the first strain to be uploaded has version: 1, the second strain has version: 2 and so on. 
 
 ```commandline
 [OrganismDetails]
