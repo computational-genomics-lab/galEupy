@@ -136,7 +136,7 @@ fi
 
 # Check if required options are provided
 if [ -z "$database_config" ] || [ -z "$list_accession_file" ] || [ -z "$genomic_data_directory" ]; then
-    echo "Error: Missing required options. Use 'help' for usage information." >&2
+    echo "Error: Missing required options." >&2
     exit 1
 fi
 
