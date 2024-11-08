@@ -73,6 +73,8 @@ db_name :
 port:
 ```
 #### Format for organism configuration file
+The version denotes the different strains of the same species if they are available. So in the configuration file, the first strain to be uploaded has version: 1, the second strain has version: 2 and so on. 
+If the user has different assemblies of the same strain, they can specify the following using "assembly_version:". 
 
 ```commandline
 [OrganismDetails]
@@ -111,7 +113,7 @@ galEupy -v d -db <db_configuration_file> -remove_db
 
 ### Running uploader pipeline
  
- A pipeline has been written in bash, called "bashpipeline", which is present in the directory "upload_pipeline". This directory is not part of the galEupy module but is provided in the GAL directory. It also contains a python file called "id_replace.py", which is required for pre-processing eggnog files.
+ A pipeline has been written in bash, called "bashpipeline", which is present in the directory "upload_pipeline". It also contains a python file called "id_replace.py", which is required for pre-processing eggnog files.
  
 Usage 
 ```commandline
