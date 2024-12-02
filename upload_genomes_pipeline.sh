@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# A pipeline to upload organism data using galEupy to MySQL backend
+# A pipeline to upload organism data using galEupy to a MySQL backend
 
 version=1
 declare -A uploaded_organisms # Associative array to track already uploaded organisms
@@ -27,16 +27,15 @@ for file in *.fna; do
     echo "Strain name: $strain_name"
     echo "gff file: $gff_file"
     echo "eggnog_file: $eggnog_file"
-    echo "version: $version"
     echo "-----------------------------"
 
-    # Check if the header (ie the organism name) has been seen before
-    if [[ -n "${uploaded_organisms[$header]}" ]]; then
+    # Check if the organism name has been encountered before
+    if [[ -n "${uploaded_organisms[$organism_name]}" ]]; then
         # Organism seen before, increment version
         version=$((version + 1))
     else
         # New organism, record it
-        uploaded_organisms["$header"]=1
+        uploaded_organisms["$organism_name"]=1
     fi
 
     # Making the organism.ini configuration file
