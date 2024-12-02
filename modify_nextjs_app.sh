@@ -1,12 +1,13 @@
 #!/bin/bash
 
+# Define variables
 REPO_URL="https://github.com/computational-genomics-lab/P_melonis_web_app"
 DATABASE_JS_PATH="P_melonis_web_app/pages/api/database.js"
 PACKAGE_JSON_PATH="P_melonis_web_app/package.json"
 WEB_INI_PATH="web.ini"
 CLONE_DIR="P_melonis_web_app"
 
-# Cloning the git repository
+# Clone the repository
 if [ ! -d "$CLONE_DIR" ]; then
     echo "Cloning repository..."
     git clone "$REPO_URL"
@@ -14,7 +15,7 @@ else
     echo "Repository already cloned."
 fi
 
-# Extracting information from web.ini
+# Extract information from web.ini
 if [ -f "$WEB_INI_PATH" ]; then
     echo "Reading configuration from $WEB_INI_PATH..."
     PORT=$(grep -oP '(?<=^PORT: )\d+' "$WEB_INI_PATH")
@@ -22,12 +23,20 @@ if [ -f "$WEB_INI_PATH" ]; then
         echo "Error: PORT not found in $WEB_INI_PATH."
         exit 1
     fi
+    #IP_ADDRESS=$(grep -oP '(?<=^IP_ADDRESS: )\d+' "$WEB_INI_PATH")
+     IP_ADDRESS=$(grep -oP '(?<=^IP_ADDRESS: ).+' "$WEB_INI_PATH")
+
+        if [ -z "$IP_ADDRESS" ]; then
+        echo "Error: IP Address not found in $WEB_INI_PATH."
+        exit 1
+    fi
+    echo "IP adress : $IP_ADDRESS"
 else
     echo "Error: $WEB_INI_PATH not found."
     exit 1
 fi
 
-# Database credentials 
+# Database credentials (replace with actual values from galEupy)
 DB_HOST="10.10.10.7"
 DB_USER="testadmin"
 DB_PASSWORD="forinventorydatabase"
@@ -62,4 +71,13 @@ else
     exit 1
 fi
 
+#move the files into the public genome data directory
+
+#prepare the config file for jbrowse2 visualisation
+ 
+#Replace the ip address and the port
+#bash P_melonis_web_app/string_replace.sh "./test" "eumicrobedb.org" "http://$IP_ADDRESS:$PORT"
+bash P_melonis_web_app/string_replace.sh "P_melonis_web_app/pages" "http:\/\/eumicrobedb.org:3001" "http:\/\/$IP_ADDRESS:$PORT"
+
+#Display success message
 echo "Modifications completed. You can now run the application using npm."
