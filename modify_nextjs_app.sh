@@ -74,9 +74,15 @@ fi
 #move the files into the public genome data directory
 
 #prepare the config file for jbrowse2 visualisation
- 
+
+
 #Replace the ip address and the port
 bash P_melonis_web_app/string_replace.sh "P_melonis_web_app/pages" "http:\/\/eumicrobedb.org:3001" "http:\/\/$IP_ADDRESS:$PORT"
 
 #Display success message
-echo "Modifications completed. You can now run the application using npm."
+echo "Modifications completed. Running the app using npm now ..."
+
+#open the P_melonis directory and launch the web application
+cd P_melonis_web_app
+npm install
+npm run dev
