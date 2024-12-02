@@ -76,7 +76,6 @@ fi
 #prepare the config file for jbrowse2 visualisation
  
 #Replace the ip address and the port
-#bash P_melonis_web_app/string_replace.sh "./test" "eumicrobedb.org" "http://$IP_ADDRESS:$PORT"
 bash P_melonis_web_app/string_replace.sh "P_melonis_web_app/pages" "http:\/\/eumicrobedb.org:3001" "http:\/\/$IP_ADDRESS:$PORT"
 
 #Display success message
