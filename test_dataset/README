@@ -8,6 +8,9 @@ It contains :
 2) genomic files of three isolates of Phytophthora melonis. It includes three types of files:
   genomic fasta files 
   genomic gff3 files
-  eggnog emapper annotated files
+  eggnog emapper annotated files. 
+Currently the genomic files are hosted in a Google Drive link : https://drive.google.com/file/d/12aGDrdPCmoWGtE1fThxUoC0vVrMH0ens/view?usp=sharing
+Since GitHub does not allow a user to host files larger than 25MB. 
+
 
 
