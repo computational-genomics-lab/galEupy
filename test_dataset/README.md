@@ -10,7 +10,7 @@ It contains :
   genomic gff3 files
   eggnog emapper annotated files. 
 Currently the genomic files are hosted in a Google Drive link (since GitHub does not allow a user to host files larger than 25MB): 
-[click here](https://drive.google.com/file/d/12aGDrdPCmoWGtE1fThxUoC0vVrMH0ens/view?usp=sharing)
+[click here to download the files](https://drive.google.com/file/d/12aGDrdPCmoWGtE1fThxUoC0vVrMH0ens/view?usp=sharing)
 
 
 
