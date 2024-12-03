@@ -72,11 +72,24 @@ else
 fi
 
 #move the files into the public genome data directory
+echo "Creating a genomes directory and transferring all the files into the directory"
+#creating the directory
+mkdir -p P_melonis_web_app/public/genomes
+
+#moving
+for file in *.fna; do
+ # Get the base name of the file (without the extension)
+ base=$(basename "$file" .fna)
+ mv "$base".fna* P_melonis_web_app/public/genomes
+ mv "$base"_with_product_name.gff3* P_melonis_web_app/public/genomes
+ #mv "$base"_eggnog.emapper.annotations P_melonis_web_app/public/genomes
+done
 
 #prepare the config file for jbrowse2 visualisation
 
 
 #Replace the ip address and the port
+#bash P_melonis_web_app/string_replace.sh "./test" "eumicrobedb.org" "http://$IP_ADDRESS:$PORT"
 bash P_melonis_web_app/string_replace.sh "P_melonis_web_app/pages" "http:\/\/eumicrobedb.org:3001" "http:\/\/$IP_ADDRESS:$PORT"
 
 #Display success message
@@ -84,5 +97,7 @@ echo "Modifications completed. Running the app using npm now ..."
 
 #open the P_melonis directory and launch the web application
 cd P_melonis_web_app
+
 npm install
+
 npm run dev
