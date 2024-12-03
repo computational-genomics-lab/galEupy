@@ -120,7 +120,7 @@ galEupy -v d -db <db_configuration_file> -remove_db
 
 The name of the files should follow this convention. The basename can be anything. In the test_dataset, three strains of the organism Phytophthora melonis have been included. 
 
-##test_dataset
+## test_dataset
 In the current directory, where this README.md file is hosted, another directory has been made called test_dataset. 
 It includes a README.md file, database and web configuration files; and a link to a zip file containing all the genomic files hosted in  
 Google Drive.
