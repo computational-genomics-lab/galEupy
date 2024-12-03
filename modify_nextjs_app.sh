@@ -5,6 +5,7 @@ REPO_URL="https://github.com/computational-genomics-lab/P_melonis_web_app"
 DATABASE_JS_PATH="P_melonis_web_app/pages/api/database.js"
 PACKAGE_JSON_PATH="P_melonis_web_app/package.json"
 WEB_INI_PATH="web.ini"
+DATABASE_INI_PATH="database.ini"
 CLONE_DIR="P_melonis_web_app"
 
 # Clone the repository
@@ -36,11 +37,22 @@ else
     exit 1
 fi
 
-# Database credentials (replace with actual values from galEupy)
-DB_HOST="10.10.10.7"
-DB_USER="testadmin"
-DB_PASSWORD="forinventorydatabase"
-DB_NAME="Pmelonis_database"
+# Extract database credentials from database.ini
+if [ -f "$DATABASE_INI_PATH" ]; then
+    echo "Reading database configuration from $DATABASE_INI_PATH..."
+    DB_USER=$(grep -oP '(?<=^db_username : ).+' "$DATABASE_INI_PATH")
+    DB_PASSWORD=$(grep -oP '(?<=^db_password : ).+' "$DATABASE_INI_PATH")
+    DB_HOST=$(grep -oP '(?<=^host : ).+' "$DATABASE_INI_PATH")
+    DB_NAME=$(grep -oP '(?<=^db_name : ).+' "$DATABASE_INI_PATH")
+
+    if [[ -z "$DB_USER" || -z "$DB_PASSWORD" || -z "$DB_HOST" || -z "$DB_NAME" ]]; then
+        echo "Error: Missing database configuration in $DATABASE_INI_PATH."
+        exit 1
+    fi
+else
+    echo "Error: $DATABASE_INI_PATH not found."
+    exit 1
+fi
 
 # Modify database.js
 if [ -f "$DATABASE_JS_PATH" ]; then
@@ -48,15 +60,14 @@ if [ -f "$DATABASE_JS_PATH" ]; then
     cat > "$DATABASE_JS_PATH" <<EOL
 const mysql = require('mysql2');
 const pool = mysql.createPool({
-
     host: "$DB_HOST",
     user: "$DB_USER",
     password: "$DB_PASSWORD",
     database: "$DB_NAME"
 });
 module.exports = pool;
-
 EOL
+    echo "$DATABASE_JS_PATH updated successfully."
 else
     echo "Error: $DATABASE_JS_PATH not found."
     exit 1
