@@ -76,12 +76,15 @@ echo "Creating a genomes directory and transferring all the files into the direc
 #creating the directory
 mkdir -p P_melonis_web_app/public/genomes
 
+#creating the index files
+./index_files.sh
+
 #moving
 for file in *.fna; do
  # Get the base name of the file (without the extension)
  base=$(basename "$file" .fna)
  mv "$base".fna* P_melonis_web_app/public/genomes
- mv "$base"_with_product_name.gff3* P_melonis_web_app/public/genomes
+ mv "$base"_with_product_name.sorted.gff3* P_melonis_web_app/public/genomes
  #mv "$base"_eggnog.emapper.annotations P_melonis_web_app/public/genomes
 done
 
@@ -97,7 +100,6 @@ echo "Modifications completed. Running the app using npm now ..."
 
 #open the P_melonis directory and launch the web application
 cd P_melonis_web_app
-
 npm install
-
 npm run dev
+
