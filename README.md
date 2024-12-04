@@ -55,7 +55,7 @@ optional arguments:
 
 ```
 
-### Upload a Genome data
+### Upload Genome data
 Usage to upload a genome
 ```commandline
 galEupy -db <db_configuration_file> -org <organism_configuration_file> -path <path_configuration_file> -v d -upload All
@@ -111,17 +111,24 @@ Usage
 galEupy -v d -db <db_configuration_file> -remove_db
 ```
 
+## Uploading multiple organisms 
+
+A pipeline written in bash has been added in the current directory, where this README.md file exists. 
+
+The bash script loops through all the genomic fasta (.fna) files and uploads the genomic fasta file as well as the corresponding gff3 files and eggnog emapper annotation files; and uploads this data into the MYSQL database (which has been specified in the database.ini file) using galEupy which has just been installed in the system. 
+
 ### test_dataset
-In the current directory, where this README.md file is hosted, another directory has been made called test_dataset. 
+In the current directory, where this README.md file is kept, another directory has been made called test_dataset. 
 It includes a README.md file, database and web configuration files; and a link to a zip file containing all the genomic files hosted in  
 Google Drive.
 
-The naming convention followed in the test dataset is first three characters of genus, followed by first three characters of species, an underscore and then the name of the strain. For eg, for the isolate Phytophthora melonis strain CJ26, the basename would be Phymel_CJ26.
+The naming convention followed in the test dataset is first three characters of genus, followed by first three characters of species, an underscore and then the name of the strain. 
+For eg, for the isolate Phytophthora melonis strain CJ26, the basename would be Phymel_CJ26.
+The corresponding files for this isolate are therefore Phymel_CJ26.fna, Phymel_CJ26_with_product_name.gff3 and Phymel_CJ26_eggnog.emapper.annotations respectively. 
 
-The corresponding files are therefore Phymel_CJ26.fna, Phymel_CJ26_with_product_name.gff3 and Phymel_CJ26_eggnog.emapper.annotations respectively. 
+To test the pipeline, the genomic files hosted in the test_dataset.zip file must be extracted and kept in this particular directory. 
 
 ### Running uploader pipeline
- 
  A pipeline has been written in bash, called "upload_genomes_pipeline.sh", which is present in this particular directory. It requires the following files for each organism strain :
 1) FASTA file : ${basename}.fna
 2) GFF file : ${basename}_with_product_name.gff3
@@ -129,12 +136,7 @@ The corresponding files are therefore Phymel_CJ26.fna, Phymel_CJ26_with_product_
 
 The name of the files should follow this convention. The basename can be anything. In the test_dataset, three strains of the organism Phytophthora melonis have been included. 
 
-
 Usage 
 ```commandline
 ./upload_genomes_pipeline.sh
 ```
-To test the pipeline, the genomic files hosted in the test_dataset.zip file must be extracted and kept in this particular directory. 
-
-The bash script loops through all the fna files and uploads the genomic fasta file as well as the corresponding gff3 files and eggnog emapper annotation files using galEupy which has just been installed in the system. 
-
