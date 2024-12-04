@@ -158,7 +158,8 @@ IP_ADDRESS:
 The port and IP address of the machine where the NextJS web application will be launched is specified here. 
 
 ### Running the web application
-A bash pipeline called "modify_nextjs_app.sh" has been created and kept in this particular directory. 
+
+A bash pipeline called "modify_nextjs_app.sh" has been created and kept in this particular directory. This clones the NextJS web application which has been created in conjunction with galEupy from the GitHub repository where it has been hosted, makes all the required changes to it and finally launches it on the IP address and the port which has been specified in the web.ini file.
 
 #### Usage
 ```commandline
