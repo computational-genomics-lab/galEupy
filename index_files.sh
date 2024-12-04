@@ -2,7 +2,7 @@
 #Indexing all the fasta and gff3 files before transferring them to the public directory of the nextjs web application
 
 # Directory containing the GFF3 files (current directory)
-input_dir="."
+input_dir="genomes"
 
 # Step 1: Process each *_with_product_name.gff3 file
 for input_file in "${input_dir}"/*_with_product_name.gff3; do
