@@ -140,3 +140,26 @@ Usage
 ```commandline
 ./upload_genomes_pipeline.sh
 ```
+## Running the web application
+
+Finally, after uploading all the genomic data into the MYSQL database specified in the database.ini file, the NextJS web application can be launched directly using another bash pipeline which is also present in this particular directory, where this README.md file is located. 
+
+### Pre-requisite software 
+To run the web application, there are some third party software which needs to be installed in the system.
+ 1) Latest versions of node and npm. In the test server these versions were v19.6.1 and 9.4.0 respectively.
+ 2) For visualisation : JBrowse CLI, samtools and gt must be installed
+
+### Configuration file
+A web.ini file has been included in the test_dataset directory. It has the following format :
+```commandline
+PORT: 
+IP_ADDRESS: 
+```
+The port and IP address of the machine where the NextJS web application will be launched is specified here. 
+
+### Running the web application
+A bash pipeline called "modify_nextjs_app.sh" has been created and kept in this particular directory. 
+Usage
+```commandline
+./modify_nextjs_app.sh
+```
