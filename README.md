@@ -159,7 +159,8 @@ The port and IP address of the machine where the NextJS web application will be 
 
 ### Running the web application
 A bash pipeline called "modify_nextjs_app.sh" has been created and kept in this particular directory. 
-Usage
+
+#### Usage
 ```commandline
 ./modify_nextjs_app.sh
 ```
