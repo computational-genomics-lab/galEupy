@@ -5,7 +5,7 @@
 version=1
 declare -A uploaded_organisms # Associative array to track already uploaded organisms
 
-for file in *.fna; do
+for file in genomes/*.fna; do
     # Get the base name of the file (without the extension)
     base=$(basename "$file" .fna)
 
@@ -53,9 +53,12 @@ scaffold_prefix:
 
 [filePath]
 GenBank:
+
+
+
 FASTA: $file
-GFF: $gff_file
-eggnog: $eggnog_file
+GFF: genomes/$gff_file
+eggnog: genomes/$eggnog_file
 
 EOF
 
