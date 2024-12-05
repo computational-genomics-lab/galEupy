@@ -82,22 +82,19 @@ else
     exit 1
 fi
 
-#move the files into the public genome data directory
-echo "Creating a genomes directory and transferring all the files into the directory"
-#creating the directory
-mkdir -p P_melonis_web_app/public/genomes
+
+#downloading the pre-requisite software
+sudo n stable #node
+sudo apt install npm #npm
+sudo apt install genometools
+sudo apt install samtools #for indexing gff and fna files respectively
+npm install -g @jbrowse/cli #for installing cli version of jbrowse2
+
 
 #creating the index files
 ./index_files.sh
-
 #moving
-for file in *.fna; do
- # Get the base name of the file (without the extension)
- base=$(basename "$file" .fna)
- cp "$base".fna* P_melonis_web_app/public/genomes
- cp "$base"_with_product_name.sorted.gff3* P_melonis_web_app/public/genomes
- #mv "$base"_eggnog.emapper.annotations P_melonis_web_app/public/genomes
-done
+mv genomes P_melonis_web_app/public/
 
 #prepare the config file for jbrowse2 visualisation
 ./P_melonis_web_app/pages/components/visualization/track_adder.sh
