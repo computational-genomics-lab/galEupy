@@ -154,10 +154,7 @@ Usage
 
 Finally, after uploading all the genomic data into the MYSQL database specified in the database.ini file, the NextJS web application can be launched directly using another bash pipeline which is also present in this particular directory, where this README.md file is located. 
 
-### Pre-requisite software 
-To run the web application, there are some third party software which needs to be installed in the system.
- 1) Latest versions of node and npm. In the test server these versions were v19.6.1 and 9.4.0 respectively.
- 2) For visualisation : JBrowse CLI, samtools and gt must be installed
+
 
 ### Configuration file
 A web.ini file has been included in the test_dataset directory. It has the following format :
@@ -171,6 +168,13 @@ The port and IP address of the machine where the NextJS web application will be 
 
 A bash pipeline called "modify_nextjs_app.sh" has been created and kept in this particular directory. This clones the NextJS web application which has been created in conjunction with galEupy from the GitHub repository where it has been hosted, makes all the required changes to it and finally launches it on the IP address and the port which has been specified in the web.ini file.
 
+#### Pre-requisite software 
+To run the web application, there are some third party software which needs to be installed in the system.
+ 1) Latest versions of node and npm. In the test server these versions were v19.6.1 and 9.4.0 respectively.
+ 2) For visualisation : JBrowse CLI, samtools and gt must be installed
+    These are all installed by the "modify_nextjs_app.sh" bash pipeline. The user has to provide the sudo password as some of this software will be installed globally in the user's system.
+    
+    
 #### Usage
 ```commandline
 ./modify_nextjs_app.sh
