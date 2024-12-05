@@ -111,3 +111,5 @@ echo "Modifications completed. Running the app using npm now ..."
 cd P_melonis_web_app
 npm install
 npm run dev
+
+echo "App running on $IP_ADDRESS:$PORT"
