@@ -145,7 +145,7 @@ The name of the files should follow this convention. The basename can be anythin
 
 Usage 
 ```commandline
-./upload_genomes_pipeline.sh
+bash upload_genomes_pipeline.sh
 ```
 ## Running the web application
 
@@ -174,5 +174,5 @@ To run the web application, there are some third party software which needs to b
     
 #### Usage
 ```commandline
-./modify_nextjs_app.sh
+bash modify_nextjs_app.sh
 ```
