@@ -9,10 +9,7 @@ pip install galEupy
 ```
 
 ### For latest development version
-```commandline
-pip install git+https://github.com/computational-genomics-lab/galEupy.git
-```
-or
+
 ```batch
 git clone https://github.com/computational-genomics-lab/galEupy.git
 cd galEupy
