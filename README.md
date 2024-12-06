@@ -19,7 +19,6 @@ pip install .
 ## Usage
 ```batch
 galEupy --help
-
 ```
 
 ```batch
@@ -132,8 +131,9 @@ The naming convention followed for the basename of a particular isolate is: firs
 For eg, for the isolate Phytophthora melonis strain CJ26, the basename would be Phymel_CJ26.
 The corresponding files for this isolate are therefore Phymel_CJ26.fna, Phymel_CJ26_with_product_name.gff3 and Phymel_CJ26_eggnog.emapper.annotations respectively. 
 
-To test the pipeline, the genomic files hosted in the Google Drive link must be extracted.
-It needs to be placed in a directory called "**genomes**" in the current directory, where this particular README.md file is located. 
+- To test the pipeline, the "test_datasets.zip" file hosted in the Google Drive link must be extracted in the **current** directory which is "**galEupy**".
+- Prepare the configuration files (database.ini and web.ini) in the current directory. Sample config files have been provided in the "test_datasets" directory. You can move them to the current "galEupy" directory and modify them according to the instructions provided in this README.md file. 
+- Rename "test_datasets" to "**genomes**". 
 
 ### Running uploader pipeline
  A pipeline has been written in bash, called "upload_genomes_pipeline.sh", which is present in this particular directory. It requires the following files for each organism strain :
