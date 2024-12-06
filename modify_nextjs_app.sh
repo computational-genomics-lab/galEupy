@@ -86,6 +86,7 @@ fi
 #downloading the pre-requisite software
 sudo n stable #node
 sudo apt install npm #npm
+sudo apt install tabix 
 sudo apt install genometools
 sudo apt install samtools #for indexing gff and fna files respectively
 npm install -g @jbrowse/cli #for installing cli version of jbrowse2
