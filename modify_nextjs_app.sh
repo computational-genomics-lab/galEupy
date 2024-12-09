@@ -86,18 +86,19 @@ fi
 #downloading the pre-requisite software
 sudo n stable #node
 sudo apt install npm #npm
+sudo apt install tabix 
 sudo apt install genometools
 sudo apt install samtools #for indexing gff and fna files respectively
 npm install -g @jbrowse/cli #for installing cli version of jbrowse2
 
 
 #creating the index files
-./index_files.sh
+bash index_files.sh
 #moving
 mv genomes P_melonis_web_app/public/
 
 #prepare the config file for jbrowse2 visualisation
-./P_melonis_web_app/pages/components/visualization/track_adder.sh
+bash P_melonis_web_app/pages/components/visualization/track_adder.sh
 
 #Replace the ip address and the port
 #bash P_melonis_web_app/string_replace.sh "./test" "eumicrobedb.org" "http://$IP_ADDRESS:$PORT"
