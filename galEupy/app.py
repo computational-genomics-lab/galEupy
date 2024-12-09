@@ -103,7 +103,6 @@ class App(ConfigFileHandler):
 
         """
         ConfigFileHandler.__init__(self, db_config_file, path_config_file, org_config_file)
-        _logger.info("AP Test.")
 
     @property
     def check_db_status(self):
@@ -306,7 +305,6 @@ class CentralDogmaAnnotator(AnnotationCategory, Taxonomy, TableStatusID):
 
         annotation_obj = AnnotationData(self.org_config)
         feature_dct = annotation_obj.prepare_gal_model()
-
         fasta_contigs = list(annotation_obj.sequence_dct.keys())
         gff_contigs = list(feature_dct.keys())
         contig_names_compare = self.compare_contig_names(fasta_contigs, gff_contigs)

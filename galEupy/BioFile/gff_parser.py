@@ -54,27 +54,25 @@ class ReadGFF3:
                                 dct[source]['pseudogene'][super_parent_id]['mrna'][parent_id]['cds']['location'] = [location_list]
                         else:
                             try:
-                                dct[source]['gene'][super_parent_id]['mrna'][parent_id]['cds']['location'].append(
-                                    [cols[3], cols[4]])
+                                dct[source]['gene'][super_parent_id]['mrna'][parent_id]['cds']['location'].append(location_list)
                             except AttributeError:
-                                dct[source]['gene'][super_parent_id]['mrna'][parent_id]['cds']['location'] = [
-                                    [cols[3], cols[4]]]
+                                dct[source]['gene'][super_parent_id]['mrna'][parent_id]['cds']['location'] = [location_list]
 
                     if re.search(r'exon', cols[2], re.I):
                         super_parent_id, parent_id = gff_line_obj.get_super_parent_id(gene_id_dct, source)
-                        location_str = [[cols[3], cols[4]]]
+                        location_str = [cols[3], cols[4]]
                         if super_parent_id is not None and parent_id is not None:
                             rna_type = gff_line_obj.id_to_rna_type(gene_id_dct, source, parent_id)
                             if super_parent_id in self.pseudo_gene_id_dct:
                                 try:
                                     dct[source]['pseudogene'][super_parent_id][rna_type][parent_id]['exon']['location'].append(location_str)
                                 except AttributeError:
-                                    dct[source]['pseudogene'][super_parent_id][rna_type][parent_id]['exon']['location'] = location_str
+                                    dct[source]['pseudogene'][super_parent_id][rna_type][parent_id]['exon']['location'] = [location_str]
                             else:
                                 try:
                                     dct[source]['gene'][super_parent_id][rna_type][parent_id]['exon']['location'].append(location_str)
                                 except AttributeError:
-                                    dct[source]['gene'][super_parent_id][rna_type][parent_id]['exon']['location'] = location_str
+                                    dct[source]['gene'][super_parent_id][rna_type][parent_id]['exon']['location'] = [location_str]
                                         
         return dct
     
