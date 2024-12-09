@@ -31,6 +31,7 @@ class AnnotationData:
     def prepare_gal_model(self):
         # model_gff_dct = create_gal_model_dct(self.sequence_dct, self.gff_dct, self.product_dct)
         model_gff_obj = ModelGFFDict(self.sequence_dct, self.gff_dct, self.product_dct)
+        # print(json.dumps(self.gff_dct, indent=3))
         model_gff_dct = model_gff_obj.create_model_dct()
         return model_gff_dct
 
@@ -40,15 +41,14 @@ class ModelGFFDict:
         self.sequence_dct = sequence_dct
         self.gff_dct = gff_dct
         self.product_dct = product_dct
-        self.model_dct = gff_dct
+        self.model_dct = gff_dct # this dct is a placehoder for further processing
         self.delete_list = []
 
     def create_model_dct(self):
-
+        # print(self.gff_dct)
         for contig_id, sequence in self.sequence_dct.items():
             if contig_id in self.gff_dct:
                 if 'gene' in self.gff_dct[contig_id]:
-
                     for gene_id, gene_dct in self.gff_dct[contig_id]['gene'].items():
                         if gene_id is None:
                             self.delete_list.append([contig_id, 'gene', gene_id])
@@ -60,46 +60,46 @@ class ModelGFFDict:
             del self.model_dct[del_list[0]][del_list[1]][del_list[2]]
 
         return self.model_dct
-
+    
     def process_gene_dict(self, contig_id, gene_id):
-
         gene_dct = self.gff_dct[contig_id]['gene'][gene_id]
-
         gene_sequence, strand = get_gene_sequence(self.sequence_dct[contig_id], gene_dct['location'])
 
         # Add gene sequence in the feature dictionary
         self.model_dct[contig_id]['gene'][gene_id]['gene_sequence'] = gene_sequence
-
-        if 'mrna' in gene_dct:
+       
+        # filter rna keys
+        rna_keys =  [key_name for key_name in list(gene_dct.keys()) if key_name.endswith('rna')] 
+        for rna_type in rna_keys:
             # for each mrna id
-            for rna_id, rna_dct in gene_dct['mrna'].items():
+            for rna_id, rna_dct in gene_dct[rna_type].items():
                 if self.product_dct:
+                    product = ""
                     if 'product' not in rna_dct:
                         if rna_id in self.product_dct:
                             product = self.product_dct[rna_id]
-                        else:
+                        elif rna_type =="mrna":
                             product = "Hypothetical Protein"
 
-                        self.model_dct[contig_id]['gene'][gene_id]['mrna'][rna_id]['product'] = product
+                        self.model_dct[contig_id]['gene'][gene_id][rna_type][rna_id]['product'] = product
 
                 if 'cds' in rna_dct:
                     location_list = rna_dct['cds']['location']
                     if 'protein_sequence' not in rna_dct:
                         merged_cds = merge_cds_list(self.sequence_dct[contig_id], location_list, strand)
                         protein_seq = translate(merged_cds)
-                        self.model_dct[contig_id]['gene'][gene_id]['mrna'][rna_id]['protein_sequence'] = \
-                            protein_seq
+                        self.model_dct[contig_id]['gene'][gene_id][rna_type][rna_id]['protein_sequence'] = protein_seq
 
                 if 'exon' not in rna_dct:
-                    self.model_dct[contig_id]['gene'][gene_id]['mrna'][rna_id]['exon'] = rna_dct['cds']
+                    self.model_dct[contig_id]['gene'][gene_id][rna_type][rna_id]['exon'] = rna_dct['cds']
 
                 if 'location' not in rna_dct:
                     if 'cds' in rna_dct:
                         location_list = rna_dct['cds']['location']
                         location = get_start_end_list(location_list, strand)
-                        self.model_dct[contig_id]['gene'][gene_id]['mrna'][rna_id]['location'] = location
+                        self.model_dct[contig_id]['gene'][gene_id][rna_type][rna_id]['location'] = location
                     else:
-                        self.model_dct[contig_id]['gene'][gene_id]['mrna'][rna_id]['location'] = gene_dct['location']
+                        self.model_dct[contig_id]['gene'][gene_id][rna_type][rna_id]['location'] = gene_dct['location']
 
 
 def create_gal_model_dct(sequence_dct, gff_dct, blast_dct={}):

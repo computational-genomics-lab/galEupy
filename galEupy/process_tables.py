@@ -18,13 +18,13 @@ class TableProcessUtility(TableUtility):
         gene_na_feature_id = self.NaFeatureId
         self.NaFeatureId += 1
         self.na_location_Id += 1
-        if 'tRNA' in gene_dct:
-            for rna_id, rna_dct in gene_dct['tRNA'].items():
+        if 'trna' in gene_dct:
+            for rna_id, rna_dct in gene_dct['trna'].items():
                 data_type = 'tRNA'
                 self.process_other_rna_data(rna_id, rna_dct, data_type, gene_na_feature_id, gene_data)
 
-        if 'rRNA' in gene_dct:
-            for rna_id, rna_dct in gene_dct['rRNA'].items():
+        if 'rrna' in gene_dct:
+            for rna_id, rna_dct in gene_dct['rrna'].items():
                 data_type = 'rRNA'
                 self.process_other_rna_data(rna_id, rna_dct, data_type, gene_na_feature_id, gene_data)
 

@@ -74,24 +74,20 @@ def main():
         org_app_obj.remove_organism_record()
 
     if args.upload:
+        app = App(db_config_file, path_config_file, org_config_file)
+        app.upload_schema()
         if args.upload == 'all':
-            app = App(db_config_file, path_config_file, org_config_file)
-            app.upload_schema()
+            
             app.process_central_dogma_annotation()
             app.import_protein_annotation()
             logger.info("Table max ids after the upload")
             app.db_table_logs()
-
         elif args.upload == 'centraldogma':
-            app = App(db_config_file, path_config_file, org_config_file)
-            app.upload_schema()
             app.process_central_dogma_annotation()
             logger.info("Table max ids after the upload")
             app.db_table_logs()
 
         elif args.upload == 'proteinannotation':
-            app = App(db_config_file, path_config_file, org_config_file)
-            app.upload_schema()
             app.import_protein_annotation()
             logger.info("Table max ids after the upload")
             app.db_table_logs()

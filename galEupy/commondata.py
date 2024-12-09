@@ -96,7 +96,7 @@ class UploadCommonData(DefaultSharedData):
 
     def upload_taxonomy_data(self):
         if self.row_taxonomy == 0:
-            _logger.debug("Upload shared taxonomy data data")
+            _logger.debug("Upload shared taxonomy data")
             query = """LOAD DATA LOCAL INFILE '{}' INTO TABLE taxon FIELDS TERMINATED BY '\t' 
                 OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n' (ncbi_taxon_ID, parent_ID, taxon_name, taxon_strain,
                 `rank`, genetic_code_ID, mitochondrial_genetic_code_ID);""".format(self.taxonomy_file)

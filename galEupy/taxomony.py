@@ -34,19 +34,15 @@ class OrganismName:
             species = org[0]
             genus = org[1]
 
-            spc = list(species)
-            genus = list(genus)
             taxonomy_detail = ''
             if len(org) == 4:
                 taxonomy_detail = org[2] + org[3]
             elif len(org) == 3:
                 taxonomy_detail = org[2]
 
-            sp = spc[0] + spc[1] + spc[2]
-            gen = genus[0] + genus[1] + "_"
             taxonomy_detail = re.sub(r'\s+', "", taxonomy_detail)
-            gene_name = sp + gen + taxonomy_detail
-            return gene_name
+            organism_prefix = species[:3] + genus[:4] + "_" + taxonomy_detail
+            return organism_prefix
 
     @property
     def org_short_name(self):

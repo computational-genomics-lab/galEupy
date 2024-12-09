@@ -44,10 +44,10 @@ class BaseApp(DatabaseConfig):
         schema_existence = schema.check_schema_existence()
 
         if schema_existence:
-            _logger.debug('Database Schemas already exist')
+            _logger.debug('Database Schema already exist')
             return True
         else:
-            _logger.debug('Database Schemas are missing')
+            _logger.debug('Database Schema is missing')
             return False
 
     def db_table_log(self):
@@ -103,6 +103,7 @@ class App(ConfigFileHandler):
 
         """
         ConfigFileHandler.__init__(self, db_config_file, path_config_file, org_config_file)
+        _logger.info("AP Test.")
 
     @property
     def check_db_status(self):
@@ -118,7 +119,7 @@ class App(ConfigFileHandler):
             database_schema(self.db_config_file)
             _logger.debug("Uploading Schema: Completed")
         else:
-            _logger.info("This Database Schema already exists")
+            _logger.info("Database Schema already exists")
 
     def process_central_dogma_annotation(self):
         _logger.debug("Started processing central dogma data")
@@ -137,14 +138,16 @@ class App(ConfigFileHandler):
                 app1.process_genbank_annotation()
                 app1.update_organism_table()
 
-            if app1.annotation_type == 'Partial_Annotation':
-                app1.process_partial_annotations()
-                app1.update_organism_table()
-                # app1.import_protein_annotation()
-
-            if app1.annotation_type == 'Minimal_Annotation':
-                app1.process_partial_annotations()
-                app1.update_organism_table()
+            if app1.annotation_type in ['Partial_Annotation', 'Minimal_Annotation']:
+                process_status = app1.process_partial_annotations()
+                if process_status:
+                    app1.update_organism_table()
+                    # app1.import_protein_annotation()
+                    _logger.info("Data processing successful")
+                    return True
+                else:
+                    _logger.info("Data upload failed")
+                    return False
 
             if app1.annotation_type == 'No_Annotation':
                 _logger.error("Under development")
@@ -298,13 +301,51 @@ class CentralDogmaAnnotator(AnnotationCategory, Taxonomy, TableStatusID):
             _logger.error("File not found: {}".format(self.org_config.GenBank))
 
     def process_partial_annotations(self):
+        _logger.info("Partial annotation step")
         random_string = general_utility.random_string(20)
 
         annotation_obj = AnnotationData(self.org_config)
         feature_dct = annotation_obj.prepare_gal_model()
 
-        self.minimal_annotation_data(annotation_obj.sequence_dct, feature_dct)
-        self.file_upload.upload_central_dogma_data()
+        fasta_contigs = list(annotation_obj.sequence_dct.keys())
+        gff_contigs = list(feature_dct.keys())
+        contig_names_compare = self.compare_contig_names(fasta_contigs, gff_contigs)
+        if contig_names_compare:
+            self.minimal_annotation_data(annotation_obj.sequence_dct, feature_dct)
+            self.file_upload.upload_central_dogma_data()
+            return True
+        else:
+            return False
+        
+    @staticmethod
+    def compare_contig_names(fasta_contigs, gff_contigs):
+        """
+        Compare two lists of contig names from FASTA and GFF files to find common entries.
+
+        This method identifies and logs the number of contigs that are common between
+        the provided FASTA and GFF file contig lists. If no common contigs are found,
+        an error is logged, and the method returns False. If common contigs exist,
+        the method logs the count and details at the debug level and returns True.
+
+        Args:
+            fasta_contigs (list): List of contig names extracted from the FASTA file.
+            gff_contigs (list): List of contig names extracted from the GFF file.
+
+        Returns:
+            bool: True if common contigs are found, False otherwise.
+
+        Logs:
+            - Error if no common contigs are found.
+            - Debug information about the number of common contigs and the sizes
+            of the provided FASTA and GFF lists.
+        """
+       
+        common_contigs = list(set(fasta_contigs) & set(gff_contigs))
+        if len(common_contigs) == 0:
+            _logger.error(f"There is no common contigs:\n\t FASTA file: {len(fasta_contigs)}, GFF file: {len(gff_contigs)}")
+            return False
+        _logger.debug(f"There are {len(common_contigs)} common contigs between FASTA and GFF file.\n\t FASTA file: {len(fasta_contigs)}, GFF file: {len(gff_contigs)}")
+        return True
 
     def minimal_annotation_data(self, sequence_dct, feature_dct):
 
@@ -315,20 +356,24 @@ class CentralDogmaAnnotator(AnnotationCategory, Taxonomy, TableStatusID):
                                         taxonomy_id, self.org_config.version)
         gal_table.show_id_log()
         gal_table.increase_by_value(1)
-
-        for scaffold, scaffold_dct in feature_dct.items():
-            if scaffold in sequence_dct:
-                sequence = sequence_dct[scaffold]
+        for idx, (scaffold, sequence) in enumerate(sequence_dct.items()):
+            if scaffold in feature_dct:
+                scaffold_dct = feature_dct[scaffold]
                 gal_table.na_sequenceimp_scaffold(gal_table.NaSequenceId, scaffold, sequence)
                 scaffold_na_sequence_id = gal_table.NaSequenceId
                 gal_table.NaSequenceId += 1
-                for feature, feature_dct in scaffold_dct.items():
+                for feature, scaffold_feature_dct in scaffold_dct.items():
                     if feature == 'gene':
-                        for gene_id, gene_dct in feature_dct.items():
+                        for gene_id, gene_dct in scaffold_feature_dct.items():
                             gal_table.process_gff_gene_data(scaffold, gene_id, gene_dct, scaffold_na_sequence_id)
                             gal_table.NaSequenceId += 1
                     elif feature == 'repeat_region':
-                        gal_table.process_repeat_data(feature, feature_dct, scaffold_na_sequence_id)
+                        gal_table.process_repeat_data(feature, scaffold_feature_dct, scaffold_na_sequence_id)
+            else:
+                _logger.debug(f"Contig not found in the gff({idx}): {scaffold}")
+                gal_table.na_sequenceimp_scaffold(gal_table.NaSequenceId, scaffold, sequence)
+                scaffold_na_sequence_id = gal_table.NaSequenceId
+                gal_table.NaSequenceId += 1
 
     def import_protein_annotation(self):
         _logger.debug("Processing protein annotation data: start")
