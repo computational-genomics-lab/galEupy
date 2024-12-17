@@ -64,5 +64,5 @@ EOF
 
     # Upload using galEupy
     # It is assumed that a database.ini file is already present in the working directory
-    galEupy -db database.ini -org organism.ini -v d -upload All -log $strain.log
+    galEupy -db database.ini -org organism.ini -v d -upload All -log "$strain_name.log"
 done
