@@ -1,7 +1,7 @@
 from setuptools import setup
 
 # exec(open('galEupy/version.py').read())
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 description = "Python module for gal"
 
 with open("README.md", "r") as fh:
@@ -10,8 +10,8 @@ with open("README.md", "r") as fh:
 setup(
     name='galEupy',
     version=__version__,
-    author='Arijit Panda, CGLAB',
-    author_email='arijpanda@csiriicb.res.in',
+    author='Arijit Panda, CGLAB; Aditya Upadhyay, CGLAB',
+    author_email='arijpanda@csiriicb.res.in; aditya.upadhyay@csiriicb.res.in',
     packages=['galEupy'],
     package_dir={'galEupy': 'galEupy'},
     package_data={'galEupy': ['BioFile/*', 'data/DbSchema/*', 'data/DefaultConfig/*', 'data/CommonData/*']},
