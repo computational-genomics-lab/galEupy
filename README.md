@@ -127,12 +127,12 @@ It contains the following :
   genomic gff3 files
   eggnog emapper annotated files. 
 
+##### Generating eggnog emapper annotation files :
+  protein FASTA files were processed by EggNOG-mapper (version : emapper-2.1.4-2-6-g05f27b0) using the EggNOG database v5.0.2 
+  
 The naming convention followed for the basename of a particular isolate is: first three characters of genus, followed by first three characters of species, an underscore and then the name of the strain. 
 For eg, for the isolate Phytophthora melonis strain CJ26, the basename would be Phymel_CJ26.
 The corresponding files for this isolate are therefore Phymel_CJ26.fna, Phymel_CJ26_with_product_name.gff3 and Phymel_CJ26_eggnog.emapper.annotations respectively. 
-
-#### Generating eggnog emapper annotation files :
-  protein FASTA files were processed by EggNOG-mapper (version : emapper-2.1.4-2-6-g05f27b0) using the EggNOG database v5.0.2 
 
 
 - To test the pipeline, the "test_datasets.zip" file hosted in the Google Drive link must be extracted in the **current** directory which is "**galEupy**".
