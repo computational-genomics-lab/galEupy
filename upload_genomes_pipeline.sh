@@ -15,8 +15,14 @@ for file in genomes/*.fna; do
     # Extract the organism name
     organism_name=$(echo "$header" | awk -F' ' '/>/{print $2, $3}')
 
-    # Extract the strain name
-    strain_name=$(echo "$header" | awk -F'strain ' '{print $2}' | awk '{print $1}')
+    # Check if the string "strain" is in the header
+    if echo "$header" | grep -q "strain"; then
+        # Extract the strain name
+        strain_name=$(echo "$header" | awk -F'strain ' '{print $2}' | awk '{print $1}')
+    else
+        # Extract the fourth word (after $3) if "strain" is not present
+        strain_name=$(echo "$header" | awk '{print $4}')
+    fi
 
     gff_file="${base}_with_product_name.gff3"
     eggnog_file="${base}_eggnog.emapper.annotations"
