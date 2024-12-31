@@ -128,7 +128,7 @@ It contains the following :
   eggnog emapper annotated files. 
 
 ##### Generating eggnog emapper annotation files :
-  protein FASTA files were processed by EggNOG-mapper (version : emapper-2.1.4-2-6-g05f27b0) using the EggNOG database v5.0.2 
+  protein FASTA files were processed by EggNOG-mapper (version : emapper-2.1.4-2-6-g05f27b0) using the EggNOG database v5.0.2. Mode of BLAST : diamond 
   
 The naming convention followed for the basename of a particular isolate is: first three characters of genus, followed by first three characters of species, an underscore and then the name of the strain. 
 For eg, for the isolate Phytophthora melonis strain CJ26, the basename would be Phymel_CJ26.
