@@ -1,56 +1,57 @@
 #!/bin/bash
 
+# Prompt the user to enter the path for cloning the repository
+read -p "Enter the directory where the web application should be cloned (default: current working directory): " CUSTOM_PATH
+
+# Use the current working directory if no path is provided
+if [ -z "$CUSTOM_PATH" ]; then
+    CUSTOM_PATH=$(pwd)
+fi
+
 # Define variables
 REPO_URL="https://github.com/computational-genomics-lab/P_melonis_web_app"
-DATABASE_JS_PATH="P_melonis_web_app/pages/api/database.js"
-PACKAGE_JSON_PATH="P_melonis_web_app/package.json"
-WEB_INI_PATH="web.ini"
-DATABASE_INI_PATH="database.ini"
-CLONE_DIR="P_melonis_web_app"
+CLONE_DIR="$CUSTOM_PATH/galEupy_webApplication"
+WEB_INI_PATH="$(pwd)/web.ini"
+DATABASE_INI_PATH="$(pwd)/database.ini"
+DATABASE_JS_PATH="$CLONE_DIR/pages/api/database.js"
+PACKAGE_JSON_PATH="$CLONE_DIR/package.json"
 
-# Clone the repository
+# Clone the repository into the specified directory
 if [ ! -d "$CLONE_DIR" ]; then
-    echo "Cloning repository..."
-    git clone "$REPO_URL"
+    echo "Cloning repository to $CLONE_DIR..."
+    git clone "$REPO_URL" "$CLONE_DIR"
 else
-    echo "Repository already cloned."
+    echo "Repository already cloned at $CLONE_DIR."
+fi
+
+# Ensure the web.ini and database.ini files exist in the starting directory
+if [ ! -f "$WEB_INI_PATH" ]; then
+    echo "Error: $WEB_INI_PATH not found in the initial directory."
+    exit 1
+fi
+
+if [ ! -f "$DATABASE_INI_PATH" ]; then
+    echo "Error: $DATABASE_INI_PATH not found in the initial directory."
+    exit 1
 fi
 
 # Extract information from web.ini
-if [ -f "$WEB_INI_PATH" ]; then
-    echo "Reading configuration from $WEB_INI_PATH..."
-    PORT=$(grep -oP '(?<=^PORT: )\d+' "$WEB_INI_PATH")
-    if [ -z "$PORT" ]; then
-        echo "Error: PORT not found in $WEB_INI_PATH."
-        exit 1
-    fi
-    #IP_ADDRESS=$(grep -oP '(?<=^IP_ADDRESS: )\d+' "$WEB_INI_PATH")
-     IP_ADDRESS=$(grep -oP '(?<=^IP_ADDRESS: ).+' "$WEB_INI_PATH")
-
-        if [ -z "$IP_ADDRESS" ]; then
-        echo "Error: IP Address not found in $WEB_INI_PATH."
-        exit 1
-    fi
-    echo "IP adress : $IP_ADDRESS"
-else
-    echo "Error: $WEB_INI_PATH not found."
+echo "Reading configuration from $WEB_INI_PATH..."
+PORT=$(grep -oP '(?<=^PORT: )\d+' "$WEB_INI_PATH")
+IP_ADDRESS=$(grep -oP '(?<=^IP_ADDRESS: ).+' "$WEB_INI_PATH")
+if [ -z "$PORT" ] || [ -z "$IP_ADDRESS" ]; then
+    echo "Error: Missing PORT or IP_ADDRESS in $WEB_INI_PATH."
     exit 1
 fi
 
 # Extract database credentials from database.ini
-if [ -f "$DATABASE_INI_PATH" ]; then
-    echo "Reading database configuration from $DATABASE_INI_PATH..."
-    DB_USER=$(grep -oP '(?<=^db_username : ).+' "$DATABASE_INI_PATH")
-    DB_PASSWORD=$(grep -oP '(?<=^db_password : ).+' "$DATABASE_INI_PATH")
-    DB_HOST=$(grep -oP '(?<=^host : ).+' "$DATABASE_INI_PATH")
-    DB_NAME=$(grep -oP '(?<=^db_name : ).+' "$DATABASE_INI_PATH")
-
-    if [[ -z "$DB_USER" || -z "$DB_PASSWORD" || -z "$DB_HOST" || -z "$DB_NAME" ]]; then
-        echo "Error: Missing database configuration in $DATABASE_INI_PATH."
-        exit 1
-    fi
-else
-    echo "Error: $DATABASE_INI_PATH not found."
+echo "Reading database configuration from $DATABASE_INI_PATH..."
+DB_USER=$(grep -oP '(?<=^db_username : ).+' "$DATABASE_INI_PATH")
+DB_PASSWORD=$(grep -oP '(?<=^db_password : ).+' "$DATABASE_INI_PATH")
+DB_HOST=$(grep -oP '(?<=^host : ).+' "$DATABASE_INI_PATH")
+DB_NAME=$(grep -oP '(?<=^db_name : ).+' "$DATABASE_INI_PATH")
+if [[ -z "$DB_USER" || -z "$DB_PASSWORD" || -z "$DB_HOST" || -z "$DB_NAME" ]]; then
+    echo "Error: Missing database configuration in $DATABASE_INI_PATH."
     exit 1
 fi
 
@@ -82,34 +83,31 @@ else
     exit 1
 fi
 
-
-#downloading the pre-requisite software
-sudo n stable #node
-sudo apt install npm #npm
-sudo apt install tabix 
+# Download prerequisite software
+sudo n stable  # Node.js
+sudo apt install npm
+sudo apt install tabix
 sudo apt install genometools
-sudo apt install samtools #for indexing gff and fna files respectively
-npm install -g @jbrowse/cli #for installing cli version of jbrowse2
+sudo apt install samtools  # For indexing GFF and FNA files
+npm install -g @jbrowse/cli  # JBrowse2 CLI
+sudo apt install ncbi-blast+-legacy  # BLASTable databases
 
-
-#creating the index files
+# Create the index files
 bash index_files.sh
-#moving
-mv genomes P_melonis_web_app/public/
+mv genomes "$CLONE_DIR/public/"
 
-#prepare the config file for jbrowse2 visualisation
-bash P_melonis_web_app/pages/components/visualization/track_adder.sh
+# Prepare the JBrowse2 configuration
+bash "$CLONE_DIR/pages/components/visualization/track_adder.sh"
 
-#Replace the ip address and the port
-#bash P_melonis_web_app/string_replace.sh "./test" "eumicrobedb.org" "http://$IP_ADDRESS:$PORT"
-bash P_melonis_web_app/string_replace.sh "P_melonis_web_app/pages" "http:\/\/eumicrobedb.org:3001" "http:\/\/$IP_ADDRESS:$PORT"
-bash P_melonis_web_app/string_replace.sh "P_melonis_web_app/pages" "..\/..\/..\/public" "http:\/\/$IP_ADDRESS:$PORT"
+# Replace IP address and port
+bash "$CLONE_DIR/string_replace.sh" "$CLONE_DIR/pages" "http:\/\/eumicrobedb.org:3001" "http:\/\/$IP_ADDRESS:$PORT"
+bash "$CLONE_DIR/string_replace.sh" "$CLONE_DIR/pages" "..\/..\/..\/public" "http:\/\/$IP_ADDRESS:$PORT"
 
-#Display success message
-echo "Modifications completed. Running the app using npm now ..."
+# Display success message
+echo "Modifications completed. Running the app using npm now..."
 
-#open the P_melonis directory and launch the web application
-cd P_melonis_web_app
+# Change directory and run the application
+cd "$CLONE_DIR"
 npm install
 npm run dev
 
