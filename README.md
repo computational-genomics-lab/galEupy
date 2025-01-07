@@ -2,11 +2,7 @@
 # galEupy
 Python module for GAL. It does data processing.
  
-## Installation
-### For latest pip version
-```commandline
-pip install galEupy
-```
+
 
 ### For latest development version
 
