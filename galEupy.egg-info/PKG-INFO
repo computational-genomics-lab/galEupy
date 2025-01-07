@@ -10,11 +10,7 @@ Description:
         # galEupy
         Python module for GAL. It does data processing.
          
-        ## Installation
-        ### For latest pip version
-        ```commandline
-        pip install galEupy
-        ```
+        
         
         ### For latest development version
         
@@ -62,7 +58,7 @@ Description:
         ### Upload Genome data
         Usage to upload a genome
         ```commandline
-        galEupy -db <db_configuration_file> -org <organism_configuration_file> -path <path_configuration_file> -v d -upload All
+        galEupy -db <db_configuration_file> -org <organism_configuration_file> -v d -upload All
         ```
         Both database and organism configuration files are required to upload the genome. Configuration files are in ini format. 
         
@@ -74,7 +70,7 @@ Description:
         db_password : 
         host : 
         db_name : 
-        port:
+        
         ```
         #### Format for organism configuration file
         The version denotes the different strains of the same species if they are available. So in the configuration file, the first strain to be uploaded has version: 1, the second strain has version: 2 and so on. 
@@ -91,23 +87,27 @@ Description:
         scaffold_prefix:
         
         [filePath]
+        # Here give path with respect to base galEupy installation
+        # if galEupy is installed in /home/xx/galEupy and your data is in /home/xx/galEupy/genome
+        # then give the path is genome/test.fna; genome/test.gff; genome/eggnog etc.
         FASTA:
         GFF:
         eggnog: 
         ```
         
-        ### View GAL database log
+        ### View GAL database information
         Usage:
         ```commandline
         galEupy -v d -db <db_configuration_file> -info
         ```
+        
         
         ### Remove an organism from gal database
         Usage
         ```commandline
         galEupy -v d -db <db_configuration_file> -org <organism_configuration_file> -remove_org
         ```
-        Here, it finds the organism details for the organism configuration file and then deletes the records related it.
+        Here, it finds the organism details for the organism configuration file and then deletes the records related it. The shared resources however are left intact. This includes the taxon table, go_term table, genetic_code table and COG_CATEGORIES table
         
         ### Remove entire GAL related databases
         Usage
