@@ -54,7 +54,7 @@ optional arguments:
 ### Upload Genome data
 Usage to upload a genome
 ```commandline
-galEupy -db <db_configuration_file> -org <organism_configuration_file> -path <path_configuration_file> -v d -upload All
+galEupy -db <db_configuration_file> -org <organism_configuration_file> -v d -upload All
 ```
 Both database and organism configuration files are required to upload the genome. Configuration files are in ini format. 
 
@@ -66,7 +66,7 @@ db_username :
 db_password : 
 host : 
 db_name : 
-port:
+
 ```
 #### Format for organism configuration file
 The version denotes the different strains of the same species if they are available. So in the configuration file, the first strain to be uploaded has version: 1, the second strain has version: 2 and so on. 
@@ -83,6 +83,9 @@ SequenceType: chromosome
 scaffold_prefix:
 
 [filePath]
+# Here give path with respect to base galEupy installation
+# if galEupy is installed in /home/xx/galEupy and your data is in /home/xx/galEupy/genome
+# then give the path is genome/test.fna; genome/test.gff; genome/eggnog etc.
 FASTA:
 GFF:
 eggnog: 
