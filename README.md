@@ -103,7 +103,7 @@ Usage
 ```commandline
 galEupy -v d -db <db_configuration_file> -org <organism_configuration_file> -remove_org
 ```
-Here, it finds the organism details for the organism configuration file and then deletes the records related it.
+Here, it finds the organism details for the organism configuration file and then deletes the records related it. The shared resources however are left intact. This includes the taxon table, go_term table, genetic_code table and COG_CATEGORIES table
 
 ### Remove entire GAL related databases
 Usage
