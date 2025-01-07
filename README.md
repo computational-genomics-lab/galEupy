@@ -91,11 +91,12 @@ GFF:
 eggnog: 
 ```
 
-### View GAL database log
+### View GAL database information
 Usage:
 ```commandline
 galEupy -v d -db <db_configuration_file> -info
 ```
+
 
 ### Remove an organism from gal database
 Usage
