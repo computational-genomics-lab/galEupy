@@ -81,7 +81,7 @@ scaffold_prefix:
 [filePath]
 # Here give path with respect to base galEupy installation
 # if galEupy is installed in /home/xx/galEupy and your data is in /home/xx/galEupy/genome
-# then give the path is genome/test.fna; genome/test.gff; genome/eggnog etc.
+# then give the path as: genome/test.fna; genome/test.gff; genome/eggnog etc.
 FASTA:
 GFF:
 eggnog: 
