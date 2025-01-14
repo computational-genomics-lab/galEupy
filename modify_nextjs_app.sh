@@ -35,10 +35,24 @@ if [ ! -f "$DATABASE_INI_PATH" ]; then
     exit 1
 fi
 
+# Function to parse INI files
+parse_ini_file() {
+    local file="$1"
+    local key="$2"
+    awk -F ':' -v key="$key" '
+        BEGIN { value = ""; }
+        $1 ~ "^[[:space:]]*" key "[[:space:]]*$" {
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2);
+            value = $2;
+        }
+        END { print value; }
+    ' "$file"
+}
+
 # Extract information from web.ini
 echo "Reading configuration from $WEB_INI_PATH..."
-PORT=$(grep -oP '(?<=^PORT: )\d+' "$WEB_INI_PATH")
-IP_ADDRESS=$(grep -oP '(?<=^IP_ADDRESS: ).+' "$WEB_INI_PATH")
+PORT=$(parse_ini_file "$WEB_INI_PATH" "PORT")
+IP_ADDRESS=$(parse_ini_file "$WEB_INI_PATH" "IP_ADDRESS")
 if [ -z "$PORT" ] || [ -z "$IP_ADDRESS" ]; then
     echo "Error: Missing PORT or IP_ADDRESS in $WEB_INI_PATH."
     exit 1
@@ -46,10 +60,10 @@ fi
 
 # Extract database credentials from database.ini
 echo "Reading database configuration from $DATABASE_INI_PATH..."
-DB_USER=$(grep -oP '(?<=^db_username : ).+' "$DATABASE_INI_PATH")
-DB_PASSWORD=$(grep -oP '(?<=^db_password : ).+' "$DATABASE_INI_PATH")
-DB_HOST=$(grep -oP '(?<=^host : ).+' "$DATABASE_INI_PATH")
-DB_NAME=$(grep -oP '(?<=^db_name : ).+' "$DATABASE_INI_PATH")
+DB_USER=$(parse_ini_file "$DATABASE_INI_PATH" "db_username")
+DB_PASSWORD=$(parse_ini_file "$DATABASE_INI_PATH" "db_password")
+DB_HOST=$(parse_ini_file "$DATABASE_INI_PATH" "host")
+DB_NAME=$(parse_ini_file "$DATABASE_INI_PATH" "db_name")
 if [[ -z "$DB_USER" || -z "$DB_PASSWORD" || -z "$DB_HOST" || -z "$DB_NAME" ]]; then
     echo "Error: Missing database configuration in $DATABASE_INI_PATH."
     exit 1
@@ -83,14 +97,23 @@ else
     exit 1
 fi
 
-# Download prerequisite software
+# Configure npm global directory
+echo "Configuring npm global directory..."
+mkdir -p ~/.npm-global
+npm config set prefix '~/.npm-global'
+export PATH=~/.npm-global/bin:$PATH
+echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
+
+# Install prerequisite software
+echo "Installing prerequisites..."
 sudo n stable  # Node.js
-sudo apt install npm
-sudo apt install tabix
-sudo apt install genometools
-sudo apt install samtools  # For indexing GFF and FNA files
-npm install -g @jbrowse/cli  # JBrowse2 CLI
-sudo apt install ncbi-blast+-legacy  # BLASTable databases
+sudo apt install -y npm
+sudo apt install -y tabix
+sudo apt install -y genometools
+sudo apt install -y samtools  # For indexing GFF and FNA files
+npm install -g @jbrowse/cli  # JBrowse2 CLI (uses the new global directory)
+sudo apt install -y ncbi-blast+-legacy  # BLASTable databases
 
 # Create the index files
 bash index_files.sh
