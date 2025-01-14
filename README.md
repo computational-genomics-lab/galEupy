@@ -63,14 +63,13 @@ db_name :
 
 ```
 #### Format for organism configuration file
-The version denotes the different strains of the same species if they are available. So in the configuration file, the first strain to be uploaded has version: 1, the second strain has version: 2 and so on. 
+The strain_number denotes the different strains of the same species if they are available. So in the configuration file, the first strain to be uploaded has strain_number: 1, the second strain has strain_number: 2 and so on. 
 If the user has different assemblies of the same strain, they can specify the following using "assembly_version:". 
 
 ```commandline
 [OrganismDetails]
 Organism:
-version: 1
-source_url:
+strain_number: 1
 
 [SequenceType]
 SequenceType: chromosome
