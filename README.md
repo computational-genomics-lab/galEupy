@@ -19,15 +19,13 @@ galEupy --help
 
 ```batch
 Welcome to galEupy
-usage: galEupy [-h] [-db DBCONFIG] [-path PATHCONFIG] [-org ORGCONFIG] [-upload {all,centraldogma,proteinannotation}] [-info [INFO]] [-org_info [ORG_INFO]]
+usage: galEupy [-h] [-db DBCONFIG] [-org ORGCONFIG] [-upload {all,centraldogma,proteinannotation}] [-info [INFO]] [-org_info [ORG_INFO]]
                [-remove_org [REMOVE_ORG]] [-remove_db [REMOVE_DB]] [-v {none,debug,info,warning,error,d,e,i,w}] [-log LOG_FILE]
 
 optional arguments:
   -h, --help            show this help message and exit
   -db DBCONFIG, --dbconfig DBCONFIG
                         Database configuration file name
-  -path PATHCONFIG, --pathconfig PATHCONFIG
-                        path configuration file name
   -org ORGCONFIG, --orgconfig ORGCONFIG
                         Organism configuration file name
   -upload {all,centraldogma,proteinannotation}, --upload {all,centraldogma,proteinannotation}
