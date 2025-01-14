@@ -175,7 +175,7 @@ def organism_config_reader(filename):
     # header : OrganismDetails
     config_org_details = config_obj.section_map('OrganismDetails')
     organism = config_org_details['organism']
-    version = config_org_details['version']
+    version = config_org_details['strain_number']
     strain = config_org_details['strain']
     assembly_version = config_org_details['assembly_version']
 
