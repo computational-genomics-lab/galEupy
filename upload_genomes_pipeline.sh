@@ -65,7 +65,7 @@ for file in genomes/*.fna; do
     cat <<EOF > organism.ini
 [OrganismDetails]
 Organism: $organism_name
-version: $version
+strain_number: $version
 strain: $strain_name
 assembly_version: 1
 
