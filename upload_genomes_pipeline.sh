@@ -66,7 +66,6 @@ for file in genomes/*.fna; do
 [OrganismDetails]
 Organism: $organism_name
 version: $version
-source_url:
 strain: $strain_name
 assembly_version: 1
 
