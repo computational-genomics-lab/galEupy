@@ -176,7 +176,6 @@ def organism_config_reader(filename):
     config_org_details = config_obj.section_map('OrganismDetails')
     organism = config_org_details['organism']
     version = config_org_details['version']
-    source_url = ''
     strain = config_org_details['strain']
     assembly_version = config_org_details['assembly_version']
 
@@ -212,7 +211,6 @@ def organism_config_reader(filename):
     organism_config_dct = {
         'organism': organism,
         'orgVersion': version,
-        'source_url': source_url,
         'strain': strain,
         'assembly_version': assembly_version,
         'sequence_type': sequence_type,
@@ -335,7 +333,6 @@ def config_string_generator( org_name, org_version, reg_org, genbank, fasta, gff
 
 Organism: {}
 version: {}
-source_url:
     """.format(org_name, org_version)
 
 
