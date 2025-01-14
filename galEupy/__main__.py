@@ -5,7 +5,6 @@ from pathlib import Path
 from .app import App, BaseApp, OrganismApp
 import sys
 
-
 def main():
     """
     galEupy main command line
@@ -20,7 +19,7 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-db", "--dbconfig", help='Database configuration file name', default=default_db_config)
-    parser.add_argument("-path", "--pathconfig", help='path configuration file name', default=default_path_config)
+    parser.add_argument("-path", "--pathconfig", help=argparse.SUPPRESS, default=default_path_config)  # Hidden argument
     parser.add_argument("-org", "--orgconfig", help='Organism configuration file name', default=default_org_config)
 
     parser.add_argument('-upload', '--upload', type=str.lower, choices=["all", "centraldogma", "proteinannotation"],
@@ -37,12 +36,12 @@ def main():
 
     parser.add_argument('-v', '--verbose', type=str, default="info",
                         choices=["none", "debug", "info", "warning", "error", "d", "e", "i", "w"],
-                        help="verbose level: debug, info (default), warning, error" )
+                        help="verbose level: debug, info (default), warning, error")
     parser.add_argument('-log', '--log_file', type=str, help='log file')
     args = parser.parse_args()
 
     db_config_file = args.dbconfig
-    path_config_file = args.pathconfig
+    path_config_file = args.pathconfig  # Still accessible internally
     org_config_file = args.orgconfig
 
     logger = get_logger(args)
@@ -77,7 +76,6 @@ def main():
         app = App(db_config_file, path_config_file, org_config_file)
         app.upload_schema()
         if args.upload == 'all':
-            
             app.process_central_dogma_annotation()
             app.import_protein_annotation()
             logger.info("Table max ids after the upload")
