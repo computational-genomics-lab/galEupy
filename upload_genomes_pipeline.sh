@@ -2,66 +2,65 @@
 
 # A pipeline to upload organism data using galEupy to a MySQL backend
 
+# Initialize variables
 version=1
 declare -A uploaded_organisms # Associative array to track already uploaded organisms
 
-#LOOP THROUGH FASTA FILES AND CHECK IF THEY ARE VALID OR NOT
-#if they are not valid : skip
-#if valid extract the organism name, strain name 
-
+# Loop through FASTA files and process each file
 for file in genomes/*.fna; do
-    # Get the base name of the file (without the extension)
+    # Extract base name of the file (without extension)
     base=$(basename "$file" .fna)
 
-    # Get the header line from the file. This is the name of the organism
+    # Extract the header line (first line starting with ">")
     header=$(grep '^>' "$file" | head -n 1)
 
-    # Validate if a header exists
+    # Validate the header's existence
     if [ -z "$header" ]; then
         echo "Invalid FASTA file format: No header found in $file; skipping."
         continue
     fi
 
-    # Extract the organism name (using the second and third fields as default format)
+    # Extract organism name (defaulting to second and third fields)
     organism_name=$(echo "$header" | awk -F' ' '/>/{print $2, $3}')
 
-    # Detect if the header contains the word "strain"
+    # Extract strain name based on header content
     if echo "$header" | grep -q "strain"; then
-        # Extract the strain name
+        # Extract strain name after the keyword "strain"
         strain_name=$(echo "$header" | awk -F'strain ' '{print $2}' | awk '{print $1}')
     else
-        # Try extracting the fourth word as the strain name if "strain" is not present
+        # Default to the fourth word if "strain" is not present
         strain_name=$(echo "$header" | awk '{print $4}')
         
-        # Validate the extracted strain name
+        # Validate strain name
         if [ -z "$strain_name" ]; then
             echo "Invalid FASTA file format in $file: Header does not match expected formats; skipping."
             continue
         fi
     fi
-# ............................END................................................
 
+    # Define associated file paths
     gff_file="${base}_with_product_name.gff3"
     eggnog_file="${base}_eggnog.emapper.annotations"
 
-    echo "File: $file"
-    echo "Base name: $base"
-    echo "Organism name: $organism_name"
-    echo "Strain name: $strain_name"
-    echo "gff file: $gff_file"
-    echo "eggnog_file: $eggnog_file"
+    # Print details for debugging/logging
+    echo "Processing File: $file"
+    echo "Base Name: $base"
+    echo "Organism Name: $organism_name"
+    echo "Strain Name: $strain_name"
+    echo "GFF File: $gff_file"
+    echo "EggNOG File: $eggnog_file"
     echo "-----------------------------"
 
-    # Check if the organism name has been encountered before
+    # Check if organism has been processed before
     if [[ -n "${uploaded_organisms[$organism_name]}" ]]; then
-        # Organism seen before, increment version
+        # Increment version if organism already exists
         version=$((version + 1))
     else
-        # New organism, record it
+        # Add new organism to the tracker
         uploaded_organisms["$organism_name"]=1
     fi
 
-    # Making the organism.ini configuration file
+    # Create the organism.ini configuration file
     cat <<EOF > organism.ini
 [OrganismDetails]
 Organism: $organism_name
@@ -75,16 +74,12 @@ scaffold_prefix:
 
 [filePath]
 GenBank:
-
-
-
 FASTA: $file
 GFF: genomes/$gff_file
 eggnog: genomes/$eggnog_file
-
 EOF
 
-    # Upload using galEupy
-    # It is assumed that a database.ini file is already present in the working directory
+    # Upload data using galEupy
+    # Assumes a database.ini file is present in the working directory
     galEupy -db database.ini -org organism.ini -v d -upload All -log "$strain_name.log"
 done
