@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Prompt the user to enter the path for cloning the repository
+#Prompt the user to enter the path for cloning the repository
 read -p "Enter the directory where the web application should be cloned (default: current working directory): " CUSTOM_PATH
 
 # Use the current working directory if no path is provided
