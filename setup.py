@@ -1,8 +1,7 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
-# exec(open('galEupy/version.py').read())
-__version__ = '1.0.2'
-description = "Python module for gal"
+# Read version from galEupy/version.py
+exec(open('galEupy/version.py').read())
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -12,10 +11,10 @@ setup(
     version=__version__,
     author='Arijit Panda, CGLAB; Aditya Upadhyay, CGLAB',
     author_email='arijpanda@csiriicb.res.in; aditya.upadhyay@csiriicb.res.in',
-    packages=['galEupy'],
+    packages=find_packages(),  # Automatically find all packages and subpackages
     package_dir={'galEupy': 'galEupy'},
     package_data={'galEupy': ['BioFile/*', 'data/DbSchema/*', 'data/DefaultConfig/*', 'data/CommonData/*']},
-    description=description,
+    description="Python module for gal",
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/computational-genomics-lab/GAL',
@@ -36,4 +35,5 @@ setup(
         'console_scripts': [
             'galEupy = galEupy.__main__:main'
         ]
-    })
+    }
+)
