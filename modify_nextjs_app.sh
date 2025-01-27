@@ -96,17 +96,46 @@ fi
 # Install Dependencies
 # ========================
 
-# Configure npm global directory
-mkdir -p ~/.npm-global
-npm config set prefix '~/.npm-global'
-export PATH=~/.npm-global/bin:$PATH
-echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
-source ~/.bashrc
 
-# Install required packages
-sudo n stable
-sudo apt install -y npm tabix genometools samtools ncbi-blast+-legacy
-npm install -g @jbrowse/cli
+# Function to install Node.js and npm using NVM
+install_node_nvm() {
+    # Install NVM (Node Version Manager)
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+    # Load NVM into the current shell session
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    # Install the desired Node.js version
+    nvm install 14
+    # Set the installed version as default
+    nvm alias default 14
+}
+
+# Function to install packages using the appropriate package manager
+install_packages() {
+    if command -v apt-get &> /dev/null; then
+        sudo apt-get update
+        sudo apt-get install -y curl tabix genometools samtools ncbi-blast+
+    elif command -v yum &> /dev/null; then
+        sudo yum install -y epel-release
+        sudo yum install -y curl tabix genometools samtools ncbi-blast+
+    elif command -v dnf &> /dev/null; then
+        sudo dnf install -y curl tabix genometools samtools ncbi-blast+
+    elif command -v pacman &> /dev/null; then
+        sudo pacman -Syu --noconfirm curl tabix genometools samtools ncbi-blast+
+    else
+        echo "Unsupported package manager. Please install the required packages manually."
+        exit 1
+    fi
+}
+
+# Install system packages
+install_packages
+
+# Install Node.js and npm
+install_node_nvm
+
+# Install global npm packages
+npm install -g @jbrowse/cli next
 
 # ==========================
 # Prepare Application Data
@@ -154,3 +183,4 @@ npm install
 npm run dev
 
 echo "Application running at http://$IP_ADDRESS:$PORT"
+
