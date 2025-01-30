@@ -93,6 +93,9 @@ Usage:
 ```commandline
 galEupy -v d -db <db_configuration_file> -info
 ```
+This command will tell you if the database named in database.ini already exists or not
+If the connection to the database is established or not.
+Note: <ins>This command can be run even before attempting to upload data</ins>
 
 
 ### Remove an organism from gal database
