@@ -46,8 +46,8 @@ optional arguments:
 ```
 
 
-### Both database and organism configuration files are required to upload the genome. Configuration files are in ini format. 
-### Edit the database.ini and the organism_config_format.ini files to your local setup
+# Both database and organism configuration files are required to upload the genome. Configuration files are in <ins>".ini"</ins> format. 
+## Edit the <ins>database.ini</ins> and the <ins>organism_config_format.ini</ins> files in your local setup
 #### Format for database configuration file
 
 ```commandline
@@ -85,7 +85,7 @@ eggnog:
 ### Upload Genome data
 Usage to upload a genome
 ```commandline
-galEupy -db <db_configuration_file> -org <organism_configuration_file> -v d -upload All
+galEupy -db database.ini -org organism_config_format.ini -v d -upload All
 ```
 
 ### View GAL database information
