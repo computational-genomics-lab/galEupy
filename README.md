@@ -45,13 +45,9 @@ optional arguments:
 
 ```
 
-### Upload Genome data
-Usage to upload a genome
-```commandline
-galEupy -db <db_configuration_file> -org <organism_configuration_file> -v d -upload All
-```
-Both database and organism configuration files are required to upload the genome. Configuration files are in ini format. 
 
+### Both database and organism configuration files are required to upload the genome. Configuration files are in ini format. 
+### Edit the database.ini and the organism_config_format.ini files to your local setup
 #### Format for database configuration file
 
 ```commandline
@@ -61,9 +57,11 @@ db_password :
 host : 
 db_name : 
 
+
+Here replace the values given as XXX to your local values and save the file
 ```
 #### Format for organism configuration file
-The strain_number denotes the different strains of the same species if they are available. So in the configuration file, the first strain to be uploaded has strain_number: 1, the second strain has strain_number: 2 and so on. 
+The strain_number denotes the different strains of the same species if they are available. So in this file, the first strain to be uploaded has strain_number: 1, the second strain has strain_number: 2 and so on. 
 If the user has different assemblies of the same strain, they can specify the following using "assembly_version:". 
 
 ```commandline
@@ -82,6 +80,12 @@ scaffold_prefix:
 FASTA:
 GFF:
 eggnog: 
+```
+
+### Upload Genome data
+Usage to upload a genome
+```commandline
+galEupy -db <db_configuration_file> -org <organism_configuration_file> -v d -upload All
 ```
 
 ### View GAL database information
