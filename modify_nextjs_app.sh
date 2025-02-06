@@ -124,14 +124,14 @@ fi
 install_packages() {
     if command -v apt-get &> /dev/null; then
         sudo apt-get update
-        sudo apt-get install -y curl tabix genometools samtools ncbi-blast+
+        sudo apt-get install -y curl tabix genometools samtools ncbi-blast+-legacy
     elif command -v yum &> /dev/null; then
         sudo yum install -y epel-release
-        sudo yum install -y curl tabix genometools samtools ncbi-blast+
+        sudo yum install -y curl tabix genometools samtools ncbi-blast+-legacy
     elif command -v dnf &> /dev/null; then
-        sudo dnf install -y curl tabix genometools samtools ncbi-blast+
+        sudo dnf install -y curl tabix genometools samtools ncbi-blast+-legacy
     elif command -v pacman &> /dev/null; then
-        sudo pacman -Syu --noconfirm curl tabix genometools samtools ncbi-blast+
+        sudo pacman -Syu --noconfirm curl tabix genometools samtools ncbi-blast+-legacy
     else
         echo "Unsupported package manager. Please install the required packages manually."
         exit 1
@@ -179,25 +179,61 @@ mv config.json "$CLONE_DIR/pages/components/visualization/"
 bash "$CLONE_DIR/string_replace.sh" "$CLONE_DIR/pages" "http://eumicrobedb.org:3001" "http://$IP_ADDRESS:$PORT"
 bash "$CLONE_DIR/string_replace.sh" "$CLONE_DIR/pages" "$CLONE_DIR/public" "http://$IP_ADDRESS:$PORT"
 
-# Generate table data from genome files
-table_data=""
-for file in "$CLONE_DIR/public/genomes"/*.fna; do
-    header=$(grep '^>' "$file" | head -n 1)
-    if [ -z "$header" ]; then continue; fi
+#=====================================
+# Combining Table Generation and BLAST Data Generation
+#=====================================
 
+# Create BLAST_DATA directory (if it doesn't already exist)
+BLAST_DATA_DIR="$CLONE_DIR/pages/components/BLAST_DATA/BLASTN_DATA"
+mkdir -p "$BLAST_DATA_DIR"
+
+# Initialize table data variable
+table_data=""
+
+# Change directory to where the .fna files reside
+cd "$CLONE_DIR/public/genomes"
+
+# Process each .fna file
+for file in *.fna; do
+    # Extract the header from the file (first header line)
+    header=$(grep '^>' "$file" | head -n 1)
+    if [ -z "$header" ]; then
+        continue
+    fi
+
+    # Extract organism name (assumes the second and third fields in the header)
+    # Example header: ">gi|123456|ref|NC_000001.1| Escherichia coli strain K12"
     organism_name=$(echo "$header" | awk -F' ' '/>/{print $2, $3}')
+
+    # Split organism_name into genus and species (assumes first two words)
+    genus=$(echo "$organism_name" | awk '{print $1}')
+    species=$(echo "$organism_name" | awk '{print $2}')
+
+    # Extract strain name. If "strain" exists in the header, use that; otherwise, use the fourth field.
     if echo "$header" | grep -q "strain"; then
         strain_name=$(echo "$header" | awk -F'strain ' '{print $2}' | awk '{print $1}')
     else
         strain_name=$(echo "$header" | awk '{print $4}')
     fi
 
+    # Get file size and scaffold count
     size=$(du -sh "$file" | awk '{print $1}')
     scaffold_count=$(grep -c "^>" "$file")
+
+    # Append table row for the index.html (or index.js) update
     table_data+="<tr><td><i>$organism_name</i> strain $strain_name</td><td>$scaffold_count</td><td>$size</td></tr>\n"
+
+    # Construct the BLAST database prefix:
+    # first two characters of genus, first two characters of species, underscore, strain name, "_v1"
+    blast_prefix="$(echo "$genus" | cut -c1-3)$(echo "$species" | cut -c1-2)_${strain_name}_v1"
+    echo "Processing $file -> generating BLAST database with prefix $blast_prefix in $BLAST_DATA_DIR"
+
+    # Generate BLAST database using formatdb (or use makeblastdb if using BLAST+)
+    formatdb -i "$file" -p F -o T -n "$BLAST_DATA_DIR/$blast_prefix"
 done
 
-# Update index.js with the generated table data
+# Update index.js with the generated table data.
+# We assume the table rows are within a <tbody> ... </tbody> block.
 sed -z -i 's|<tbody>.*</tbody>|<tbody>'"$table_data"'</tbody>|g' "$INDEX_JS_PATH"
 
 # ================================
