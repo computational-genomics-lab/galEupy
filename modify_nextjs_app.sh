@@ -1,8 +1,31 @@
 #!/bin/bash
+set -e
 
-# ========================
-# Setup Web Application
-# ========================
+# ================================
+# Load NVM and Setup Node v18
+# ================================
+export NVM_DIR="$HOME/.nvm"
+# Load nvm if installed
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+  . "$NVM_DIR/nvm.sh"
+else
+  echo "NVM not found, installing NVM..."
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+  . "$NVM_DIR/nvm.sh"
+fi
+
+# Install Node 18.20.6 (or desired version) and remove conflicting prefix settings
+nvm install 18.20.6
+nvm use --delete-prefix v18.20.6
+
+# Verify that the correct Node and npm are in use
+echo "Using Node version: $(node --version)"
+echo "Using npm version: $(npm --version)"
+
+
+# ================================
+# Setup Web Application Variables
+# ================================
 
 # 1. Prompt for user input and set variables
 read -p "Enter the directory where the web application should be cloned (default: current working directory): " CUSTOM_PATH
@@ -18,18 +41,19 @@ INDEX_JS_PATH="$CLONE_DIR/pages/index.js"
 
 # 2. Clone the repository (if not already cloned)
 if [ ! -d "$CLONE_DIR" ]; then
+    echo "Cloning repository into $CLONE_DIR ..."
     git clone "$REPO_URL" "$CLONE_DIR"
 fi
 
 # 3. Check for required configuration files
 if [ ! -f "$WEB_INI_PATH" ] || [ ! -f "$DATABASE_INI_PATH" ]; then
-    echo "Required configuration files missing."
+    echo "Required configuration files (web.ini and/or database.ini) missing."
     exit 1
 fi
 
-# ==========================
+# ================================
 # Parse Configuration Files
-# ==========================
+# ================================
 
 # Function to parse INI files
 parse_ini_file() {
@@ -49,7 +73,7 @@ parse_ini_file() {
 PORT=$(parse_ini_file "$WEB_INI_PATH" "PORT")
 IP_ADDRESS=$(parse_ini_file "$WEB_INI_PATH" "IP_ADDRESS")
 if [ -z "$PORT" ] || [ -z "$IP_ADDRESS" ]; then
-    echo "Web configuration missing."
+    echo "Web configuration missing (PORT or IP_ADDRESS)."
     exit 1
 fi
 
@@ -63,11 +87,11 @@ if [[ -z "$DB_USER" || -z "$DB_PASSWORD" || -z "$DB_HOST" || -z "$DB_NAME" ]]; t
     exit 1
 fi
 
-# ==========================
-# Update Configuration Files
-# ==========================
+# ================================
+# Update Application Configuration Files
+# ================================
 
-# 4. Update database.js
+# 4. Update database.js with database connection details
 if [ -f "$DATABASE_JS_PATH" ]; then
     cat > "$DATABASE_JS_PATH" <<EOL
 const mysql = require('mysql2');
@@ -84,7 +108,7 @@ else
     exit 1
 fi
 
-# 5. Update package.json
+# 5. Update package.json to set the port for Next.js
 if [ -f "$PACKAGE_JSON_PATH" ]; then
     sed -i "s/\"dev\": \"next dev -p [0-9]*\"/\"dev\": \"next dev -p $PORT\"/" "$PACKAGE_JSON_PATH"
 else
@@ -92,25 +116,11 @@ else
     exit 1
 fi
 
-# ========================
-# Install Dependencies
-# ========================
+# ================================
+# Install Dependencies and System Packages
+# ================================
 
-
-# Function to install Node.js and npm using NVM
-install_node_nvm() {
-    # Install NVM (Node Version Manager)
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
-    # Load NVM into the current shell session
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    # Install the desired Node.js version
-    nvm install 14
-    # Set the installed version as default
-    nvm alias default 14
-}
-
-# Function to install packages using the appropriate package manager
+# Function to install system packages using the appropriate package manager
 install_packages() {
     if command -v apt-get &> /dev/null; then
         sudo apt-get update
@@ -131,31 +141,47 @@ install_packages() {
 # Install system packages
 install_packages
 
-# Install Node.js and npm
-install_node_nvm
-
-# Install global npm packages
+# Install global npm packages required by the application using the NVM-managed Node
 npm install -g @jbrowse/cli next
 
-# ==========================
+# ================================
 # Prepare Application Data
-# ==========================
+# ================================
 
 # Generate index files and move them to public directory
 bash index_files.sh
 cp -r genomes "$CLONE_DIR/public/"
 
-# Prepare JBrowse2 configuration
-bash "$CLONE_DIR/pages/components/visualization/track_adder.sh"
+# Prepare JBrowse2 configuration:
+# Remove old configuration file if it exists and generate a new one.
+rm -f "$CLONE_DIR/pages/components/visualization/config.json"
+#bash "$CLONE_DIR/pages/components/visualization/track_adder.sh"
 
-# Replace IP address and port in the application
-bash "$CLONE_DIR/string_replace.sh" "$CLONE_DIR/pages" "http:\/\/eumicrobedb.org:3001" "http:\/\/$IP_ADDRESS:$PORT"
-bash "$CLONE_DIR/string_replace.sh" "$CLONE_DIR/pages" "..\/..\/..\/public" "http:\/\/$IP_ADDRESS:$PORT"
+
+#===================================
+#Make config file for galEupy web app
+#====================================
+
+
+for file in $CLONE_DIR/public/genomes/*.fna ; do
+        b=`basename $file .fna`
+        echo $file, $b
+        jbrowse add-assembly $file --load inPlace
+        jbrowse add-track $CLONE_DIR/public/genomes/"$b"_with_product_name.sorted.gff3.gz --load inPlace --assemblyNames $b.fna
+        jbrowse add-track $CLONE_DIR/public/genomes/"$b"_rxlr.bw --load inPlace --assemblyNames $b.fna
+
+done
+
+mv config.json "$CLONE_DIR/pages/components/visualization/"
+
+
+# Replace IP address and port in the application configuration files
+bash "$CLONE_DIR/string_replace.sh" "$CLONE_DIR/pages" "http://eumicrobedb.org:3001" "http://$IP_ADDRESS:$PORT"
+bash "$CLONE_DIR/string_replace.sh" "$CLONE_DIR/pages" "$CLONE_DIR/public" "http://$IP_ADDRESS:$PORT"
 
 # Generate table data from genome files
 table_data=""
 for file in "$CLONE_DIR/public/genomes"/*.fna; do
-    base=$(basename "$file" .fna)
     header=$(grep '^>' "$file" | head -n 1)
     if [ -z "$header" ]; then continue; fi
 
@@ -174,9 +200,9 @@ done
 # Update index.js with the generated table data
 sed -z -i 's|<tbody>.*</tbody>|<tbody>'"$table_data"'</tbody>|g' "$INDEX_JS_PATH"
 
-# ==========================
-# Launch Application
-# ==========================
+# ================================
+# Launch Next.js Application
+# ================================
 
 cd "$CLONE_DIR"
 npm install
