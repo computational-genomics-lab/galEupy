@@ -143,7 +143,7 @@ npm install -g @jbrowse/cli next
 
 # Generate index files and move them to public directory
 bash index_files.sh
-mv genomes "$CLONE_DIR/public/"
+cp -r genomes "$CLONE_DIR/public/"
 
 # Prepare JBrowse2 configuration
 bash "$CLONE_DIR/pages/components/visualization/track_adder.sh"
