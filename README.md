@@ -46,8 +46,8 @@ optional arguments:
 ```
 
 
-# Both database and organism configuration files are required to upload the genome. Configuration files are in <ins>".ini"</ins> format. 
-## Edit the <ins>database.ini</ins> and the <ins>organism_config_format.ini</ins> files in your local setup
+### Both database and organism configuration files are required to upload the genome into the database. Configuration files are in <ins>".ini"</ins> format. 
+### Edit the <ins>database.ini</ins> and the <ins>organism_config_format.ini</ins> files in your local setup
 #### Format for database configuration file
 
 ```commandline
