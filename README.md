@@ -181,6 +181,10 @@ To run the web application, there are some third party software which needs to b
  1) Latest versions of node and npm. In the test server these versions were v19.6.1 and 9.4.0 respectively.
  2) For visualisation : JBrowse CLI, samtools and gt must be installed
     These are all installed by the "modify_nextjs_app.sh" bash pipeline. The user has to provide the sudo password as some of this software will be installed globally in the user's system.
+
+# Running web application anytime
+To run the web application anytime, go to the galEupy_webApplication directory and start
+```npm run dev```
     
     
 #### Usage
