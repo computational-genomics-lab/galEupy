@@ -39,7 +39,7 @@ for file in genomes/*.fna; do
     fi
 
     # Define associated file paths
-    gff_file="${base}_with_product_name.gff3"
+    gff_file="${base}.gff3"
     eggnog_file="${base}_eggnog.emapper.annotations"
 
     # Print details for debugging/logging
