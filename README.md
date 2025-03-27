@@ -138,7 +138,7 @@ It contains the following :
   
 The naming convention followed for the basename of a particular isolate is: first three characters of genus, followed by first three characters of species, an underscore and then the name of the strain. 
 For eg, for the isolate Phytophthora melonis strain CJ26, the basename would be Phymel_CJ26.
-The corresponding files for this isolate are therefore Phymel_CJ26.fna, Phymel_CJ26_with_product_name.gff3 and Phymel_CJ26_eggnog.emapper.annotations respectively. 
+The corresponding files for this isolate are therefore Phymel_CJ26.fna, Phymel_CJ26.gff3 and Phymel_CJ26_eggnog.emapper.annotations respectively. 
 
 
 - To test the pipeline, the "test_datasets.zip" file hosted in the Google Drive link must be extracted in the **current** directory which is "**galEupy**".
@@ -149,7 +149,7 @@ The corresponding files for this isolate are therefore Phymel_CJ26.fna, Phymel_C
 ### Running uploader pipeline
  A pipeline has been written in bash, called "upload_genomes_pipeline.sh", which is present in this particular directory. It requires the following files for each organism strain :
 1) FASTA file : ${basename}.fna
-2) GFF file : ${basename}_with_product_name.gff3
+2) GFF file : ${basename}.gff3
 3) eggnog file : ${basename}_eggnog.emapper.annotations
 
 The name of the files should follow this convention. The basename can be anything. In the test_dataset, three strains of the organism Phytophthora melonis have been included. 
