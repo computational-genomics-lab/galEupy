@@ -152,7 +152,17 @@ The corresponding files for this isolate are therefore Phymel_CJ26.fna, Phymel_C
 2) GFF file : ${basename}.gff3
 3) eggnog file : ${basename}_eggnog.emapper.annotations
 
-The name of the files should follow this convention. The basename can be anything. In the test_dataset, three strains of the organism Phytophthora melonis have been included. 
+The name of the files should follow this convention. 
+
+#### Naming convention for basename 
+
+The naming convention followed for the basename of a particular isolate is: first three characters of genus, followed by first three characters of species, an underscore and then the name of the strain. 
+
+For eg, for the isolate Phytophthora melonis strain CJ26, the basename would be Phymel_CJ26.
+The corresponding files for this isolate are therefore Phymel_CJ26.fna, Phymel_CJ26.gff3 and Phymel_CJ26_eggnog.emapper.annotations respectively. 
+
+
+In the test_dataset, three strains of the organism Phytophthora melonis have been included. 
 
 Usage 
 ```commandline
