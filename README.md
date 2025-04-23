@@ -59,6 +59,7 @@ Use the CLI with -db flag to specify configuration:
 
 | Command | Description |
 | -------- | ------- |
+|galEupy -db database.ini -org organism_config_format.ini -v d -upload all|Upload Genomic Data|
 |galEupy -db database.ini -info	|Check database status|
 |galEupy -db database.ini -remove_org	-org organism.ini|Remove specific organism|
 |galEupy -db database.ini -remove_db	|WARNING: Wipe entire database|
