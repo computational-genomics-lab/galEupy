@@ -58,6 +58,7 @@ eggnog = path/to/genomes/Org_strain_eggnog.emapper.annotations
 Use the CLI with -db flag to specify configuration:
 
 | Command | Description |
+| -------- | ------- |
 |galEupy -db database.ini -info	|Check database status|
 |galEupy -db database.ini -remove_org	-org organism.ini|Remove specific organism|
 |galEupy -db database.ini -remove_db	|WARNING: Wipe entire database|
