@@ -117,11 +117,11 @@ npm run dev
 * Confirm strict adherence to naming conventions
 * Check relative file paths in configs
 
-#### 4. Web App Dependencies:
+#### 3. Web App Dependencies:
 
 * Run with sudo for global package installations
 * Check network permissions for IP/port binding
 
-##### Maintainers:** Computational Genomics Lab
+#### **Maintainers:** Computational Genomics Lab
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
  
