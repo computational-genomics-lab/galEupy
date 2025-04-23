@@ -10,8 +10,8 @@
 3. [Basic Usage](#basic-usage)
 4. [Batch Upload Pipeline](#batch-upload-pipeline)
 5. [Test Dataset](#test-dataset)
-6. [Web Application Integration](#web-application-integration)
-7. [Maintenance](#maintenance)
+6. [Web Application Setup](#web-application-setup)
+7. [Troubleshooting](#troubleshooting)
 
 ## Installation <a name="installation"></a>
 
@@ -59,7 +59,70 @@ Use the CLI with -db flag to specify configuration:
 
 | Command | Description |
 | -------- | ------- |
-|galEupy -db database.ini -org organism_config_format.ini -v d -upload all|Upload Genomic Data|
+| galEupy -db database.ini -org organism_config_format.ini -v d -upload all |Upload Genomic Data|
 |galEupy -db database.ini -info	|Check database status|
 |galEupy -db database.ini -remove_org	-org organism.ini|Remove specific organism|
 |galEupy -db database.ini -remove_db	|WARNING: Wipe entire database|
+
+## Batch upload pipeline <a name="batch-upload-pipeline"></a>
+### Automated pipeline
+Use the included script for bulk uploads:
+```bash
+bash upload_genomes_pipeline.sh
+```
+### File Naming Convention:
+<3-letter genus><3-letter species>_<strain>.<ext>
+Example: Phymel_CJ26.fna (Phytophthora melonis strain CJ26)
+
+## Test dataset <a name="test-dataset"></a>
+### Download Test Files
+[Google Drive Link](https://drive.google.com/file/d/1wqu8YxEQ9euBRuqu9047Cpl_cR1FwG3i/view?usp=sharing)
+Includes sample data for 3 Phytophthora melonis strains.
+
+### Setup Instructions
+- Extract test_datasets.zip into the galEupy directory
+- Rename folder to genomes
+- Update configuration files with your MySQL credentials
+
+## Web Application Setup <a name="web-application-setup"></a>
+
+### 1. Configuration (web.ini)
+```bash
+PORT = 3000
+IP_ADDRESS = localhost  # or your server IP
+```
+### 2. Launch Web App
+```bash
+bash modify_nextjs_app.sh
+```
+### 3. Runtime Requirements
+* Node.js ≥ v19.6.1
+* npm ≥ v9.4.0
+* JBrowse CLI, samtools, and gt (installed automatically)
+
+### Access Application
+```bash
+cd galEupy_webApplication
+npm run dev
+```
+
+## Troubleshooting <a name="troubleshooting"></a>
+
+### Common Issues
+
+#### 1. Database Connection Errors:
+* Verify MySQL credentials in database.ini
+* Ensure MySQL service is running
+
+#### 2. File Upload Failures:
+* Confirm strict adherence to naming conventions
+* Check relative file paths in configs
+
+#### 4. Web App Dependencies:
+
+* Run with sudo for global package installations
+* Check network permissions for IP/port binding
+
+**Maintainers:** Computational Genomics Lab
+License: [MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
