@@ -2,7 +2,6 @@
 **Genomic Analysis and Loading (GAL) Module**  
 *A Python tool for batch processing and managing genomic data in MySQL databases*
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Table of Contents
 1. [Installation](#installation)
@@ -75,9 +74,9 @@ bash upload_genomes_pipeline.sh
 Example: Phymel_CJ26.fna (Phytophthora melonis strain CJ26)
 
 ## Test dataset <a name="test-dataset"></a>
-### Download Test Files
+### Download Test Files 
 [Google Drive Link](https://drive.google.com/file/d/1wqu8YxEQ9euBRuqu9047Cpl_cR1FwG3i/view?usp=sharing)
-Includes sample data for 3 Phytophthora melonis strains.
+##### Includes sample data for 3 Phytophthora melonis strains.
 
 ### Setup Instructions
 - Extract test_datasets.zip into the galEupy directory
@@ -123,6 +122,6 @@ npm run dev
 * Run with sudo for global package installations
 * Check network permissions for IP/port binding
 
-**Maintainers:** Computational Genomics Lab
-##### License: [MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
+##### Maintainers:** Computational Genomics Lab
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+ 
