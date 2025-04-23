@@ -15,7 +15,49 @@
 
 ## Installation <a name="installation"></a>
 
+### Latest Development Version
 ```bash
 git clone https://github.com/computational-genomics-lab/galEupy.git
 cd galEupy
 pip install .
+```
+### Verify Installation
+```bash
+galEupy --help
+```
+## Configuration <a name="configuration"></a>
+
+### Database Configuration (database.ini)
+
+Create/modify database.ini with MySQL credentials:
+```bash
+[dbconnection]
+db_username = your_username
+db_password = your_password
+host = localhost
+db_name = gal_db
+```
+### Organism Configuration Template (organism_config_format.ini)
+Template for organism uploads:
+```bash
+[OrganismDetails]
+Organism = Genus_species
+strain_number = 1
+
+[SequenceType]
+SequenceType = chromosome
+scaffold_prefix = 
+
+[filePath]
+FASTA = path/to/genomes/Org_strain.fna
+GFF = path/to/genomes/Org_strain.gff3
+eggnog = path/to/genomes/Org_strain_eggnog.emapper.annotations
+```
+
+## Basic Usage <a name="basic-usage"></a>
+Use the CLI with -db flag to specify configuration:
+
+| Command | Description |
+|galEupy -db database.ini -info	|Check database status|
+|galEupy -db database.ini -remove_org	-org organism.ini|Remove specific organism|
+|galEupy -db database.ini -remove_db	|WARNING: Wipe entire database|
