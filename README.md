@@ -116,7 +116,7 @@ galEupy -v d -db <db_configuration_file> -remove_db
 A pipeline written in bash has been added in the current directory, where this README.md file exists. 
 
 The bash script loops through all the genomic fasta (.fna) files and uploads the genomic fasta file as well as the corresponding gff3 files and eggnog emapper annotation files; and uploads this data into the MYSQL database (which has been specified in the database.ini file) using galEupy which has just been installed in the system. Make sure the same organism and strain combination is already not there in the database.
-For example, the header name of the fna file must contain a string such as '>VXDT01000009.1 Phytophthora capsici strain CPHST' where the first string is the name of the scaffold/chromosome, the second string is the
+The header name of the fna file must contain a string such as '>VXDT01000009.1 Phytophthora capsici strain CPHST' where the first string is the name of the scaffold/chromosome, the second string is the
 name of the genus and species and the last two strings are strain and strain name
 
 ### test_dataset
