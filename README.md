@@ -71,7 +71,7 @@ bash upload_genomes_pipeline.sh
 ```
 ### File Naming Convention:
 <3-letter genus><3-letter species>_<strain>.<ext>
-Example: Phymel_CJ26.fna (Phytophthora melonis strain CJ26)
+#### Example: Phymel_CJ26.fna (Phytophthora melonis strain CJ26)
 
 ## Test dataset <a name="test-dataset"></a>
 ### Download Test Files 
