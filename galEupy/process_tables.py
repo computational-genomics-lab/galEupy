@@ -68,7 +68,7 @@ class TableProcessUtility(TableUtility):
         self.NaFeatureId += 1
         self.na_location_Id += 1
 
-    def process_cds_exon_gff_data(self, feature_name, feature_dct, rna_id, gene_strand, rna_na_feature_id):
+    def process_cds_exon_gff_data(self, feature_name, feature_dct, cds_id, gene_strand, rna_na_feature_id):
         location = 'location'
         if location in feature_dct:
             for i in feature_dct[location]:
@@ -78,7 +78,7 @@ class TableProcessUtility(TableUtility):
                 else:
                     feature_start = i[0]
                     feature_end = i[1]
-                self.na_featureimp(self.NaFeatureId, self.NaSequenceId, feature_name, rna_id, rna_na_feature_id)
+                self.na_featureimp(self.NaFeatureId, self.NaSequenceId, feature_name, cds_id, rna_na_feature_id)
                 self.na_location(self.na_location_Id, self.NaFeatureId, feature_start, feature_end, gene_strand)
                 self.NaFeatureId += 1
                 self.na_location_Id += 1
