@@ -44,36 +44,75 @@ class ReadGFF3:
                     if re.search(r'transcript', cols[2], re.I):
                         dct, gene_id_dct = self.process_augustus_transcript_line(dct, cols, gene_id_dct)
 
+
                     if re.search(r'cds', cols[2], re.I):
                         super_parent_id, parent_id = gff_line_obj.get_super_parent_id(gene_id_dct, source)
+                        attribute_dct = gff_line_obj.attribute_dct  # Get parsed attributes
+
+                        # Extract CDS-specific attributes
+                        cds_id = attribute_dct.get('id', None)
+                        protein_id = attribute_dct.get('protein_id', None)
+
                         location_list = [cols[3], cols[4]]
-                        if super_parent_id in dct[source]['pseudogene']:
-                            try:
-                                dct[source]['pseudogene'][super_parent_id]['mrna'][parent_id]['cds']['location'].append(location_list)
-                            except AttributeError:
-                                dct[source]['pseudogene'][super_parent_id]['mrna'][parent_id]['cds']['location'] = [location_list]
-                        else:
-                            try:
-                                dct[source]['gene'][super_parent_id]['mrna'][parent_id]['cds']['location'].append(location_list)
-                            except AttributeError:
-                                dct[source]['gene'][super_parent_id]['mrna'][parent_id]['cds']['location'] = [location_list]
+                        
+                        # Determine the correct gene type (pseudogene or regular gene)
+                        gene_type = 'pseudogene' if super_parent_id in dct[source]['pseudogene'] else 'gene'
+                        
+                        # Access the mRNA entry, creating 'cds' and 'location' if necessary
+                        mrna_entry = dct[source][gene_type][super_parent_id]['mrna'][parent_id]
+                        
+                        #Initialise cds entry if missing 
+                        if 'cds' not in mrna_entry:
+                            mrna_entry['cds'] = {
+                                'ID': cds_id,
+                                'protein_id': protein_id,
+                                'location': []}
+                        
+                        else : 
+                            mrna_entry['cds']['ID'] = cds_id or mrna_entry['cds'].get('ID')
+                            mrna_entry['cds']['protein_id'] = protein_id or mrna_entry['cds'].get('protein_id')
+
+                        # Append the CDS location
+                        #try: NO MORE TRY 
+                        mrna_entry['cds']['location'].append(location_list)
+                        # except AttributeError:
+                        #     # In case 'location' exists but isn't a list
+                        #     mrna_entry['cds']['location'] = [location_list]
+
 
                     if re.search(r'exon', cols[2], re.I):
                         super_parent_id, parent_id = gff_line_obj.get_super_parent_id(gene_id_dct, source)
+                        attribute_dct = gff_line_obj.attribute_dct  # Get parsed attributes
+
+                        # Extract exon-specific attributes
+                        exon_id = attribute_dct.get('id', None)
+                        protein_id = None  # Exons don't directly have protein_id, but we can get it from the parent mRNA
+
                         location_str = [cols[3], cols[4]]
+                       
                         if super_parent_id is not None and parent_id is not None:
                             rna_type = gff_line_obj.id_to_rna_type(gene_id_dct, source, parent_id)
-                            if super_parent_id in self.pseudo_gene_id_dct:
-                                try:
-                                    dct[source]['pseudogene'][super_parent_id][rna_type][parent_id]['exon']['location'].append(location_str)
-                                except AttributeError:
-                                    dct[source]['pseudogene'][super_parent_id][rna_type][parent_id]['exon']['location'] = [location_str]
+
+                            # Determine gene type (pseudogene or regular)
+                            gene_type = 'pseudogene' if super_parent_id in self.pseudo_gene_id_dct else 'gene'
+                            
+                            # Access the mRNA entry
+                            mrna_entry = dct[source][gene_type][super_parent_id][rna_type][parent_id]
+                            
+                            # Initialize exon entry if missing
+                            if 'exon' not in mrna_entry:
+                                mrna_entry['exon'] = {
+                                    'ID': exon_id,
+                                    'protein_id': mrna_entry.get('product', None),  # Optional: Inherit protein_id from mRNA
+                                    'location': []
+                                }
                             else:
-                                try:
-                                    dct[source]['gene'][super_parent_id][rna_type][parent_id]['exon']['location'].append(location_str)
-                                except AttributeError:
-                                    dct[source]['gene'][super_parent_id][rna_type][parent_id]['exon']['location'] = [location_str]
-                                        
+                                # Update fields if they were missing
+                                mrna_entry['exon']['ID'] = exon_id or mrna_entry['exon'].get('ID')
+                            
+                            # Append location
+                            mrna_entry['exon']['location'].append(location_str)                            
+                                 
         return dct
     
     def process_gene_line(self, dct, cols):
