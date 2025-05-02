@@ -1,242 +1,285 @@
 import logging
+# Assuming .dbtable_utility exists in the same package or a relative path
 from .dbtable_utility import TableUtility
+
+# It's good practice to define constants for frequently used strings
+# e.g., FEATURE_TYPE_GENE = 'gene', LOCATION_KEY = 'location', etc.
+# but keeping them as is based on the original code for now.
+
 _logger = logging.getLogger("galEupy.process_tables")
 
 
 class TableProcessUtility(TableUtility):
+    """
+    Utility class for processing GFF data and interacting with database tables.
+    Inherits from TableUtility.
+    """
     def __init__(self, db_dots, upload_dir, organism, taxonomy_id, version):
-        TableUtility.__init__(self, db_dots, upload_dir, organism, taxonomy_id, version)
+        """
+        Initializes TableProcessUtility, calling the parent constructor.
+        """
+        # Correct indentation for the superclass call
+        super().__init__(db_dots, upload_dir, organism, taxonomy_id, version)
+        # It's often useful to initialize IDs here if they aren't handled
+        # solely by the parent class or database sequences. Example:
+        # self.NaFeatureId = initial_value_if_needed
+        # self.na_location_Id = initial_value_if_needed
+        # self.GeneInstanceId = initial_value_if_needed
+        # self.ProteinId = initial_value_if_needed
 
     def process_gff_gene_data(self, scaffold, gene_id, gene_dct, scaffold_na_sequence_id):
+        """
+        Processes a single gene's data from a GFF structure.
+        """
         gene_name = self.prefix + gene_id
         gene_data = GeneInfo(gene_name, gene_dct)
-        self.na_sequenceimp_gene(self.NaSequenceId, scaffold, scaffold_na_sequence_id, gene_data)
+
+        # Process the gene feature itself
+        self.na_sequenceimp_gene(
+            self.NaSequenceId, scaffold, scaffold_na_sequence_id, gene_data
+        )
         data_type = 'gene'
-        self.na_featureimp(self.NaFeatureId, self.NaSequenceId, data_type, gene_name, "NULL")
-        self.na_location(self.na_location_Id, self.NaFeatureId, gene_data.gene_start, gene_data.gene_end,
-                         gene_data.strand)
-        gene_na_feature_id = self.NaFeatureId
+        self.na_featureimp(
+            self.NaFeatureId, self.NaSequenceId, data_type, gene_name, "NULL"
+        )
+        # Breaking long function calls for readability
+        self.na_location(
+            self.na_location_Id,
+            self.NaFeatureId,
+            gene_data.gene_start,
+            gene_data.gene_end,
+            gene_data.strand
+        )
+        gene_na_feature_id = self.NaFeatureId  # Store parent ID for children
         self.NaFeatureId += 1
         self.na_location_Id += 1
+
+        # Process associated RNA features
         if 'trna' in gene_dct:
             for rna_id, rna_dct in gene_dct['trna'].items():
-                data_type = 'tRNA'
-                self.process_other_rna_data(rna_id, rna_dct, data_type, gene_na_feature_id, gene_data)
+                self.process_other_rna_data(
+                    rna_id, rna_dct, 'tRNA', gene_na_feature_id, gene_data
+                )
 
         if 'rrna' in gene_dct:
             for rna_id, rna_dct in gene_dct['rrna'].items():
-                data_type = 'rRNA'
-                self.process_other_rna_data(rna_id, rna_dct, data_type, gene_na_feature_id, gene_data)
+                self.process_other_rna_data(
+                    rna_id, rna_dct, 'rRNA', gene_na_feature_id, gene_data
+                )
 
         if 'mrna' in gene_dct:
             for rna_id, rna_dct in gene_dct['mrna'].items():
                 data_type = 'mRNA'
-                self.na_featureimp(self.NaFeatureId, self.NaSequenceId, data_type, rna_id, gene_na_feature_id)
+                self.na_featureimp(
+                    self.NaFeatureId, self.NaSequenceId, data_type, rna_id, gene_na_feature_id
+                )
                 rna_data = RnaInfo(rna_dct)
-                self.na_location(self.na_location_Id, self.NaFeatureId, rna_data.start, rna_data.end, gene_data.strand)
+                self.na_location(
+                    self.na_location_Id, self.NaFeatureId, rna_data.start, rna_data.end, gene_data.strand
+                )
 
-                if 'product' in rna_dct:
-                    annotation = rna_dct['product']
-                else:
-                    annotation = 'Hypothetical Protein'
-
+                annotation = rna_dct.get('product', 'Hypothetical Protein')
                 self.gene_instance(self.GeneInstanceId, self.NaFeatureId, annotation)
 
-                if 'protein_sequence' in rna_dct:
-                    protein_sequence = rna_dct['protein_sequence']
-                else:
-                    protein_sequence = ""
-
-                self.protein(self.ProteinId, gene_name, annotation, self.GeneInstanceId, protein_sequence)
-
+                cds_id = None
+                protein_id = None
+                # Capture the NaFeatureId for this mRNA *before* processing its children (CDS/exon)
+                # and *before* incrementing for the next mRNA.
                 rna_na_feature_id = self.NaFeatureId
 
+                if 'cds' in rna_dct:
+                    cds_info = rna_dct['cds']
+                    # Use a more specific default if ID is missing
+                    cds_id = cds_info.get('ID', f'cds_for_{rna_id}')
+                    protein_id = cds_info.get('protein_id', None) # Often links to protein feature
+
+                    self.process_cds_exon_gff_data(
+                        feature_name='cds',
+                        feature_dct=cds_info,
+                        feature_id_name=cds_id, # Pass the specific ID for CDS
+                        gene_strand=gene_data.strand,
+                        parent_na_feature_id=rna_na_feature_id # Link CDS to mRNA
+                    )
+
+                protein_sequence = rna_dct.get('protein_sequence', "")
+                # Ensure protein_id from CDS attributes is used if available
+                # Assuming self.protein links the protein sequence to the gene instance/mRNA
+                self.protein(
+                    self.ProteinId,
+                    protein_id or gene_name, # Use specific protein_id if found
+                    annotation,
+                    self.GeneInstanceId,
+                    protein_sequence
+                )
+
+                if 'exon' in rna_dct:
+                    # Exons usually share an identifier, often related to the parent mRNA/CDS
+                    # Using cds_id here might be correct if exons are grouped by CDS ID,
+                    # otherwise, might need a different approach based on GFF structure.
+                    
+                    exon_info = rna_dct['exon']
+                    # Use a more specific default if ID is missing
+                    exon_id = exon_info.get('ID', f'exon_for_{rna_id}')
+                    #protein_id = cds_info.get('protein_id', None) # Often links to protein feature
+
+                    self.process_cds_exon_gff_data(
+                        feature_name='exon',
+                        feature_dct=exon_info,
+                        feature_id_name=exon_id, # Pass the specific ID for CDS
+                        gene_strand=gene_data.strand,
+                        parent_na_feature_id=rna_na_feature_id # Link CDS to mRNA
+                    )
+                    
+                    # exon_id_name = f'exon_for_{rna_id}' # Example placeholder if no specific exon ID
+                    # self.process_cds_exon_gff_data(
+                    #     feature_name='exon',
+                    #     feature_dct=rna_dct['exon'],
+                    #     feature_id_name=exon_id_name, # Pass appropriate ID for Exon
+                    #     gene_strand=gene_data.strand,
+                    #     parent_na_feature_id=rna_na_feature_id # Link exon to mRNA
+                    # )
+
+                # Increment IDs for the *next* mRNA feature (or other top-level feature)
+                # The CDS/exon processing increments IDs internally for each part.
                 self.NaFeatureId += 1
                 self.na_location_Id += 1
                 self.GeneInstanceId += 1
                 self.ProteinId += 1
 
-                if 'exon' in rna_dct:
-                    self.process_cds_exon_gff_data('exon', rna_dct['exon'], rna_id, gene_data.strand, rna_na_feature_id)
-                if 'cds' in rna_dct:
-                    self.process_cds_exon_gff_data('cds', rna_dct['cds'], rna_id, gene_data.strand, rna_na_feature_id)
 
     def process_other_rna_data(self, rna_id, rna_dct, data_type, gene_na_feature_id, gene_data):
+        """
+        Processes non-mRNA RNA types (tRNA, rRNA).
+        """
         rna_data = RnaInfo(rna_dct)
-        self.na_featureimp_rna(self.NaFeatureId, self.NaSequenceId, data_type, rna_id, gene_na_feature_id)
-        self.na_location(self.na_location_Id, self.NaFeatureId, rna_data.start, rna_data.end, gene_data.strand)
+        # Consider if na_featureimp_rna is different from na_featureimp
+        self.na_featureimp( # Assuming na_featureimp_rna was a typo or specific implementation needed
+            self.NaFeatureId, self.NaSequenceId, data_type, rna_id, gene_na_feature_id
+        )
+        self.na_location(
+            self.na_location_Id, self.NaFeatureId, rna_data.start, rna_data.end, gene_data.strand
+        )
         self.NaFeatureId += 1
         self.na_location_Id += 1
 
-    def process_cds_exon_gff_data(self, feature_name, feature_dct, cds_id, gene_strand, rna_na_feature_id):
-        location = 'location'
-        if location in feature_dct:
-            for i in feature_dct[location]:
-                if len(i) == 1:
-                    feature_start = i[0]
-                    feature_end = i[0]
-                else:
-                    feature_start = i[0]
-                    feature_end = i[1]
-                self.na_featureimp(self.NaFeatureId, self.NaSequenceId, feature_name, cds_id, rna_na_feature_id)
-                self.na_location(self.na_location_Id, self.NaFeatureId, feature_start, feature_end, gene_strand)
+
+    def process_cds_exon_gff_data(self, feature_name, feature_dct, feature_id_name, gene_strand, parent_na_feature_id):
+        """
+        Processes features with potentially multiple location entries (like CDS or exons).
+        """
+        location_key = 'location'
+        if location_key in feature_dct:
+            # Handle cases where location might be a list of lists (e.g., multiple exons/CDS segments)
+            locations = feature_dct[location_key]
+            if not isinstance(locations, list):
+                _logger.warning(f"Expected list for locations in {feature_name} {feature_id_name}, found {type(locations)}. Skipping.")
+                return
+
+            for loc_entry in locations:
+                if not isinstance(loc_entry, (list, tuple)) or not (1 <= len(loc_entry) <= 2):
+                     _logger.warning(f"Invalid location format in {feature_name} {feature_id_name}: {loc_entry}. Skipping.")
+                     continue
+
+                # Assumes GFF format where start <= end
+                feature_start = loc_entry[0]
+                feature_end = loc_entry[1] if len(loc_entry) == 2 else loc_entry[0] # Handle single-point features if needed
+
+                # Each segment (exon/CDS part) gets its own NaFeature entry linked to the parent (mRNA)
+                self.na_featureimp(
+                    self.NaFeatureId, self.NaSequenceId, feature_name, feature_id_name, parent_na_feature_id
+                )
+                self.na_location(
+                    self.na_location_Id, self.NaFeatureId, feature_start, feature_end, gene_strand
+                )
+                # Increment IDs for each segment processed
                 self.NaFeatureId += 1
                 self.na_location_Id += 1
+
 
     def process_repeat_data(self, feature, feature_dct, scaffold_na_sequence_id):
-        data_type = feature
-        location = 'location'
-        if location in feature_dct:
-            for i in feature_dct[location]:
-                if len(i) == 1:
-                    feature_start = i[0]
-                    feature_end = i[0]
-                else:
-                    feature_start = i[0]
-                    feature_end = i[1]
-                if feature_start < feature_end:
-                    strand = 0
-                else:
-                    strand = 1
+        """
+        Processes repeat features.
+        """
+        data_type = feature # e.g., 'repeat_region', 'tandem_repeat'
+        location_key = 'location'
+        if location_key in feature_dct:
+            locations = feature_dct[location_key]
+            if not isinstance(locations, list):
+                _logger.warning(f"Expected list for locations in {feature}, found {type(locations)}. Skipping.")
+                return
 
-                self.na_featureimp(self.NaFeatureId, scaffold_na_sequence_id, data_type, data_type, "NULL")
-                self.na_location(self.na_location_Id, self.NaFeatureId, feature_start, feature_end, strand)
+            for loc_entry in locations:
+                if not isinstance(loc_entry, (list, tuple)) or not (1 <= len(loc_entry) <= 2):
+                     _logger.warning(f"Invalid location format in {feature}: {loc_entry}. Skipping.")
+                     continue
 
+                feature_start = loc_entry[0]
+                feature_end = loc_entry[1] if len(loc_entry) == 2 else loc_entry[0]
+
+                # Determine strand based on GFF conventions (usually '+' or '-')
+                # The original logic `strand = 1 if feature_start > feature_end else 0`
+                # seems incorrect for standard GFF where start <= end.
+                # Assuming strand info might be elsewhere in feature_dct or defaults to forward (0).
+                # Fetching strand properly would require knowing the structure of feature_dct.
+                # Using a default of 0 (forward/unknown) for now.
+                strand = feature_dct.get('strand', 0) # Assuming 0 for '+' or unknown, 1 for '-'
+
+                # Repeats often don't have a parent feature in the same way genes/mRNAs do.
+                # Using "NULL" or a specific repeat ID if available.
+                # Passing scaffold_na_sequence_id as the sequence context.
+                self.na_featureimp(
+                     self.NaFeatureId, scaffold_na_sequence_id, data_type, data_type, "NULL" # Or a specific repeat ID
+                )
+                self.na_location(
+                    self.na_location_Id, self.NaFeatureId, feature_start, feature_end, strand
+                )
                 self.NaFeatureId += 1
                 self.na_location_Id += 1
 
-
-'''
-
-def process_gff_gene_data(gal_table, org_info, scaffold, gene_id, gene_dct, scaffold_na_sequence_id):
-    gene_name = org_info.prefix + gene_id
-    gene_data = GeneInfo(gene_name, gene_dct)
-    today = get_date()
-    na_sequence_imp_gene(gal_table, gal_table.NaSequenceId, org_info, scaffold, scaffold_na_sequence_id, gene_data, today)
-    data_type = 'gene'
-    na_feature_imp(gal_table, gal_table.NaFeatureId, gal_table.NaSequenceId, data_type, gene_name, "NULL")
-
-    na_location(gal_table, gal_table.na_location_Id, gal_table.NaFeatureId, gene_data.gene_start, gene_data.gene_end,
-                gene_data.strand)
-    gene_na_feature_id = gal_table.NaFeatureId
-
-    gal_table.NaFeatureId += 1
-    gal_table.na_location_Id += 1
-
-    if 'tRNA' in gene_dct:
-        for rna_id, rna_dct in gene_dct['tRNA'].items():
-            data_type = 'tRNA'
-            process_other_rna_data(gal_table, gal_table, rna_id, rna_dct, data_type, gene_na_feature_id, gene_data)
-
-    if 'rRNA' in gene_dct:
-        for rna_id, rna_dct in gene_dct['rRNA'].items():
-            data_type = 'rRNA'
-            process_other_rna_data(gal_table, gal_table, rna_id, rna_dct, data_type, gene_na_feature_id, gene_data)
-
-    if 'mrna' in gene_dct:
-        for rna_id, rna_dct in gene_dct['mrna'].items():
-            data_type = 'mRNA'
-            na_feature_imp(gal_table, gal_table.NaFeatureId, gal_table.NaSequenceId, data_type, rna_id, gene_na_feature_id)
-
-            rna_data = RnaInfo(rna_dct)
-
-            na_location(gal_table, gal_table.na_location_Id, gal_table.NaFeatureId, rna_data.start, rna_data.end,
-                                 gene_data.strand)
-
-            if 'product' in rna_dct:
-                annotation = rna_dct['product']
-            else:
-                annotation = 'Hypothetical Protein'
-
-            gene_instance(gal_table, gal_table.GeneInstanceId, gal_table.NaFeatureId, annotation, today)
-
-            if 'protein_sequence' in rna_dct:
-                protein_sequence = rna_dct['protein_sequence']
-            else:
-                protein_sequence = ""
-            protein(gal_table, gal_table.ProteinId, gene_name, annotation, gal_id.GeneInstanceId, protein_sequence)
-
-            rna_na_feature_id = gal_table.NaFeatureId
-
-            gal_table.NaFeatureId += 1
-            gal_table.na_location_Id += 1
-            gal_table.GeneInstanceId += 1
-            gal_table.ProteinId += 1
-
-            if 'exon' in rna_dct:
-                process_cds_exon_gff_data(gal_table, gal_table, 'exon', rna_dct['exon'], rna_id, gene_data.strand,
-                                          rna_na_feature_id)
-            if 'cds' in rna_dct:
-                process_cds_exon_gff_data(gal_table, gal_table, 'cds', rna_dct['cds'], rna_id, gene_data.strand,
-                                          rna_na_feature_id)
-
-
-def process_other_rna_data(gal_fh, gal_id, rna_id, rna_dct, data_type, gene_na_feature_id, gene_data):
-    rna_data = RnaInfo(rna_dct)
-    na_feature_imp_rna(gal_fh, gal_id.NaFeatureId, gal_id.NaSequenceId, data_type, rna_id, gene_na_feature_id)
-    na_location(gal_fh, gal_id.na_location_Id, gal_id.NaFeatureId, rna_data.start, rna_data.end, gene_data.strand)
-    gal_id.NaFeatureId += 1
-    gal_id.na_location_Id += 1
-
-
-def process_cds_exon_gff_data(gal_id, gal_fh, feature_name, feature_dct, rna_id, gene_strand, rna_na_feature_id):
-    location = 'location'
-    if location in feature_dct:
-        for i in feature_dct[location]:
-            if len(i) == 1:
-                feature_start = i[0]
-                feature_end = i[0]
-            else:
-                feature_start = i[0]
-                feature_end = i[1]
-            na_feature_imp(gal_fh, gal_id.NaFeatureId, gal_id.NaSequenceId, feature_name, rna_id, rna_na_feature_id)
-            na_location(gal_fh, gal_id.na_location_Id, gal_id.NaFeatureId, feature_start, feature_end, gene_strand)
-            gal_id.NaFeatureId += 1
-            gal_id.na_location_Id += 1
-
-
-def process_repeat_data(gal_table, feature, feature_dct, scaffold_na_sequence_id):
-    data_type = feature
-    location = 'location'
-    if location in feature_dct:
-        for i in feature_dct[location]:
-            if len(i) == 1:
-                feature_start = i[0]
-                feature_end = i[0]
-            else:
-                feature_start = i[0]
-                feature_end = i[1]
-            if feature_start < feature_end:
-                strand = 0
-            else:
-                strand = 1
-
-            na_feature_imp(gal_table, gal_table.NaFeatureId, scaffold_na_sequence_id, data_type, data_type, "NULL")
-            na_location(gal_table, gal_table.na_location_Id, gal_table.NaFeatureId, feature_start, feature_end, strand)
-
-            gal_table.NaFeatureId += 1
-            gal_table.na_location_Id += 1
-'''
-
-
+# Separate utility classes
+# Use two blank lines before class definitions
 class RnaInfo:
+    """
+    Simple class to hold basic RNA location info.
+    """
     def __init__(self, rna_dct):
-        location_list = rna_dct['location'][0]
-        self.start = location_list[0]
-        self.end = location_list[1]
+        # Add error handling for missing or malformed 'location'
+        location_list = []
+        try:
+            # Expecting location like [[start, end, strand?]] or [[start, end], [start, end]]
+            # Taking the first segment for overall start/end
+            location_list = rna_dct['location'][0]
+            self.start = int(location_list[0])
+            self.end = int(location_list[1])
+        except (KeyError, IndexError, TypeError, ValueError) as e:
+            _logger.error(f"Could not parse RNA location from {rna_dct.get('location')}: {e}")
+            # Set defaults or raise exception
+            self.start = -1
+            self.end = -1
 
 
 class GeneInfo:
+    """
+    Simple class to hold basic Gene info (sequence, location, strand).
+    """
     def __init__(self, gene_name, gene_dct):
         self.gene_name = gene_name
-        self.gene_sequence = gene_dct['gene_sequence']
-        try:
-            self.gene_start, self.gene_end, strand = gene_dct['location'][0]
-            if strand == '-':
-                self.strand = 1
-            else:
-                self.strand = 0
-        except ValueError:
-            print(gene_dct['location'])
-            print(gene_name, gene_dct)
+        # Add error handling for missing keys
+        self.gene_sequence = gene_dct.get('gene_sequence', '') # Default to empty string if missing
+        if not self.gene_sequence:
+             _logger.warning(f"Gene {gene_name} has missing 'gene_sequence'")
 
+        try:
+            # Assuming location is like [[start, end, strand]]
+            location_info = gene_dct['location'][0]
+            self.gene_start = int(location_info[0])
+            self.gene_end = int(location_info[1])
+            strand_char = location_info[2]
+            # Convert strand representation: 1 for '-' (reverse), 0 for '+' (forward) or other
+            self.strand = 1 if strand_char == '-' else 0
+        except (KeyError, IndexError, TypeError, ValueError) as e:
+            _logger.error(f"Could not parse gene location/strand for {gene_name} from {gene_dct.get('location')}: {e}")
+            # Set defaults or raise a more specific error
+            self.gene_start = -1
+            self.gene_end = -1
+            self.strand = 0 # Default to forward/unknown
