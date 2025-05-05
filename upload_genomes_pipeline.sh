@@ -38,9 +38,24 @@ for file in genomes/*.fna; do
         fi
     fi
 
-    # Define associated file paths
-    gff_file="${base}.gff3"
-    eggnog_file="${base}_eggnog.emapper.annotations"
+    # ===== Handle .gff or .gff3 files =====
+    gff_file=""
+    # Check for existing GFF files in genomes directory
+    for ext in gff gff3; do
+        if [[ -f "genomes/${base}.${ext}" ]]; then
+            gff_file="genomes/${base}.${ext}"
+            break
+        fi
+    done
+
+    # Exit if no GFF file found
+    if [[ -z "$gff_file" ]]; then
+        echo "Error: No GFF file found for ${base} (.gff or .gff3); skipping."
+        continue
+    fi
+
+    # EggNOG file path
+    eggnog_file="genomes/${base}_eggnog.emapper.annotations"
 
     # Print details for debugging/logging
     echo "Processing File: $file"
@@ -75,11 +90,12 @@ scaffold_prefix:
 [filePath]
 GenBank:
 FASTA: $file
-GFF: genomes/$gff_file
-eggnog: genomes/$eggnog_file
+GFF: $gff_file
+eggnog: $eggnog_file
 EOF
 
     # Upload data using galEupy
     # Assumes a database.ini file is present in the working directory
     galEupy -db database.ini -org organism.ini -v d -upload All -log "$strain_name.log"
 done
+
