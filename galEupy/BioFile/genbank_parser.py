@@ -229,6 +229,7 @@ def process_gff_other_rna_data(gb_dct, gene_dct, prev_gene_id, transcript_id_dct
 
 
 def process_gff_cds_type1_data(gb_dct, gene_dct, prev_gene_id, transcript_id_dct, locus_name):
+#For standalone CDS entries
     feature = 'CDS'
     qualifier_dct, location, strand, start_loc, end_loc = extract_feature_record(feature, gb_dct[feature][0])
 
@@ -265,6 +266,7 @@ def process_gff_cds_type2_data(gb_dct, gene_dct, prev_gene_id, transcript_id, tr
 
 
 def process_gff_cds_type3_data(gb_dct, gene_dct, prev_gene_id, product_dct, locus_name, transcript_id):
+# CDS linked to mRNAs
     # cds count = n and m_rna count = n
 
     cds_product_dct = defaultdict(list)
