@@ -1,3 +1,4 @@
+
 import logging
 from pathlib import Path
 from .dbtable_utility import TableStatusID
@@ -6,8 +7,10 @@ import csv
 # from .BioFile.interproscan_parser import ParseInterproResult
 from .directory_utility import ProteinAnnotationFiles
 # import time
+import pprint
 
-_logger = logging.getLogger("galEupy.protein_annotation_utility")
+
+# _logger = logging.getLogger("galEupy.protein_annotation_utility")
 
 _logger = logging.getLogger("galEupy.protein_annotation_utility")
 
@@ -18,41 +21,81 @@ class TranscriptMap:
         self.org_version = org_version
         self._transcript_map_dct = self.build_transcript_map_dct()
 
+
     def build_transcript_map_dct(self):
-        sql_query = f"""select p.name as 'name1',naf.name as 'name2', gi.gene_instance_id from 
-        protein p, geneinstance gi, nafeatureimp naf, nasequenceimp na where 
-        gi.gene_instance_ID = p.gene_instance_ID and
-        naf.na_feature_ID = gi.na_feature_ID and
-        naf.feature_type='mRNA' and
-        na.na_sequence_id = naf.na_sequence_id and 
-        na.taxon_id = {self.taxonomy_id} and
-        na.strain_number = {self.org_version}"""
+        sql_query = f"""
+SELECT gi.gene_instance_ID, mrna.name AS mrna_name, cds.name AS cds_name,
+ p.name AS protein_name FROM nasequenceimp na JOIN nafeatureimp mrna 
+ ON mrna.na_sequence_ID = na.na_sequence_ID AND 
+ mrna.feature_type = 'mRNA' JOIN geneinstance gi ON
+   gi.na_feature_ID = mrna.na_feature_ID JOIN nafeatureimp 
+   cds ON cds.na_sequence_ID = na.na_sequence_ID AND 
+   cds.feature_type = 'cds' JOIN protein p ON
+     p.gene_instance_ID = gi.gene_instance_ID WHERE 
+     na.taxon_ID =  {self.taxonomy_id} AND na.strain_number = {self.org_version}
+
+        """
 
         transcript_name_dct = {}
 
-        result = self.db_dots.query(sql_query)
-        for value in result:
-            name1 = value['name1']
-            name2 = value['name2']
-            gene_instance_id = value['gene_instance_id']
+        for row in self.db_dots.query(sql_query):
+            gid = row['gene_instance_ID']
 
-            modified_gene_name = self.modify_transcript_name(name1)
-            transcript_name_dct[modified_gene_name] = gene_instance_id
-            transcript_name_dct[name2] = gene_instance_id
+            # 1) map the raw mRNA ID (e.g. XM_… or g1.t1)
+            transcript_name_dct[row['mrna_name']] = gid
 
+            # 2) map the CDS accession (NP_… / XP_…)
+            #transcript_name_dct[row['cds_name']]  = gid
+            cds = row['cds_name']           # e.g. "cds-NP_596862.1"
+            transcript_name_dct[cds] = gid
+            if cds.startswith('cds-'):
+                transcript_name_dct[cds[len('cds-'):]] = gid
+
+            # 3) map the protein table’s `p.name` too, in case it differs
+            transcript_name_dct[row['protein_name']] = gid
+
+            # 4) still support Funannotate‐style aliasing if needed
+            for source in (row['mrna_name'], row['protein_name']):
+                if self._is_funannotate_name(source):
+                    alias = self.modify_transcript_name(source)
+                    transcript_name_dct[alias] = gid
+
+
+        # # Pretty format the dictionary
+        # pp = pprint.pformat(transcript_name_dct)
+
+        # # Log the dictionary
+        # _logger.info(f"Pretty formatted dictionary:\n{pp}")
         return transcript_name_dct
 
+
     @staticmethod
-    def modify_transcript_name(gene_name):
-        match_obj = re.search(r'\S+_(\S+)', gene_name, re.M | re.I)
-        modified_transcript_name = match_obj.group(1) if match_obj else gene_name
-        return f'{modified_transcript_name}.t1'
+    def _is_funannotate_name(gene_name: str) -> bool:
+        # e.g. funannotate mRNA names look like “g1”, “g32”, “g100” etc.
+        # or protein names like “something_1234”
+        return bool(re.match(r'^[^_]+_\d+$', gene_name))
+
+
+    @staticmethod
+    def modify_transcript_name(gene_name: str) -> str:
+        """
+        Turn a Funannotate protein name like “XYZ_123” into “123.t1”.
+        Leave any other name untouched.
+        """
+        m = re.match(r'^[^_]+_(\d+)$', gene_name)
+        if not m:
+            # not Funannotate style → assume it's already an NCBI-style transcript
+            return gene_name
+
+        suffix = m.group(1)
+        return f"{suffix}.t1"
+
 
     def find_transcript_entry(self, transcript_name):
-        protein_instance_id = self._transcript_map_dct.get(transcript_name)
-        if not protein_instance_id:
-            _logger.error(f'{transcript_name} name is not matching with the database entry')
-        return protein_instance_id
+        pid = self._transcript_map_dct.get(transcript_name)
+        if pid is None:
+            _logger.error(f"Could not find transcript entry for '{transcript_name}'")
+        return pid
 
 class BaseProteinAnnotations(ProteinAnnotationFiles, TableStatusID):
     def __init__(self, db_conn, path_config, org_config, random_str):
@@ -72,11 +115,11 @@ class BaseProteinAnnotations(ProteinAnnotationFiles, TableStatusID):
     def create_protein_file(self, taxonomy_id, org_version):
         _logger.debug("Creating protein file to store the protein information")
 
-        query = f"""select nf.feature_type, nf.name, p.description, p.gene_instance_id, p.sequence from 
-        nasequenceimp ns, nafeatureimp nf, geneinstance gi, protein p where ns.taxon_id = {taxonomy_id}
-        and ns.strain_number = {org_version} and ns.sequence_type_id = 6 and nf.na_sequence_id = ns.na_sequence_id
-        and nf.feature_type = 'mRNA' and gi.na_feature_id = nf.na_feature_id and  
-        p.gene_instance_id = gi.gene_instance_id"""
+        query = f"""select nf.feature_type, nf.name, p.description, p.gene_instance_ID, p.sequence from 
+        nasequenceimp ns, nafeatureimp nf, geneinstance gi, protein p where ns.taxon_ID = {taxonomy_id}
+        and ns.strain_number = {org_version} and ns.sequence_type_ID = 6 and nf.na_sequence_ID = ns.na_sequence_ID
+        and nf.feature_type = 'mRNA' and gi.na_feature_ID = nf.na_feature_ID and  
+        p.gene_instance_ID = gi.gene_instance_ID"""
 
         result = self.db_dots.query(query)
         with open(self.protein_file, 'w') as fh:
