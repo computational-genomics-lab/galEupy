@@ -311,6 +311,8 @@ class CentralDogmaAnnotator(AnnotationCategory, Taxonomy, TableStatusID):
         if contig_names_compare:
             self.minimal_annotation_data(annotation_obj.sequence_dct, feature_dct)
             self.file_upload.upload_central_dogma_data()
+            _logger.info("passed")
+
             return True
         else:
             return False
@@ -349,6 +351,8 @@ class CentralDogmaAnnotator(AnnotationCategory, Taxonomy, TableStatusID):
 
         taxonomy_id = self.taxonomy_id_sres
         _logger.info(f"Taxonomy_id: {taxonomy_id}")
+
+
 
         gal_table = TableProcessUtility(self.db_connection, self.path_config.upload_dir, self.org_config.organism,
                                         taxonomy_id, self.org_config.version)
