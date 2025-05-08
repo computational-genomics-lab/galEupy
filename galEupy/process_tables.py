@@ -2,12 +2,8 @@ import logging
 # Assuming .dbtable_utility exists in the same package or a relative path
 from .dbtable_utility import TableUtility
 
-# It's good practice to define constants for frequently used strings
-# e.g., FEATURE_TYPE_GENE = 'gene', LOCATION_KEY = 'location', etc.
-# but keeping them as is based on the original code for now.
 
 _logger = logging.getLogger("galEupy.process_tables")
-
 
 class TableProcessUtility(TableUtility):
     """
@@ -18,14 +14,8 @@ class TableProcessUtility(TableUtility):
         """
         Initializes TableProcessUtility, calling the parent constructor.
         """
-        # Correct indentation for the superclass call
+
         super().__init__(db_dots, upload_dir, organism, taxonomy_id, version)
-        # It's often useful to initialize IDs here if they aren't handled
-        # solely by the parent class or database sequences. Example:
-        # self.NaFeatureId = initial_value_if_needed
-        # self.na_location_Id = initial_value_if_needed
-        # self.GeneInstanceId = initial_value_if_needed
-        # self.ProteinId = initial_value_if_needed
 
     def process_gff_gene_data(self, scaffold, gene_id, gene_dct, scaffold_na_sequence_id):
         """
@@ -42,7 +32,7 @@ class TableProcessUtility(TableUtility):
         self.na_featureimp(
             self.NaFeatureId, self.NaSequenceId, data_type, gene_name, "NULL"
         )
-        # Breaking long function calls for readability
+
         self.na_location(
             self.na_location_Id,
             self.NaFeatureId,
@@ -88,10 +78,23 @@ class TableProcessUtility(TableUtility):
                 rna_na_feature_id = self.NaFeatureId
 
                 if 'cds' in rna_dct:
-                    cds_info = rna_dct['cds']
-                    # Use a more specific default if ID is missing
-                    cds_id = cds_info.get('ID', f'cds_for_{rna_id}')
-                    protein_id = cds_info.get('protein_id', None) # Often links to protein feature
+                    # Check if 'cds' is a list of CDS dictionaries (common in multi-segment CDS)
+                    cds_list = rna_dct['cds'] if isinstance(rna_dct['cds'], list) else [rna_dct['cds']]
+                    for cds_info in cds_list:
+                        cds_id = cds_info.get('ID', f'cds_for_{rna_id}')
+                        protein_id = cds_info.get('protein_id', None)
+                        self.process_cds_exon_gff_data(
+                            feature_name='cds',
+                            feature_dct=cds_info,
+                            feature_id_name=cds_id,
+                            gene_strand=gene_data.strand,
+                            parent_na_feature_id=rna_na_feature_id
+                        )
+                # if 'cds' in rna_dct:
+                #     cds_info = rna_dct['cds']
+                #     # Use a more specific default if ID is missing
+                #     cds_id = cds_info.get('ID', f'cds_for_{rna_id}')
+                #     protein_id = cds_info.get('protein_id', None) # Often links to protein feature
 
                     self.process_cds_exon_gff_data(
                         feature_name='cds',
@@ -106,12 +109,12 @@ class TableProcessUtility(TableUtility):
                 # Assuming self.protein links the protein sequence to the gene instance/mRNA
                 self.protein(
                     self.ProteinId,
-                    protein_id or gene_name, # Use specific protein_id if found
+                    gene_name, 
                     annotation,
                     self.GeneInstanceId,
                     protein_sequence
                 )
-
+                # _logger.info(f'the protein id is {self.ProteinId} and the gene name is {gene_name}')
                 if 'exon' in rna_dct:
                     # Exons usually share an identifier, often related to the parent mRNA/CDS
                     # Using cds_id here might be correct if exons are grouped by CDS ID,
@@ -162,38 +165,52 @@ class TableProcessUtility(TableUtility):
         self.NaFeatureId += 1
         self.na_location_Id += 1
 
-
     def process_cds_exon_gff_data(self, feature_name, feature_dct, feature_id_name, gene_strand, parent_na_feature_id):
         """
-        Processes features with potentially multiple location entries (like CDS or exons).
+        Processes features with multiple location segments (CDS/exons) as single features with multiple locations
         """
-        location_key = 'location'
-        if location_key in feature_dct:
-            # Handle cases where location might be a list of lists (e.g., multiple exons/CDS segments)
-            locations = feature_dct[location_key]
-            if not isinstance(locations, list):
-                _logger.warning(f"Expected list for locations in {feature_name} {feature_id_name}, found {type(locations)}. Skipping.")
-                return
+        # Create single NA_FEATURE entry for this CDS/exon
+        self.na_featureimp(
+            self.NaFeatureId,
+            self.NaSequenceId,
+            feature_name,
+            feature_id_name,
+            parent_na_feature_id
+        )
+        
+        # Process all location segments for this feature
+        locations = feature_dct.get('location', [])
+        if not isinstance(locations, list):
+            _logger.warning(f"Expected list for locations in {feature_name} {feature_id_name}, found {type(locations)}. Skipping.")
+            return
 
-            for loc_entry in locations:
-                if not isinstance(loc_entry, (list, tuple)) or not (1 <= len(loc_entry) <= 2):
-                     _logger.warning(f"Invalid location format in {feature_name} {feature_id_name}: {loc_entry}. Skipping.")
-                     continue
+        valid_segment_count = 0
+        for loc_entry in locations:
+            if not isinstance(loc_entry, (list, tuple)) or len(loc_entry) != 2:
+                _logger.warning(f"Invalid location format in {feature_name} {feature_id_name}: {loc_entry}. Skipping segment.")
+                continue
 
-                # Assumes GFF format where start <= end
-                feature_start = loc_entry[0]
-                feature_end = loc_entry[1] if len(loc_entry) == 2 else loc_entry[0] # Handle single-point features if needed
+            feature_start, feature_end = loc_entry
+            
+            # CREATE LOCATION ENTRY (NO COORDINATE VALIDATION)
+            self.na_location(
+                self.na_location_Id,
+                self.NaFeatureId,  # Use the same feature ID for all segments
+                feature_start,
+                feature_end,
+                gene_strand
+            )
+            self.na_location_Id += 1
+            valid_segment_count += 1
 
-                # Each segment (exon/CDS part) gets its own NaFeature entry linked to the parent (mRNA)
-                self.na_featureimp(
-                    self.NaFeatureId, self.NaSequenceId, feature_name, feature_id_name, parent_na_feature_id
-                )
-                self.na_location(
-                    self.na_location_Id, self.NaFeatureId, feature_start, feature_end, gene_strand
-                )
-                # Increment IDs for each segment processed
-                self.NaFeatureId += 1
-                self.na_location_Id += 1
+        if valid_segment_count == 0:
+            _logger.error(f"No valid locations found for {feature_name} {feature_id_name}. Feature not created.")
+            return  # Roll back feature creation by not incrementing NaFeatureId
+        else:
+            _logger.debug(f"Created {feature_name} {feature_id_name} with {valid_segment_count} segments")
+
+        # Only increment feature ID after processing all segments
+        self.NaFeatureId += 1
 
 
     def process_repeat_data(self, feature, feature_dct, scaffold_na_sequence_id):
@@ -270,7 +287,7 @@ class GeneInfo:
              _logger.warning(f"Gene {gene_name} has missing 'gene_sequence'")
 
         try:
-            # Assuming location is like [[start, end, strand]]
+            #  location is like [[start, end, strand]]
             location_info = gene_dct['location'][0]
             self.gene_start = int(location_info[0])
             self.gene_end = int(location_info[1])
