@@ -206,8 +206,8 @@ class TableProcessUtility(TableUtility):
         if valid_segment_count == 0:
             _logger.error(f"No valid locations found for {feature_name} {feature_id_name}. Feature not created.")
             return  # Roll back feature creation by not incrementing NaFeatureId
-        else:
-            _logger.debug(f"Created {feature_name} {feature_id_name} with {valid_segment_count} segments")
+        #else:
+            #_logger.debug(f"Created {feature_name} {feature_id_name} with {valid_segment_count} segments")
 
         # Only increment feature ID after processing all segments
         self.NaFeatureId += 1
