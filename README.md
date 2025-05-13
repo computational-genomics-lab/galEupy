@@ -50,7 +50,7 @@ scaffold_prefix =
 [filePath]
 FASTA = path/to/genomes/Org_strain.fna
 GFF = path/to/genomes/Org_strain.gff3
-eggnog = path/to/genomes/Org_strain_eggnog.emapper.annotations
+eggnog = path/to/genomes/Org_strain.emapper.annotations
 ```
 
 ## Basic Usage <a name="basic-usage"></a>
