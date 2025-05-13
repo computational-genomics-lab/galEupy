@@ -30,7 +30,7 @@ for file in genomes/*.fna; do
     else
         # Default to the fourth word if "strain" is not present
         strain_name=$(echo "$header" | awk '{print $4}')
-        
+
         # Validate strain name
         if [ -z "$strain_name" ]; then
             echo "Invalid FASTA file format in $file: Header does not match expected formats; skipping."
@@ -96,6 +96,9 @@ EOF
 
     # Upload data using galEupy
     # Assumes a database.ini file is present in the working directory
-    galEupy -db database.ini -org organism.ini -v d -upload All -log "$strain_name.log"
-done
+safe_org=${organism_name//[[:space:]]/_}
 
+logfile="${safe_org}_${strain_name}.log"
+
+    galEupy -db database.ini -org organism.ini -v d -upload All -log "$logfile"
+done
