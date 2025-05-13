@@ -1,4 +1,3 @@
-
 import logging
 from pathlib import Path
 from .dbtable_utility import TableStatusID
@@ -25,13 +24,13 @@ class TranscriptMap:
     def build_transcript_map_dct(self):
         sql_query = f"""
 SELECT gi.gene_instance_ID, mrna.name AS mrna_name, cds.name AS cds_name,
- p.name AS protein_name FROM nasequenceimp na JOIN nafeatureimp mrna 
- ON mrna.na_sequence_ID = na.na_sequence_ID AND 
+ p.name AS protein_name FROM nasequenceimp na JOIN nafeatureimp mrna
+ ON mrna.na_sequence_ID = na.na_sequence_ID AND
  mrna.feature_type = 'mRNA' JOIN geneinstance gi ON
-   gi.na_feature_ID = mrna.na_feature_ID JOIN nafeatureimp 
-   cds ON cds.na_sequence_ID = na.na_sequence_ID AND 
+   gi.na_feature_ID = mrna.na_feature_ID JOIN nafeatureimp
+   cds ON cds.na_sequence_ID = na.na_sequence_ID AND
    cds.feature_type = 'cds' JOIN protein p ON
-     p.gene_instance_ID = gi.gene_instance_ID WHERE 
+     p.gene_instance_ID = gi.gene_instance_ID WHERE
      na.taxon_ID =  {self.taxonomy_id} AND na.strain_number = {self.org_version}
 
         """
@@ -115,10 +114,10 @@ class BaseProteinAnnotations(ProteinAnnotationFiles, TableStatusID):
     def create_protein_file(self, taxonomy_id, org_version):
         _logger.debug("Creating protein file to store the protein information")
 
-        query = f"""select nf.feature_type, nf.name, p.description, p.gene_instance_ID, p.sequence from 
+        query = f"""select nf.feature_type, nf.name, p.description, p.gene_instance_ID, p.sequence from
         nasequenceimp ns, nafeatureimp nf, geneinstance gi, protein p where ns.taxon_ID = {taxonomy_id}
         and ns.strain_number = {org_version} and ns.sequence_type_ID = 6 and nf.na_sequence_ID = ns.na_sequence_ID
-        and nf.feature_type = 'mRNA' and gi.na_feature_ID = nf.na_feature_ID and  
+        and nf.feature_type = 'mRNA' and gi.na_feature_ID = nf.na_feature_ID and
         p.gene_instance_ID = gi.gene_instance_ID"""
 
         result = self.db_dots.query(query)
@@ -142,11 +141,11 @@ class ProteinAnnotations(BaseProteinAnnotations, TranscriptMap):
     def parse_eggnog_result(self, parsed_file):
         _logger.info("Parsing EGGNOG data: Initiated")
         _logger.info(f"taxonomy id is {self.taxonomy_id}")
-        
+
         eggnog_row_id = self.table_status_dct['protein_instance_feature_ID']
         field_list = ['Description', 'COG_category', 'GOs', 'EC', 'KEGG_ko', 'KEGG_Pathway',
                     'KEGG_Module', 'KEGG_Reaction', 'KEGG_rclass', 'BRITE', 'KEGG_TC', 'PFAMs']
-        
+
         with open(parsed_file, 'r') as file:
             reader = csv.reader(file, delimiter='\t')
             header_indices = {}
@@ -197,15 +196,15 @@ class ProteinAnnotations(BaseProteinAnnotations, TranscriptMap):
 
 
     def upload_eggnog_data(self):
-        
+
         _logger.info(f"Parsing EGGNOG data: Initiated with taxonomy_id={self.taxonomy_id}, strain_number={self.org_version}")
         _logger.info(f"Uploading EGGNOG data from {self.eggnog}")
         column_list = ['protein_instance_feature_ID', 'protein_instance_ID', 'feature_name', 'subclass_view', 'taxonomy_id', 'strain_number',
                     'domain_name', 'prediction_id', 'go_id',
                     'text1', 'text2', 'text3', 'text4', 'text5', 'text6', 'text7', 'text8', 'text9']
 
-        query = f"""LOAD DATA LOCAL INFILE '{self.eggnog}' INTO TABLE proteininstancefeature FIELDS 
-        TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"' LINES 
+        query = f"""LOAD DATA LOCAL INFILE '{self.eggnog}' INTO TABLE proteininstancefeature FIELDS
+        TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"' LINES
         TERMINATED BY '\n' ({",".join(column_list) })"""
 
         self.db_conn.insert(query)
