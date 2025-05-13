@@ -55,7 +55,7 @@ for file in genomes/*.fna; do
     fi
 
     # EggNOG file path
-    eggnog_file="genomes/${base}_eggnog.emapper.annotations"
+    eggnog_file="genomes/${base}.emapper.annotations"
 
     # Print details for debugging/logging
     echo "Processing File: $file"
