@@ -109,7 +109,7 @@ class TableProcessUtility(TableUtility):
                 # Assuming self.protein links the protein sequence to the gene instance/mRNA
                 self.protein(
                     self.ProteinId,
-                    gene_name, 
+                    gene_name,
                     annotation,
                     self.GeneInstanceId,
                     protein_sequence
@@ -119,7 +119,7 @@ class TableProcessUtility(TableUtility):
                     # Exons usually share an identifier, often related to the parent mRNA/CDS
                     # Using cds_id here might be correct if exons are grouped by CDS ID,
                     # otherwise, might need a different approach based on GFF structure.
-                    
+
                     exon_info = rna_dct['exon']
                     # Use a more specific default if ID is missing
                     exon_id = exon_info.get('ID', f'exon_for_{rna_id}')
@@ -132,7 +132,7 @@ class TableProcessUtility(TableUtility):
                         gene_strand=gene_data.strand,
                         parent_na_feature_id=rna_na_feature_id # Link CDS to mRNA
                     )
-                    
+
                     # exon_id_name = f'exon_for_{rna_id}' # Example placeholder if no specific exon ID
                     # self.process_cds_exon_gff_data(
                     #     feature_name='exon',
@@ -177,7 +177,7 @@ class TableProcessUtility(TableUtility):
             feature_id_name,
             parent_na_feature_id
         )
-        
+
         # Process all location segments for this feature
         locations = feature_dct.get('location', [])
         if not isinstance(locations, list):
@@ -191,7 +191,7 @@ class TableProcessUtility(TableUtility):
                 continue
 
             feature_start, feature_end = loc_entry
-            
+
             # CREATE LOCATION ENTRY (NO COORDINATE VALIDATION)
             self.na_location(
                 self.na_location_Id,
