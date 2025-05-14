@@ -70,8 +70,9 @@ Use the included script for bulk uploads:
 bash upload_genomes_pipeline.sh
 ```
 ### File Naming Convention:
-#### **<3-letter genus><3-letter species>_< strain >.< ext >**
-#### Example: Phymel_CJ26.fna (Phytophthora melonis strain CJ26)
+#### **<3-letter genus><3-letter species>_< strain >.< ext >** followed for the test genomes. 
+#### Example: Phymel_CJ26.fna (Phytophthora melonis strain CJ26) 
+#### Some features of the web application (the genic region visualisation portion) will be non-functional if this naming convention is not followed. 
 
 ## Test dataset <a name="test-dataset"></a>
 ### Download Test Files 
@@ -87,12 +88,13 @@ bash upload_genomes_pipeline.sh
 
 ### 1. Configuration (web.ini)
 ```bash
-PORT = 3000
+PORT = 3000 # port where web application will be launched
 IP_ADDRESS = localhost  # or your server IP
 ```
 ### 2. Launch Web App
+#### Requires Ubuntu version 20 and above
 ```bash
-bash modify_nextjs_app.sh
+bash modify_nextjs_app.sh 
 ```
 ### 3. Runtime Requirements
 * Node.js ≥ v19.6.1
