@@ -5,23 +5,33 @@ set -e
 # Load NVM and Setup Node v18
 # ================================
 export NVM_DIR="$HOME/.nvm"
-# Load nvm if installed
-if [ -s "$NVM_DIR/nvm.sh" ]; then
-  . "$NVM_DIR/nvm.sh"
-else
-  echo "NVM not found, installing NVM..."
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
-  . "$NVM_DIR/nvm.sh"
+
+# Install system dependencies for NVM and Node
+sudo apt-get update
+sudo apt-get install -y --no-install-recommends curl git build-essential
+
+# Install NVM if missing
+if [ ! -s "${NVM_DIR}/nvm.sh" ]; then
+    echo "Installing NVM..."
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+    # Source NVM immediately
+    [ -s "${NVM_DIR}/nvm.sh" ] && \. "${NVM_DIR}/nvm.sh"
 fi
 
-# Install Node 18.20.6 (or desired version) and remove conflicting prefix settings
-nvm install 18.20.6
-nvm use --delete-prefix v18.20.6
+# Load NVM
+[ -s "${NVM_DIR}/nvm.sh" ] && \. "${NVM_DIR}/nvm.sh"
 
-# Verify that the correct Node and npm are in use
-echo "Using Node version: $(node --version)"
-echo "Using npm version: $(npm --version)"
+# Install specific Node version
+LTS_VERSION="18.20.6"
+if ! nvm list "${LTS_VERSION}" >/dev/null 2>&1; then
+    echo "Installing Node ${LTS_VERSION}..."
+    nvm install "${LTS_VERSION}"
+fi
+nvm use "${LTS_VERSION}" --silent
 
+# Verify Node/npm versions
+echo "Node version: $(node --version)"
+echo "npm version: $(npm --version)"
 
 # ================================
 # Setup Web Application Variables
@@ -121,28 +131,38 @@ fi
 # ================================
 
 # Function to install system packages using the appropriate package manager
-install_packages() {
-    if command -v apt-get &> /dev/null; then
-        sudo apt-get update
-        sudo apt-get install -y curl tabix genometools samtools ncbi-blast+-legacy
-    elif command -v yum &> /dev/null; then
-        sudo yum install -y epel-release
-        sudo yum install -y curl tabix genometools samtools ncbi-blast+-legacy
-    elif command -v dnf &> /dev/null; then
-        sudo dnf install -y curl tabix genometools samtools ncbi-blast+-legacy
-    elif command -v pacman &> /dev/null; then
-        sudo pacman -Syu --noconfirm curl tabix genometools samtools ncbi-blast+-legacy
-    else
-        echo "Unsupported package manager. Please install the required packages manually."
-        exit 1
-    fi
+
+# ================================
+# Enhanced System Package Installation
+# ================================
+install_system_packages() {
+    echo "Installing required system packages..."
+    sudo apt-get update
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        git \
+        tabix \
+        genometools \
+        samtools \
+        ncbi-blast+ \
+        python3 \
+        python3-pip \
+        libssl-dev \
+        libbz2-dev \
+        zlib1g-dev \
+        libncurses5-dev \
+        libncursesw5-dev \
+        liblzma-dev
 }
 
 # Install system packages
-install_packages
+install_system_packages
 
 # Install global npm packages required by the application using the NVM-managed Node
-npm install -g @jbrowse/cli next
+npm install -g --force \
+    @jbrowse/cli@3.0.0 \
+    next@14.1.0 \
+    react@18.2.0 \
+    react-dom@18.2.0
 
 # ================================
 # Prepare Application Data
@@ -168,7 +188,8 @@ for file in $CLONE_DIR/public/genomes/*.fna ; do
         echo $file, $b
         jbrowse add-assembly $file --load inPlace
         jbrowse add-track $CLONE_DIR/public/genomes/"$b".gff3.gz --load inPlace --assemblyNames $b.fna
-        jbrowse add-track $CLONE_DIR/public/genomes/"$b"_rxlr.bw --load inPlace --assemblyNames $b.fna
+         #UNCOMMENT IF U HAVE RXLR FILES
+        #jbrowse add-track $CLONE_DIR/public/genomes/"$b"_rxlr.bw --load inPlace --assemblyNames $b.fna
 
 done
 
@@ -243,6 +264,3 @@ sed -z -i 's|<tbody>.*</tbody>|<tbody>'"$table_data"'</tbody>|g' "$INDEX_JS_PATH
 cd "$CLONE_DIR"
 npm install
 npm run dev
-
-echo "Application running at http://$IP_ADDRESS:$PORT"
-
