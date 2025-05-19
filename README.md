@@ -76,12 +76,13 @@ bash upload_genomes_pipeline.sh
 
 ## Test dataset <a name="test-dataset"></a>
 ### Download Test Files 
-[Google Drive Link](https://drive.google.com/file/d/1wqu8YxEQ9euBRuqu9047Cpl_cR1FwG3i/view?usp=sharing)
-##### Includes sample data for 3 Phytophthora melonis strains.
+[Zenodo Link](https://doi.org/10.5281/zenodo.15461870)
+##### Includes sample data for 7 organisms/
+##### the system works for both Refseq gff file format obtained from NCBI as well the funannonate generated gff3 file format. 
 
 ### Setup Instructions
-- Extract test_datasets.zip into the galEupy directory
-- Rename folder to genomes
+- Download all the files from the zenodo link
+- Put the zip folder in the galEupy current directory, extract and rename the folder to "genomes"
 - Update configuration files with your MySQL credentials
 
 ## Web Application Setup <a name="web-application-setup"></a>
