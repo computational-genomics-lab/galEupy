@@ -91,11 +91,25 @@ bash upload_genomes_pipeline.sh
 ```fasta
 >NC_003424.3 Phytophthora melonis strain CJ26 chromosome 1
 ```
-  - Organism: Phytophthora melonis
-  - Strain: CJ26
+   - Organism: Phytophthora melonis
+   - Strain: CJ26
 
+2. Without "strain" keyword :
+   ```fasta
+   >NZ_CP015450.1 Bacillus subtilis 168 complete genome
+   ```
+   - Organism: Bacillus subtilis
+   - Strain: 168
 
-"NC_003424.3 Schizosaccharomyces pombe strain=972h- chromosome I"
+#### Invalid examples
+```fasta
+>NG_045678 Saccharomyces (missing species)
+>LT962581.1 Fusarium scaffold_5 (missing strain)
+```
+** ⚠️ Error Message for Malformed Files:** 
+```bash
+"Invalid FASTA file format in [filename]: Header does not match expected formats; skipping."
+```
 
 #### 2. File Naming Convention
 **Pattern:** `<3-letter genus><3-letter species>_<strain>.fna`  
