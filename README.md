@@ -84,7 +84,7 @@ bash upload_genomes_pipeline.sh
 | 2-3	| Organism (Genus species)	| Mandatory (fields 2 and 3) |
 | 4+	| Strain	| strain <value> OR field 4 |
 
-##### **Valid Examples**
+ **Valid Examples**
 
 1. With explicit strain:
 ```fasta
@@ -100,7 +100,7 @@ bash upload_genomes_pipeline.sh
    - Organism: Bacillus subtilis
    - Strain: 168
 
-##### **Invalid examples**
+**Invalid examples**
 ```fasta
 >NG_045678 Saccharomyces (missing species)
 >LT962581.1 Fusarium scaffold_5 (missing strain)
