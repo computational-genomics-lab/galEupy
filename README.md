@@ -100,7 +100,7 @@ bash upload_genomes_pipeline.sh
    - Organism: Bacillus subtilis
    - Strain: 168
 
-**Invalid examples**
+**Invalid Examples**
 ```fasta
 >NG_045678 Saccharomyces (missing species)
 >LT962581.1 Fusarium scaffold_5 (missing strain)
