@@ -87,7 +87,7 @@ bash upload_genomes_pipeline.sh
 
 #### Valid Examples
 
-- 1. With explicit strain:
+1. With explicit strain:
 ```fasta
 >NC_003424.3 Phytophthora melonis strain CJ26 chromosome 1
 ```
