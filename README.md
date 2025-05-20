@@ -77,17 +77,25 @@ bash upload_genomes_pipeline.sh
 >ID Genus species [strain <identifier>] [additional information]
 ```
 
-**Example Header:** 
-"NC_003424.3 Schizosaccharomyces pombe strain=972h- chromosome I"
+**Parsing Rules**
 
-**Header Breakdown:**
-| Position | Content | Example | Required |
-|------------|-------|---------|----------|
-| 1 |	Sequence ID	| NC_003424.3	| Yes |
-| 2	| Genus	| Schizosaccharomyces |	Yes |
-| 3	| Species	| pombe	| Yes |
-| 4	| Strain designation	| strain 972h-	| Yes |
-| 5+	| Additional comments	| genome assembly	 | Optional |
+| Field | Content | Extraction Method |
+|------------|-------|----------|
+| 1 |	Sequence ID	| Mandatory |
+| 2-3	| Organism (Genus species)	| Mandatory (fields 2 and 3) |
+| 4+	| Strain	| strain <value> OR field 4 |
+
+#### Valid Examples
+
+- 1. With explicit strain:
+```fasta
+>NC_003424.3 Phytophthora melonis strain CJ26 chromosome 1
+```
+ - Organism: Phytophthora melonis
+ - Strain: CJ26
+
+
+"NC_003424.3 Schizosaccharomyces pombe strain=972h- chromosome I"
 
 #### 2. File Naming Convention
 **Pattern:** `<3-letter genus><3-letter species>_<strain>.fna`  
