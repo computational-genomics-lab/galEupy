@@ -69,10 +69,21 @@ Use the included script for bulk uploads:
 ```bash
 bash upload_genomes_pipeline.sh
 ```
-### File Naming Convention:
-#### **<3-letter genus><3-letter species>_< strain >.< ext >** followed for the test genomes. 
-#### Example: Phymel_CJ26.fna (Phytophthora melonis strain CJ26) 
+### FASTA File Requirements
+
+#### 1. File Naming Convention
+**Pattern:** `<3-letter genus><3-letter species>_<strain>.fna`  
+**Example:** `Schpom_972h-.fna` (Schizosaccharomyces pombe strain 972h-)
+
+| Component  | Format          | Extraction Rule                |
+|------------|-----------------|---------------------------------|
+| Genus      | First 3 letters | First 3 characters of filename |
+| Species    | Next 3 letters  | Characters 4-6 of filename     |
+| Strain     | Alphanumeric    | After underscore (_)           |
+
 #### Some features of the web application (the genic region visualisation portion) will be non-functional if this naming convention is not followed. 
+
+
 
 ## Test dataset <a name="test-dataset"></a>
 ### Download Test Files 
