@@ -91,8 +91,8 @@ bash upload_genomes_pipeline.sh
 ```fasta
 >NC_003424.3 Phytophthora melonis strain CJ26 chromosome 1
 ```
- - Organism: Phytophthora melonis
- - Strain: CJ26
+  - Organism: Phytophthora melonis
+  - Strain: CJ26
 
 
 "NC_003424.3 Schizosaccharomyces pombe strain=972h- chromosome I"
