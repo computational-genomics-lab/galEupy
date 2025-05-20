@@ -71,7 +71,23 @@ bash upload_genomes_pipeline.sh
 ```
 ### FASTA File Requirements
 
-#### 1. File Naming Convention
+#### 1. FASTA file Header Structure Requirements
+**Required Format:** Each FASTA file **must** contain headers with the following structure: 
+>ID Genus species strain <strain_name> [additional information]
+
+**Example Header:** 
+"NC_003424.3 Schizosaccharomyces pombe strain=972h- chromosome I"
+
+**Header Breakdown:**
+| Position | Content | Example | Required |
+|------------|-------|---------|----------|
+| 1 |	Sequence ID	| NC_003424.3	| Yes |
+| 2	| Genus	| Schizosaccharomyces |	Yes |
+| 3	| Species	| pombe	| Yes |
+| 4	| Strain designation	| strain 972h-	| Yes |
+| 5+	| Additional comments	| genome assembly	 | Optional |
+
+#### 2. File Naming Convention
 **Pattern:** `<3-letter genus><3-letter species>_<strain>.fna`  
 **Example:** `Schpom_972h-.fna` (Schizosaccharomyces pombe strain 972h-)
 
@@ -82,7 +98,6 @@ bash upload_genomes_pipeline.sh
 | Strain     | Alphanumeric    | After underscore (_)           |
 
 #### Some features of the web application (the genic region visualisation portion) will be non-functional if this naming convention is not followed. 
-
 
 
 ## Test dataset <a name="test-dataset"></a>
