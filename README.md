@@ -8,9 +8,9 @@
 2. [Configuration](#configuration)
 3. [Basic Usage](#basic-usage)
 4. [Batch Upload Pipeline](#batch-upload-pipeline)
-5. [Test Dataset](#test-dataset)
-6. [Web Application Setup](#web-application-setup)
-7. [Troubleshooting](#troubleshooting)
+6. [Test Dataset](#test-dataset)
+7. [Web Application Setup](#web-application-setup)
+8. [Troubleshooting](#troubleshooting)
 
 ## Installation <a name="installation"></a>
 
@@ -70,7 +70,6 @@ Use the included script for bulk uploads:
 bash upload_genomes_pipeline.sh
 ```
 ### FASTA File Requirements
-
 #### 1. FASTA file Header Structure Requirements
 **Required Format:** Each FASTA file **must** contain headers with the following structure: 
 ``` fasta
@@ -78,14 +77,13 @@ bash upload_genomes_pipeline.sh
 ```
 
 **Parsing Rules**
-
 | Field | Content | Extraction Method |
 |------------|-------|----------|
 | 1 |	Sequence ID	| Mandatory |
 | 2-3	| Organism (Genus species)	| Mandatory (fields 2 and 3) |
 | 4+	| Strain	| strain <value> OR field 4 |
 
-#### Valid Examples
+##### Valid Examples
 
 1. With explicit strain:
 ```fasta
@@ -101,7 +99,7 @@ bash upload_genomes_pipeline.sh
    - Organism: Bacillus subtilis
    - Strain: 168
 
-#### Invalid examples
+##### Invalid examples
 ```fasta
 >NG_045678 Saccharomyces (missing species)
 >LT962581.1 Fusarium scaffold_5 (missing strain)
