@@ -86,14 +86,14 @@ bash upload_genomes_pipeline.sh
 
  **Valid Examples**
 
-1. With explicit strain:
+ 1. With explicit strain:
 ```fasta
 >NC_003424.3 Phytophthora melonis strain CJ26 chromosome 1
 ```
    - Organism: Phytophthora melonis
    - Strain: CJ26
 
-2. Without "strain" keyword :
+ 2. Without "strain" keyword :
    ```fasta
    >NZ_CP015450.1 Bacillus subtilis 168 complete genome
    ```
