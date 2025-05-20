@@ -90,14 +90,14 @@ bash upload_genomes_pipeline.sh
 ```fasta
 >NC_003424.3 Phytophthora melonis strain CJ26 chromosome 1
 ```
-   - Organism: Phytophthora melonis
+   - Organism: *Phytophthora melonis*
    - Strain: CJ26
 
  2. Without "strain" keyword :
    ```fasta
    >NZ_CP015450.1 Bacillus subtilis 168 complete genome
    ```
-   - Organism: Bacillus subtilis
+   - Organism: *Bacillus subtilis*
    - Strain: 168
 
 **Invalid Examples**
@@ -112,7 +112,7 @@ bash upload_genomes_pipeline.sh
 
 #### 2. File Naming Convention
 **Pattern:** `<3-letter genus><3-letter species>_<strain>.fna`  
-**Example:** `Schpom_972h-.fna` (Schizosaccharomyces pombe strain 972h-)
+**Example:** `Schpom_972h-.fna` (For *Schizosaccharomyces pombe* strain 972h-)
 
 | Component  | Format          | Extraction Rule                |
 |------------|-----------------|---------------------------------|
@@ -126,7 +126,7 @@ bash upload_genomes_pipeline.sh
 ## Test dataset <a name="test-dataset"></a>
 ### Download Test Files 
 [Zenodo Link](https://doi.org/10.5281/zenodo.15461870)
-##### Includes sample data for 7 organisms/
+##### Includes sample data for 7 organisms.
 ##### the system works for both Refseq gff file format obtained from NCBI as well the funannonate generated gff3 file format. 
 
 ### Setup Instructions
