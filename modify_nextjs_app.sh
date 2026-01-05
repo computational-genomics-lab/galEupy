@@ -193,12 +193,15 @@ for file in $CLONE_DIR/public/genomes/*.fna ; do
 
 done
 
+ESCAPED_CLONE_DIR=$(printf '%s\n' "$CLONE_DIR" | sed 's/[\/&]/\\&/g')
+#this is done to handle the special characters in $CLONE_DIR for sed
+
+# Remove "$CLONE_DIR/public" string from config.json
+sed -i "s|${ESCAPED_CLONE_DIR}/public||g" config.json
+
+
 mv config.json "$CLONE_DIR/pages/components/visualization/"
 
-
-# Replace IP address and port in the application configuration files
-#bash "$CLONE_DIR/string_replace.sh" "$CLONE_DIR/pages" "http://eumicrobedb.org:3001" "http://$IP_ADDRESS:$PORT"
-#bash "$CLONE_DIR/string_replace.sh" "$CLONE_DIR/pages" "$CLONE_DIR/public" "http://$IP_ADDRESS:$PORT"
 
 #=====================================
 # Combining Table Generation and BLAST Data Generation
